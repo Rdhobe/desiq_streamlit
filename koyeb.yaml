@@ -1,0 +1,78 @@
+service:
+  name: desiq
+  type: web
+  ports:
+    - port: 8000
+      protocol: http
+  env:
+    - name: PYTHON_VERSION
+      value: 3.11.0
+    - name: DEBUG
+      value: "false"
+    - name: PORT
+      value: "8000"
+    - name: WEB_CONCURRENCY
+      value: "2"
+    - name: GUNICORN_THREADS
+      value: "4"
+    - name: GUNICORN_TIMEOUT
+      value: "120"
+    - name: GUNICORN_MAX_REQUESTS
+      value: "300"
+    - name: GUNICORN_WORKER_CLASS
+      value: sync
+    - name: GUNICORN_LOG_LEVEL
+      value: info
+    - name: DJANGO_SETTINGS_MODULE
+      value: desiq.settings
+    - name: SECRET_KEY
+      secret: secret-key
+    - name: STATIC_ROOT
+      value: /var/data/staticfiles
+    - name: STATIC_URL
+      value: /static/
+    - name: OPENAI_API_KEY
+      secret: openai-api-key
+    - name: RAZORPAY_KEY_ID
+      secret: razorpay-key-id
+    - name: RAZORPAY_KEY_SECRET
+      secret: razorpay-key-secret
+    - name: DATABASE_URL
+      secret: database-url
+    - name: AI_REQUEST_TIMEOUT
+      value: "110"
+    - name: WORKER_TIME_LIMIT
+      value: "110"
+    - name: WORKER_MEMORY_LIMIT_MB
+      value: "450"
+    - name: MAX_CONCURRENT_AI_REQUESTS
+      value: "2"
+    - name: DJANGO_VERSION
+      value: "4.2.11"
+    - name: TEMPLATE_DIRS
+      value: "core/templates"
+  routes:
+    - path: /
+      port: 8000
+  healthchecks:
+    - type: http
+      port: 8000
+      path: /health/
+      initial_delay: 30s
+      interval: 15s
+      timeout: 10s
+      success_threshold: 1
+      failure_threshold: 3
+  regions:
+    - fra
+  scaling:
+    min: 1
+    max: 1
+  instance_types:
+    - type: nano
+  build:
+    dockerfile: Dockerfile
+  resources:
+    disk_size_gb: 1
+  run:
+    command: gunicorn desiq.wsgi:application -c gunicorn_config.py 
