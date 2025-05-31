@@ -36,7 +36,7 @@ RUN chmod -R 755 staticfiles static
 EXPOSE 8000
 
 # Create entrypoint script to run migrations before starting
-RUN echo '#!/bin/bash\necho "Running health check..."\npython health_check.py\necho "Running migrations..."\npython manage.py migrate --no-input\necho "Starting gunicorn..."\nexec gunicorn desiq.wsgi:application -c gunicorn_config.py' > /app/entrypoint.sh && \
+RUN echo '#!/bin/bash\necho "Running health check..."\npython health_check.py\necho "Running migrations..."\npython manage.py migrate --no-input\necho "Starting gunicorn..."\nexec gunicorn koyeb_wsgi:application -c gunicorn_config.py' > /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
 # Use entrypoint script
