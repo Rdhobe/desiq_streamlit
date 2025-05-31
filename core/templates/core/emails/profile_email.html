@@ -1,0 +1,27 @@
+{% extends "core/emails/base_email.html" %}
+
+{% block title %}Profile Updated - DesiQ{% endblock %}
+
+{% block content %}
+<h2>Profile Updated Successfully</h2>
+
+<div style="text-align: center;">
+    <div class="icon">✅</div>
+</div>
+
+<p>Hello {{ user.username }},</p>
+
+<p>We're confirming that your profile information was successfully updated.</p>
+
+<p>If you didn't make these changes to your profile, please contact our support team immediately.</p>
+
+<p>You can review your current profile settings by clicking the button below:</p>
+
+<div style="text-align: center;">
+    <a href="{{ request.scheme }}://{{ site.domain }}/profile/" class="btn">View Profile</a>
+</div>
+
+<p>Security Tip: We recommend regularly updating your password and reviewing your account settings to ensure your account remains secure.</p>
+
+<p>Best regards,<br>The DesiQ Team</p>
+{% endblock %} 

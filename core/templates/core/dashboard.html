@@ -1,0 +1,333 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Dashboard{% endblock %}
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header" style="position: relative; margin-bottom: 20px;">
+        <h2 class="dashboard-title">Welcome, {{ user.username }}!</h2>
+        <p class="dashboard-subtitle">Here's your decision-making progress.</p>
+        {% if is_premium %}
+        <div class="premium-badge">Premium</div>
+        {% endif %}
+        <button class="tour-button" onclick="if(window.startDesiQTour) window.startDesiQTour()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            Take Tour
+        </button>
+        <div class="user-level-info">
+            <span class="level-badge">Level {{ level }}</span>
+            <span class="info-icon" data-tooltip="Levels are earned by gaining XP. Each level requires 100 XP and unlocks new features and scenarios. Complete scenarios and daily challenges to gain XP.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            </span>
+            <div class="xp-container">
+                <div class="xp-bar">
+                    <div class="xp-progress" style="width: {{ xp_progress_percentage }}%;"></div>
+                </div>
+                <span class="xp-text">{{ xp }} XP</span>
+            </div>
+        </div>
+    </div>
+<div class="dashboard-stats-row">
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Rationality Score</span>
+            <span class="info-icon" data-tooltip="This score reflects your ability to make logical, evidence-based decisions. It increases as you choose options that show good reasoning skills in scenarios.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            </span>
+            <img class="stat-icon" src="{% static 'img/Rationality Score.svg' %}" alt="Rationality">
+        </div>
+        <div class="stat-score">{{ rationality_score }}/100</div>
+        <div class="stat-progress-bar">
+            <div class="stat-progress" style="width: {{ rationality_score }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Decisiveness</span>
+            <span class="info-icon" data-tooltip="This score measures your ability to make confident and timely decisions without unnecessary delay. It increases with choices that demonstrate clear and efficient decision-making.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            </span>
+            <img class="stat-icon" src="{% static 'img/Group 2.svg' %}" alt="Decisiveness">
+        </div>
+        <div class="stat-score">{{ decisiveness_score }}/100</div>
+        <div class="stat-progress-bar">
+            <div class="stat-progress" style="width: {{ decisiveness_score }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Scenarios Completed</span>
+            <span class="info-icon" data-tooltip="The total number of decision-making scenarios you've successfully completed. Each completion earns XP and contributes to your skill scores.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            </span>
+            <img class="stat-icon trophy" src="{% static 'img/Trophy.svg' %}" alt="Trophy">
+        </div>
+        <div class="stat-score">{{ scenarios_completed }}</div>
+        <p class="stat-subtext">Keep going!</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Streak</span>
+            <span class="info-icon" data-tooltip="The number of consecutive days you've engaged with the platform. Login daily to maintain your streak and earn bonus rewards.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            </span>
+            <img class="stat-icon fire" src="{% static 'img/fire.svg' %}" alt="Fire">
+        </div>
+        <div class="stat-score">{{ streak }} days</div>
+        <p class="stat-subtext">Keep it going!</p>
+    </div>
+</div>
+
+<div class="score-info-link">
+    <a href="#" onclick="window.open('/static/score_info.html', '_blank', 'width=800,height=600'); return false;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+        Learn how scores are calculated
+    </a>
+</div>
+
+<div class="dashboard-main-row">
+    <div class="recent-decisions">
+        <h2 class="section-title">Recent Decisions</h2>
+        <p class="section-subtitle">Your latest decision-making exercises</p>
+        <div class="decisions-list">
+            {% if user_decisions %}
+                {% for decision in user_decisions %}
+                    <div class="decision-item">
+                        <h3>{{ decision.title }}</h3>
+                        <p class="decision-date">{{ decision.date|date:"M d, Y" }}</p>
+                        <p class="decision-score">Score: {{ decision.score }}/100</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-decisions">
+                    <p>No recent decisions found. Try completing some scenarios!</p>
+                    <a href="{% url 'core:scenarios' %}" class="action-button">Try a Scenario</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="dashboard-sidebar">
+        <div class="challenge-card">
+            <h2 class="section-title">Daily Challenges</h2>
+            <p class="challenge-subtitle">Complete today's challenges to earn bonus XP</p>
+            <div class="challenge-progress">
+                <span class="challenge-count">{{ daily_challenges_completed }}/{{ daily_challenges_total }}</span>
+                <div class="challenge-progress-bar">
+                    <div class="challenge-progress-fill" style="width: {% widthratio daily_challenges_completed daily_challenges_total 100 %}%;"></div>
+                </div>
+            </div>
+            <div class="challenges-list">
+                {% if daily_challenges %}
+                    {% for challenge in daily_challenges %}
+                        <div class="challenge-item {% if challenge.completed %}completed{% elif challenge.locked %}locked{% endif %}">
+                            <div class="challenge-checkbox">
+                                {% if challenge.completed %}✓{% endif %}
+                                {% if challenge.locked %}🔒{% endif %}
+                            </div>
+                            <div class="challenge-info">
+                                <p class="challenge-name">{{ challenge.name }}</p>
+                                <p class="challenge-reward">+{{ challenge.xp_reward }} XP</p>
+                            </div>
+                            {% if not challenge.completed and not challenge.locked %}
+                            <a href="{% url 'core:scenario_detail' challenge.scenario_id %}" class="challenge-button">Start</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-challenges">Check back later for new challenges</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="usage-card">
+            <h2 class="section-title">Daily Uses</h2>
+            <p class="reset-timer">Resets in <span id="countdown-timer">00:00:00</span></p>
+            <div class="usage-stats">
+                <div class="usage-item">
+                    <span class="usage-label">Scenarios Generated</span>
+                    <div class="usage-bar">
+                        <div class="usage-fill" style="width: {% widthratio scenarios_generated max_scenarios_per_day 100 %}%;"></div>
+                    </div>
+                    <span class="usage-value">{{ scenarios_generated }}/{{ max_scenarios_per_day }}</span>
+                </div>
+                <div class="usage-item">
+                    <span class="usage-label">Scenarios Completed</span>
+                    <div class="usage-bar">
+                        <div class="usage-fill" style="width: {% widthratio scenarios_today max_scenarios_per_day 100 %}%;"></div>
+                    </div>
+                    <span class="usage-value">{{ scenarios_today }}/{{ max_scenarios_per_day }}</span>
+                </div>
+                <div class="usage-item">
+                    <span class="usage-label">Mentor Sessions</span>
+                    <div class="usage-bar">
+                        <div class="usage-fill" style="width: {% widthratio mentor_sessions_today max_mentor_sessions_per_day 100 %}%;"></div>
+                    </div>
+                    <span class="usage-value">{{ mentor_sessions_today }}/{{ max_mentor_sessions_per_day }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="upcoming-content">
+        <h2 class="section-title">UPCOMING CONTENT</h2>
+        <p class="section-subtitle">Coming Soon Some Intresting Stuff !!</p>
+        <div class="decisions-list">
+                    <div class="decision-item">
+                        <h3>New Mentors</h3>
+                        <p class="decision-date">May 09, 2025</p>
+                    </div>
+                    <div class="decision-item">
+                        <h3>decision scenario in story format</h3>
+                        <p class="decision-date">May 09, 2025</p>
+                    </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+<style>
+    .info-icon {
+        cursor: help;
+        margin-left: 5px;
+        position: relative;
+        display: inline-flex;
+        vertical-align: middle;
+        color: #6c757d;
+        transition: color 0.2s ease;
+    }
+    
+    .info-icon:hover {
+        color: #1b309a;
+    }
+    
+    .info-icon[data-tooltip]:hover:after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        width: 220px;
+        text-align: center;
+        z-index: 100;
+        margin-bottom: 10px;
+        line-height: 1.4;
+        white-space: normal;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .info-icon[data-tooltip]:hover:before {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+        margin-bottom: 4px;
+        z-index: 100;
+    }
+    
+    .score-info-link {
+        text-align: center;
+        margin: 15px 0;
+    }
+    
+    .score-info-link a {
+        display: inline-flex;
+        align-items: center;
+        color: #1b309a;
+        font-size: 14px;
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        background-color: rgba(27, 48, 154, 0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .score-info-link a:hover {
+        background-color: rgba(27, 48, 154, 0.2);
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Function to calculate time remaining until midnight
+    function updateCountdown() {
+        const now = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(now.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        
+        const timeRemaining = tomorrow - now;
+        
+        // Calculate hours, minutes, seconds
+        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+        
+        // Format with leading zeros
+        const formattedHours = String(hours).padStart(2, '0');
+        const formattedMinutes = String(minutes).padStart(2, '0');
+        const formattedSeconds = String(seconds).padStart(2, '0');
+        
+        // Update the countdown timer
+        const countdownElement = document.getElementById('countdown-timer');
+        countdownElement.textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+        
+        // Add visual indication of countdown
+        if (hours === 0) {
+            if (minutes < 10) {
+                countdownElement.style.color = '#ff5722'; // Orange for last 10 minutes
+            }
+            if (minutes === 0 && seconds < 30) {
+                countdownElement.style.color = '#f44336'; // Red for last 30 seconds
+                
+                // Add blinking effect for last 10 seconds
+                if (seconds < 10) {
+                    countdownElement.style.animation = 'blink 1s infinite';
+                }
+            }
+        }
+        
+        // If countdown reaches zero, refresh the page to reset limits
+        if (timeRemaining <= 1000) {
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+    }
+    
+    // Add blinking animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Update countdown immediately and then every second
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+</script>
+{% endblock %}
+
+

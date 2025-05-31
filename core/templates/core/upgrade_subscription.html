@@ -1,0 +1,384 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Upgrade to Premium - Desiq{% endblock %}
+{% block header %}Upgrade to Premium{% endblock %}
+
+{% block content %}
+<div class="upgrade-container">
+    <div class="upgrade-header">
+        <h1>Choose Your Premium Plan</h1>
+        <p class="subtitle">Unlock all Desiq features and take your decision-making to the next level</p>
+    </div>
+    
+    <div class="plans-container">
+        <div class="plan-card">
+            <div class="plan-header">
+                <h2>Monthly Premium</h2>
+                <div class="plan-price">
+                    <span class="price">₹999</span>
+                    <span class="period">/ month</span>
+                </div>
+            </div>
+            <div class="plan-features">
+                <ul>
+                    <li>Access to all premium mentors</li>
+                    <li>20 messages per day with each mentor</li>
+                    <li>3 daily challenges</li>
+                    <li>3 scenario generations per day</li>
+                    <li>Priority support</li>
+                </ul>
+            </div>
+            <div class="plan-cta">
+                <a href="{% url 'core:payment' %}?plan=monthly" class="btn-subscribe">Subscribe Now</a>
+            </div>
+        </div>
+        
+        <div class="plan-card recommended">
+            <div class="plan-badge">Best Value</div>
+            <div class="plan-header">
+                <h2>Annual Premium</h2>
+                <div class="plan-price">
+                    <span class="price">₹9,999</span>
+                    <span class="period">/ year</span>
+                </div>
+                <div class="plan-savings">Save 17% compared to monthly</div>
+            </div>
+            <div class="plan-features">
+                <ul>
+                    <li>Access to all premium mentors</li>
+                    <li>20 messages per day with each mentor</li>
+                    <li>3 daily challenges</li>
+                    <li>3 scenario generations per day</li>
+                    <li>Priority support</li>
+                    <li>Annual exclusive decision templates</li>
+                </ul>
+            </div>
+            <div class="plan-cta">
+                <a href="{% url 'core:payment' %}?plan=annual" class="btn-subscribe">Subscribe Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+            <div class="faq-question">Can I cancel my subscription at any time?</div>
+            <div class="faq-answer">Yes, you can cancel your subscription at any time from your account settings. Your premium access will remain active until the end of your current billing period.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">How will I be billed?</div>
+            <div class="faq-answer">Your subscription will be charged automatically at the start of each billing period using your selected payment method.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Can I upgrade or downgrade my plan?</div>
+            <div class="faq-answer">Yes, you can upgrade from monthly to annual at any time. If you want to switch from annual to monthly, the change will take effect at your next renewal date.</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Upgrade Container */
+    .upgrade-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    /* Upgrade Header */
+    .upgrade-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .upgrade-header h1 {
+        font-size: 32px;
+        font-weight: 600;
+        color: #1b309a;
+        margin-bottom: 10px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+        color: #666;
+    }
+    
+    /* Plans Container */
+    .plans-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+    
+    /* Plan Card */
+    .plan-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 350px;
+        position: relative;
+        border: 1px solid #eee;
+    }
+    
+    .plan-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .plan-card.recommended {
+        border: 2px solid #ffc107;
+        transform: scale(1.05);
+    }
+    
+    .plan-card.recommended:hover {
+        transform: translateY(-5px) scale(1.05);
+    }
+    
+    .plan-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ffc107;
+        color: #333;
+        padding: 5px 15px;
+        font-weight: 600;
+        font-size: 14px;
+        border-bottom-left-radius: 10px;
+    }
+    
+    /* Plan Header */
+    .plan-header {
+        background: linear-gradient(245deg, rgba(255, 255, 255, 1) 8%, rgba(255, 239, 246, 1) 40%, rgba(234, 218, 242, 1) 67%, rgba(210, 182, 227, 1) 82%);
+        padding: 25px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .plan-header h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1b309a;
+        margin: 0 0 15px 0;
+    }
+    
+    .plan-price {
+        margin-bottom: 10px;
+    }
+    
+    .price {
+        font-size: 36px;
+        font-weight: 700;
+        color: #1b309a;
+    }
+    
+    .period {
+        font-size: 16px;
+        color: #666;
+    }
+    
+    .plan-savings {
+        display: inline-block;
+        background: rgba(255, 193, 7, 0.2);
+        color: #ff9800;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    /* Plan Features */
+    .plan-features {
+        padding: 25px;
+    }
+    
+    .plan-features ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .plan-features li {
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 16px;
+        color: #555;
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .plan-features li:before {
+        content: "✓";
+        color: #1b309a;
+        position: absolute;
+        left: 5px;
+        font-weight: bold;
+    }
+    
+    .plan-features li:last-child {
+        border-bottom: none;
+    }
+    
+    /* CTA Button */
+    .plan-cta {
+        padding: 0 25px 25px;
+        text-align: center;
+    }
+    
+    .btn-subscribe {
+        display: inline-block;
+        width: 100%;
+        padding: 15px 0;
+        background: linear-gradient(245deg, rgba(255, 255, 255, 1) 8%, rgba(255, 239, 246, 1) 40%, rgba(234, 218, 242, 1) 67%);
+        color: #1b309a;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(234, 218, 242, 0.5);
+    }
+    
+    .btn-subscribe:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .recommended .btn-subscribe {
+        background: #1b309a;
+        color: white;
+        border: none;
+    }
+    
+    .recommended .btn-subscribe:hover {
+        background: #142270;
+    }
+    
+    /* Guarantee Section */
+    .guarantee-section {
+        display: flex;
+        align-items: center;
+        background: #f9f9f9;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 50px;
+    }
+    
+    .guarantee-icon {
+        margin-right: 20px;
+    }
+    
+    .guarantee-icon img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .guarantee-text h3 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1b309a;
+        margin: 0 0 10px 0;
+    }
+    
+    .guarantee-text p {
+        margin: 0;
+        color: #666;
+        font-size: 16px;
+    }
+    
+    /* FAQ Section */
+    .faq-section {
+        margin-bottom: 40px;
+    }
+    
+    .faq-section h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1b309a;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .faq-item {
+        margin-bottom: 15px;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .faq-question {
+        background: #f9f9f9;
+        padding: 15px 20px;
+        font-weight: 500;
+        color: #333;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    
+    .faq-answer {
+        padding: 15px 20px;
+        color: #666;
+        font-size: 15px;
+        border-top: 1px solid #eee;
+    }
+    
+    /* Responsive */
+    @media (max-width: 991px) {
+        .plans-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .plan-card, .plan-card.recommended {
+            width: 100%;
+            max-width: 400px;
+            transform: none;
+        }
+        
+        .plan-card.recommended {
+            transform: none;
+            order: -1;
+            margin-bottom: 30px;
+        }
+        
+        .plan-card:hover, .plan-card.recommended:hover {
+            transform: translateY(-5px);
+        }
+    }
+    
+    @media (max-width: 767px) {
+        .guarantee-section {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .guarantee-icon {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle FAQ answers
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', function() {
+                const answer = this.nextElementSibling;
+                if (answer.style.display === 'none' || answer.style.display === '') {
+                    answer.style.display = 'block';
+                } else {
+                    answer.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,772 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Chat with {{ other_user.username }}{% endblock %}
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="user-info">
+            <a href="{% url 'core:messages' %}" class="back-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <div class="user-avatar">{{ other_user.username|first|upper }}</div>
+            <div class="user-name">{{ other_user.username }}</div>
+        </div>
+    </div>
+    
+    <div class="chat-content">
+        <div class="messages-container" id="chat-messages">
+            {% for message in messages %}
+                <div class="message {% if message.sender == request.user %}message-self{% else %}message-other{% endif %}">
+                    <div class="message-avatar">{{ message.sender.username|first|upper }}</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
+                        </div>
+                        
+                        {% if message.shared_scenario %}
+                            <div class="shared-scenario">
+                                <h4>Shared Scenario: {{ message.shared_scenario.title }}</h4>
+                                <p>{{ message.shared_scenario.description|truncatechars:150 }}</p>
+                                <a href="{% url 'core:scenario_detail' message.shared_scenario.id %}" class="view-scenario-btn">View Scenario</a>
+                            </div>
+                        {% else %}
+                            <div class="message-text">{{ message.content }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-chat">
+                    <p>No messages yet. Start the conversation!</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="message-input-container">
+            <form id="chat-form">
+                <input type="text" id="chat-message-input" placeholder="Type your message..." required>
+                <button type="submit" id="chat-message-submit" data-mobile-text="→">Send</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="chat-sidebar">
+        <div class="scenarios-section">
+            <h3>Your Scenarios</h3>
+            {% if user_scenarios %}
+                <ul class="scenarios-list">
+                    {% for progress in user_scenarios %}
+                        <li class="scenario-item">
+                            <div class="scenario-info">
+                                <h4>{{ progress.scenario.title }}</h4>
+                                <span class="scenario-category">{{ progress.scenario.get_category_display }}</span>
+                            </div>
+                            <button class="share-btn" data-scenario-id="{{ progress.scenario.id }}">Share</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-state">No completed scenarios to share.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .chat-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        height: calc(100vh - 120px);
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+            "header header"
+            "content sidebar";
+        gap: 20px;
+    }
+    
+    .chat-header {
+        grid-area: header;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .chat-content {
+        grid-area: content;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .chat-sidebar {
+        grid-area: sidebar;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        overflow-y: auto;
+    }
+    
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .back-link {
+        color: #4a6cf7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #4a6cf7;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    .user-name {
+        font-weight: 500;
+        font-size: 18px;
+    }
+    
+    .messages-container {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .message {
+        display: flex;
+        gap: 10px;
+        max-width: 70%;
+    }
+    
+    .message-self {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+    }
+    
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #4a6cf7;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+    
+    .message-self .message-avatar {
+        background-color: #6c757d;
+    }
+    
+    .message-content {
+        background-color: white;
+        padding: 10px;
+        border-radius: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .message-self .message-content {
+        background-color: #e3f2fd;
+    }
+    
+    .message-header {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 5px;
+    }
+    
+    .message-time {
+        font-size: 12px;
+        color: #666;
+    }
+    
+    .message-text {
+        word-break: break-word;
+    }
+    
+    .message-input-container {
+        padding: 15px;
+        background-color: white;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    #chat-form {
+        display: flex;
+        gap: 10px;
+    }
+    
+    #chat-message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 14px;
+    }
+    
+    #chat-message-submit {
+        padding: 10px 20px;
+        background-color: #4a6cf7;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    
+    .scenarios-section {
+        background-color: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .scenarios-section h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    
+    .scenarios-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .scenario-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .scenario-info h4 {
+        margin: 0;
+        font-size: 14px;
+    }
+    
+    .scenario-category {
+        font-size: 12px;
+        color: #666;
+    }
+    
+    .share-btn {
+        padding: 5px 10px;
+        background-color: #4a6cf7;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    
+    .empty-state {
+        color: #666;
+        font-size: 14px;
+        text-align: center;
+        padding: 10px 0;
+    }
+    
+    .shared-scenario {
+        background-color: #f0f4ff;
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 5px;
+    }
+    
+    .shared-scenario h4 {
+        margin: 0 0 5px 0;
+        font-size: 14px;
+    }
+    
+    .shared-scenario p {
+        margin: 0 0 10px 0;
+        font-size: 13px;
+        color: #444;
+    }
+    
+    .view-scenario-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #4a6cf7;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+    
+    .empty-chat {
+        text-align: center;
+        padding: 30px 0;
+        color: #888;
+    }
+</style>
+
+<script>
+    const otherUserId = "{{ other_user.id }}";
+    let eventSource = null;
+    
+    // Fix for mobile viewport height (especially for iOS Safari)
+    function setVhProperty() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    // Set the property on initial load
+    setVhProperty();
+    
+    // Update the property on resize
+    window.addEventListener('resize', setVhProperty);
+    
+    // Update on orientation change for mobile devices
+    window.addEventListener('orientationchange', setVhProperty);
+    
+    // Get DOM elements
+    const messageContainer = document.getElementById('chat-messages');
+    const messageInput = document.getElementById('chat-message-input');
+    const messageForm = document.getElementById('chat-form');
+    const messageSubmit = document.getElementById('chat-message-submit');
+    const shareButtons = document.querySelectorAll('.share-btn');
+    
+    // Update button text on mobile
+    function updateMobileButtonText() {
+        if (window.innerWidth <= 768) {
+            const mobileText = messageSubmit.getAttribute('data-mobile-text');
+            messageSubmit.textContent = mobileText;
+            messageSubmit.classList.add('mobile-text-updated');
+        } else {
+            // Reset to desktop text
+            messageSubmit.textContent = 'Send';
+            messageSubmit.classList.remove('mobile-text-updated');
+        }
+    }
+    
+    // Call once on load
+    updateMobileButtonText();
+    
+    // Call on resize
+    window.addEventListener('resize', updateMobileButtonText);
+    
+    // Function to connect to SSE
+    function connectSSE() {
+        // Close existing connection if any
+        if (eventSource) {
+            eventSource.close();
+        }
+        
+        // Get the last message ID from the DOM for checking missed messages
+        const lastMessageId = getLastMessageId();
+        
+        // Create new SSE connection
+        eventSource = new EventSource(`/api/chat/${otherUserId}/messages/?last_id=${lastMessageId}`);
+        
+        // Handle connection open
+        eventSource.onopen = function() {
+            console.log('SSE connection established');
+            
+            // Remove any system messages about connection issues
+            const systemMessages = messageContainer.querySelectorAll('.message-system');
+            systemMessages.forEach(msg => msg.remove());
+        };
+        
+        // Handle incoming messages
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            
+            // Ignore heartbeat messages
+            if (data.type === 'heartbeat') {
+                return;
+            }
+            
+            // Handle connection messages
+            if (data.type === 'connection') {
+                console.log(data.message);
+                
+                // Add connected message
+                const connectedMsg = document.createElement('div');
+                connectedMsg.className = 'message message-system';
+                connectedMsg.textContent = 'Connected to chat';
+                connectedMsg.style.textAlign = 'center';
+                connectedMsg.style.color = 'green';
+                connectedMsg.style.padding = '5px';
+                connectedMsg.style.margin = '5px 0';
+                messageContainer.appendChild(connectedMsg);
+                
+                // Remove the message after 3 seconds
+                setTimeout(() => {
+                    connectedMsg.remove();
+                }, 3000);
+                
+                return;
+            }
+            
+            // Skip our own messages as we already displayed them when sent
+            // This prevents duplicate messages from appearing
+            if (data.user_id === {{ request.user.id }}) {
+                return;
+            }
+            
+            // Show visual notification in title bar
+            showMessageNotification(data.username);
+            
+            // Use the displayMessage function to show the message
+            displayMessage(data, false);
+        };
+        
+        // Handle connection error
+        eventSource.onerror = function(e) {
+            console.error('SSE connection error:', e);
+            
+            // Add system message about disconnection
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message-system';
+            messageDiv.textContent = 'Connection lost. Attempting to reconnect...';
+            messageDiv.style.textAlign = 'center';
+            messageDiv.style.color = 'orange';
+            messageDiv.style.padding = '5px';
+            messageDiv.style.margin = '5px 0';
+            messageContainer.appendChild(messageDiv);
+            
+            // Try to reconnect after 3 seconds
+            setTimeout(connectSSE, 3000);
+        };
+    }
+    
+    // Function to get the last message ID from the DOM
+    function getLastMessageId() {
+        // For now we'll use the number of messages as a simple way to track
+        // This could be improved by adding actual IDs to messages
+        const messages = messageContainer.querySelectorAll('.message:not(.message-system)');
+        return messages.length;
+    }
+    
+    // Initialize SSE connection
+    connectSSE();
+    
+    // Setup reconnection and periodic check for missed messages
+    setInterval(function() {
+        if (eventSource.readyState === EventSource.CLOSED) {
+            console.log('SSE connection is closed, reconnecting...');
+            connectSSE();
+        } else if (eventSource.readyState === EventSource.OPEN) {
+            // Every minute, check for any missed messages
+            fetch(`/api/chat/${otherUserId}/check-missed-messages/?count=${getLastMessageId()}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.reconnect) {
+                        console.log('Server indicates we should reconnect SSE');
+                        connectSSE();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking for missed messages:', error);
+                });
+        }
+    }, 60000);  // Check every minute
+    
+    // Function to display a message in the UI
+    function displayMessage(data, isSelf = false) {
+        // Create message element
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        if (isSelf) {
+            messageDiv.classList.add('message-self');
+        } else {
+            messageDiv.classList.add('message-other');
+        }
+        
+        // Create avatar
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        avatarDiv.textContent = (data.username || '{{ request.user.username }}').charAt(0).toUpperCase();
+        
+        // Create message content
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        
+        // Create message header
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'message-header';
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'message-time';
+        
+        // Format the timestamp
+        const timestamp = data.timestamp ? new Date(data.timestamp) : new Date();
+        timeSpan.textContent = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        headerDiv.appendChild(timeSpan);
+        contentDiv.appendChild(headerDiv);
+        
+        // Handle different message types
+        if (data.type === 'scenario' || (data.scenario_id && data.type === 'share_scenario')) {
+            // Create shared scenario element
+            const scenarioDiv = document.createElement('div');
+            scenarioDiv.className = 'shared-scenario';
+            
+            const scenarioTitle = document.createElement('h4');
+            let title = 'Shared Scenario';
+            if (data.scenario && data.scenario.title) {
+                title += ': ' + data.scenario.title;
+            } else if (data.title) {
+                title += ': ' + data.title;
+            }
+            scenarioTitle.textContent = title;
+            
+            const scenarioDesc = document.createElement('p');
+            let description = 'Loading scenario details...';
+            if (data.scenario && data.scenario.description) {
+                description = data.scenario.description.substring(0, 150) + (data.scenario.description.length > 150 ? '...' : '');
+            } else if (data.description) {
+                description = data.description.substring(0, 150) + (data.description.length > 150 ? '...' : '');
+            }
+            scenarioDesc.textContent = description;
+            
+            const viewBtn = document.createElement('a');
+            viewBtn.className = 'view-scenario-btn';
+            const scenarioId = (data.scenario && data.scenario.id) || data.scenario_id;
+            viewBtn.href = '/scenarios/' + scenarioId + '/';
+            viewBtn.textContent = 'View Scenario';
+            
+            scenarioDiv.appendChild(scenarioTitle);
+            scenarioDiv.appendChild(scenarioDesc);
+            scenarioDiv.appendChild(viewBtn);
+            contentDiv.appendChild(scenarioDiv);
+        } else {
+            // Create regular message text
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.textContent = data.message || data.content || '';
+            contentDiv.appendChild(textDiv);
+        }
+        
+        // Assemble message
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        // Remove empty chat message if present
+        const emptyChat = messageContainer.querySelector('.empty-chat');
+        if (emptyChat) {
+            emptyChat.remove();
+        }
+        
+        // Add to container
+        messageContainer.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+        
+        return messageDiv;
+    }
+
+    // Function to send a message
+    function sendMessage(message, type = 'text', scenarioId = null) {
+        const data = {
+            message: message
+        };
+        
+        if (type === 'share_scenario' && scenarioId) {
+            data.type = 'share_scenario';
+            data.scenario_id = scenarioId;
+        }
+        
+        // Display message immediately in the UI
+        const messageData = {
+            message: message,
+            type: type,
+            scenario_id: scenarioId
+        };
+        const messageDiv = displayMessage(messageData, true);
+        
+        // Now send the message to the server
+        fetch(`/api/chat/${otherUserId}/send/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to send message');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Message sent successfully:', data);
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
+            // Remove the message from the UI if it failed to send
+            messageDiv.remove();
+        });
+    }
+    
+    // Get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Handle form submission
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (message) {
+            // Send message
+            sendMessage(message);
+            
+            // Clear input
+            messageInput.value = '';
+            messageInput.focus();
+        }
+    });
+    
+    // Handle share buttons
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const scenarioId = this.getAttribute('data-scenario-id');
+            const scenarioTitle = this.closest('.scenario-item').querySelector('h4').textContent;
+            
+            // Get scenario info for preview display
+            fetch(`/scenarios/${scenarioId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        return { title: scenarioTitle, description: 'Loading scenario details...' };
+                    }
+                    // Try to extract description from the page (this is a simplified approach)
+                    return { title: scenarioTitle, description: 'Shared scenario' };
+                })
+                .catch(() => {
+                    return { title: scenarioTitle, description: 'Shared scenario' };
+                })
+                .then(scenarioData => {
+                    // Send scenario
+                    sendMessage('I want to share this scenario with you.', 'share_scenario', scenarioId);
+                    
+                    // Show confirmation
+                    alert('Scenario "' + scenarioTitle + '" shared successfully!');
+                });
+        });
+    });
+    
+    // Scroll to bottom of messages
+    function scrollToBottom() {
+        if (messageContainer) {
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+    }
+    
+    // Call initially and add event listeners
+    scrollToBottom();
+    window.addEventListener('resize', scrollToBottom);
+    messageInput.addEventListener('focus', scrollToBottom);
+    
+    // Focus input when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        messageInput.focus();
+        scrollToBottom();
+    });
+    
+    // Fix for iOS keyboard appearing and disappearing
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        window.addEventListener('focusin', function() {
+            // Wait a moment for the keyboard to fully appear
+            setTimeout(scrollToBottom, 100);
+        });
+        
+        window.addEventListener('focusout', function() {
+            // Wait a moment for the keyboard to fully disappear
+            setTimeout(scrollToBottom, 100);
+        });
+    }
+    
+    // Clean up when leaving the page
+    window.addEventListener('beforeunload', function() {
+        if (eventSource) {
+            eventSource.close();
+        }
+    });
+    
+    // Function to show a notification in the title
+    let originalTitle = document.title;
+    let notificationTimeout = null;
+    
+    function showMessageNotification(username) {
+        clearTimeout(notificationTimeout);
+        
+        // Change the title to show new message
+        document.title = `New message from ${username} - Desiq`;
+        
+        // Reset the title after 5 seconds
+        notificationTimeout = setTimeout(() => {
+            document.title = originalTitle;
+        }, 5000);
+        
+        // Try to play a notification sound if browser allows it
+        try {
+            // Create a simple "beep" sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 800; // frequency in hertz
+            
+            gainNode.gain.value = 0.1; // volume control
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.start(0);
+            
+            // Stop the sound after a short time
+            setTimeout(() => {
+                oscillator.stop();
+            }, 200);
+        } catch (e) {
+            console.log('Audio notification not supported or denied');
+        }
+    }
+</script>
+{% endblock %} 

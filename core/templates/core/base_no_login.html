@@ -1,0 +1,186 @@
+{% load static custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Desiq{% endblock %}</title>
+  <link rel="stylesheet" href="{% robust_static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% robust_static 'css/responsive.css' %}">
+  <link rel="stylesheet" href="{% robust_static 'css/public_pages.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="no-sidebar">
+  <!-- Header for non-authenticated users -->
+  <header class="public-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <a href="{% url 'core:home' %}">
+            <img src="{% robust_static 'img/digital-brain-logo.svg' %}" alt="Desiq">
+            <span class="logo-text">DesiQ</span>
+          </a>
+        </div>        
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile menu for non-authenticated users -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <div class="logo">
+        <a href="{% url 'core:home' %}">
+          <img src="{% robust_static 'img/digital-brain-logo.svg' %}" alt="Desiq">
+          <span class="logo-text">DesiQ</span>
+        </a>
+      </div>
+      <button class="mobile-menu-close" id="mobileMenuClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <nav class="mobile-nav-menu">
+      <ul>
+        <li><a href="{% url 'core:home' %}">Home</a></li>
+        <li><a href="{% url 'core:home' %}#features">Features</a></li>
+        <li><a href="{% url 'core:home' %}#how-it-works">How It Works</a></li>
+        <li><a href="{% url 'core:home' %}#why-desiq">Why DesiQ</a></li>
+        <li><a href="{% url 'core:home' %}#faq">FAQ</a></li>
+        <li><a href="{% url 'core:about' %}">About</a></li>
+        <li><a href="{% url 'core:community_public' %}">Community</a></li>
+        <li><a href="{% url 'core:support_public' %}">Support</a></li>
+        <li><a href="{% url 'core:login' %}">Log in</a></li>
+        <li><a href="{% url 'core:register' %}">Sign up</a></li>
+      </ul>
+    </nav>
+  </div>
+  
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  
+  <!-- Main content -->
+  <main class="main-content">
+    
+    
+    {% block content %}{% endblock %}
+  </main>
+  
+  <!-- JavaScript to handle mobile menu -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.getElementById('mobileMenuToggle');
+      const menuClose = document.getElementById('mobileMenuClose');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileOverlay = document.getElementById('mobileOverlay');
+      
+      // Open menu
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+          mobileMenu.classList.add('active');
+          mobileOverlay.classList.add('active');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+      }
+      
+      // Close menu
+      if (menuClose) {
+        menuClose.addEventListener('click', function() {
+          mobileMenu.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+          document.body.style.overflow = ''; // Restore scrolling
+        });
+      }
+      
+      // Click on overlay to close
+      if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', function() {
+          mobileMenu.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+          document.body.style.overflow = ''; // Restore scrolling
+        });
+      }
+      
+      // Handle window resize - properly handle closing menu on resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+          mobileMenu.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+          document.body.style.overflow = ''; // Restore scrolling
+        }
+      });
+
+      // Smooth scrolling for anchor links - ONLY for links that start with "#"
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        // Skip links that are just "#" with no actual id
+        if (anchor.getAttribute('href') === '#') return;
+        
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+          
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 100,
+              behavior: 'smooth'
+            });
+            
+            // Close mobile menu after clicking a link
+            if (window.innerWidth < 992) {
+              mobileMenu.classList.remove('active');
+              mobileOverlay.classList.remove('active');
+              document.body.style.overflow = '';
+            }
+          }
+        });
+      });
+      
+      // For links that contain "#" but don't start with "#" (like home.html#features)
+      document.querySelectorAll('a[href*="#"]:not([href^="#"])').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const hrefValue = this.getAttribute('href');
+          // Parse the URL to compare paths correctly
+          const linkUrl = new URL(hrefValue, window.location.origin);
+          const currentPath = window.location.pathname;
+          
+          // Only handle as same-page link if we're already on the page the link points to
+          const isOnSamePage = currentPath === linkUrl.pathname;
+          
+          if (isOnSamePage) {
+            // This is a link to an anchor on the current page
+            const targetId = '#' + hrefValue.split('#')[1];
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+              e.preventDefault(); // Only prevent default for same-page links
+              
+              window.scrollTo({
+                top: targetElement.offsetTop - 100,
+                behavior: 'smooth'
+              });
+              
+              // Close mobile menu only on mobile view
+              if (window.innerWidth < 992) {
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+              }
+            }
+          } else {
+            // This is a normal navigation link to another page
+            return true;
+          }
+        });
+      });
+    });
+  </script>
+
+  <script src="{% static_direct 'js/script.js' %}"></script>
+  
+  {% block extra_js %}{% endblock %}
+</body>
+</html> 

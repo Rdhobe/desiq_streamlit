@@ -1,0 +1,89 @@
+{% comment %} {% extends 'core/base.html' %} {% endcomment %}
+{% load static custom_filters %}
+
+{% block title %}500 - Internal Server Error{% endblock %}
+
+{% block content %}
+<style>
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 60px 20px;
+        min-height: 80vh;
+        background: linear-gradient(to right, #fdfbfb, #ebedee);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .error-image img {
+        max-width: 300px;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translatey(0px); }
+        50% { transform: translatey(-10px); }
+        100% { transform: translatey(0px); }
+    }
+
+    .error-content h1 {
+        font-size: 48px;
+        margin-top: 20px;
+        color: #333;
+    }
+
+    .error-content p {
+        font-size: 18px;
+        color: #666;
+        margin: 10px 0;
+    }
+
+    .error-actions {
+        margin-top: 30px;
+    }
+
+    .error-actions a {
+        margin: 0 10px;
+        padding: 12px 24px;
+        font-size: 16px;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-image">
+        <img src="{% static_direct 'img/error_500_decision.svg' %}" 
+        alt="Internal Server Error"
+        onerror="this.onerror=null; this.src='/static/img/error.svg';">
+    </div>
+    <div class="error-content">
+        <h1>Oops! Something went wrong.</h1>
+        <p>We encountered an unexpected issue while processing your request.</p>
+        <p>Our team has been notified. Please try again shortly.</p>
+        <div class="error-actions">
+            <a href="{% url 'core:home' %}" class="btn btn-primary">Back to Dashboard</a>
+            <a href="{% url 'core:support' %}" class="btn btn-secondary">Contact Support</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

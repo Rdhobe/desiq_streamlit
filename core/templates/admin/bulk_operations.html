@@ -1,0 +1,525 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .bulk-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .bulk-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .bulk-header h1 {
+        margin: 0;
+    }
+    
+    .tabs {
+        display: flex;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+    
+    .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        font-weight: 500;
+    }
+    
+    .tab.active {
+        border-bottom-color: #417690;
+        color: #417690;
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    .operation-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .operation-card h3 {
+        margin-top: 0;
+        color: #417690;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .operation-description {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+    }
+    
+    .operation-form {
+        margin-top: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #555;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    .form-textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        min-height: 100px;
+        box-sizing: border-box;
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: white;
+        box-sizing: border-box;
+    }
+    
+    .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 10px;
+    }
+    
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+    
+    .btn-secondary {
+        background-color: #79aec8;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #609ab6;
+    }
+    
+    .btn-danger {
+        background-color: #d9534f;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+    
+    .btn-warning {
+        background-color: #f0ad4e;
+    }
+    
+    .btn-warning:hover {
+        background-color: #eea236;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    .preview-table th,
+    .preview-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    
+    .preview-table th {
+        background-color: #f5f5f5;
+    }
+    
+    .result-message {
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+    }
+    
+    .result-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+    }
+    
+    .result-error {
+        background-color: #f2dede;
+        color: #a94442;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bulk-container">
+    <div class="bulk-header">
+        <h1>Bulk Operations</h1>
+        <a href="{% url 'core:admin_dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" data-target="users">Users</div>
+        <div class="tab" data-target="scenarios">Scenarios</div>
+        <div class="tab" data-target="mentors">Mentors</div>
+        <div class="tab" data-target="tests">Personality Tests</div>
+    </div>
+    
+    <!-- Users Tab -->
+    <div id="users" class="tab-content active">
+        <div class="operation-card">
+            <h3>Bulk Update User Status</h3>
+            <div class="operation-description">
+                Update premium status for multiple users at once.
+            </div>
+            <form class="operation-form" action="{% url 'core:admin_bulk_operation' operation='update_user_status' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Users (one username per line)</label>
+                    <textarea class="form-textarea" name="usernames" placeholder="Enter usernames, one per line" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Update Options</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="set_premium" name="set_premium" value="1">
+                            <label for="set_premium">Set as Premium</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="set_regular" name="set_regular" value="1">
+                            <label for="set_regular">Set as Regular (non-premium)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Premium Expiry (if setting premium)</label>
+                    <input type="date" class="form-input" name="premium_expiry">
+                </div>
+                <button type="submit" class="btn">Update Users</button>
+            </form>
+        </div>
+        
+        <div class="operation-card">
+            <h3>Reset User Progress</h3>
+            <div class="operation-description">
+                Reset progress for multiple users. This will clear their scenario progress, test results, and other activity.
+            </div>
+            <form class="operation-form" action="{% url 'core:admin_bulk_operation' operation='reset_user_progress' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Users (one username per line)</label>
+                    <textarea class="form-textarea" name="usernames" placeholder="Enter usernames, one per line" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reset Options</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="reset_scenarios" name="reset_scenarios" value="1" checked>
+                            <label for="reset_scenarios">Reset Scenario Progress</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="reset_tests" name="reset_tests" value="1" checked>
+                            <label for="reset_tests">Reset Test Results</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="reset_xp" name="reset_xp" value="1">
+                            <label for="reset_xp">Reset XP and Level</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning">Reset Progress</button>
+            </form>
+        </div>
+        
+        <div class="operation-card">
+            <h3>Export User Data</h3>
+            <div class="operation-description">
+                Export data for selected users in various formats.
+            </div>
+            <form class="operation-form" action="{% url 'core:admin_bulk_operation' operation='export_user_data' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Users (leave blank for all users)</label>
+                    <textarea class="form-textarea" name="usernames" placeholder="Enter usernames, one per line or leave blank for all"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Export Format</label>
+                    <select class="form-select" name="export_format">
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                        <option value="excel">Excel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data to Include</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include_profile" name="include_profile" value="1" checked>
+                            <label for="include_profile">Profile Data</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include_progress" name="include_progress" value="1" checked>
+                            <label for="include_progress">Progress Data</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include_results" name="include_results" value="1" checked>
+                            <label for="include_results">Test Results</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Export Data</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scenarios Tab -->
+    <div id="scenarios" class="tab-content">
+        <div class="operation-card">
+            <h3>Bulk Update Scenario Status</h3>
+            <div class="operation-description">
+                Update status for multiple scenarios at once.
+            </div>
+            <form class="operation-form" action="{% url 'core:admin_bulk_operation' operation='update_scenario_status' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Scenario IDs (one per line)</label>
+                    <textarea class="form-textarea" name="scenario_ids" placeholder="Enter scenario IDs, one per line" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Set Status</label>
+                    <select class="form-select" name="status">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Update Scenarios</button>
+            </form>
+        </div>
+        
+        <div class="operation-card">
+            <h3>Bulk Categorize Scenarios</h3>
+            <div class="operation-description">
+                Update categories for multiple scenarios at once.
+            </div>
+            <form class="operation-form" action="{% url 'core:admin_bulk_operation' operation='categorize_scenarios' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Scenario IDs (one per line)</label>
+                    <textarea class="form-textarea" name="scenario_ids" placeholder="Enter scenario IDs, one per line" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" name="category">
+                        <option value="career">Career</option>
+                        <option value="relationship">Relationship</option>
+                        <option value="education">Education</option>
+                        <option value="health">Health</option>
+                        <option value="finance">Finance</option>
+                        <option value="personal">Personal Development</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Update Categories</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Mentors Tab -->
+    <div id="mentors" class="tab-content">
+        <div class="operation-card">
+            <h3>Bulk Update Mentor Status</h3>
+            <div class="operation-description">
+                Update status for multiple mentors at once.
+            </div>
+            <form class="operation-form" action="{% url 'core:admin_bulk_operation' operation='update_mentor_status' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Mentor IDs (one per line)</label>
+                    <textarea class="form-textarea" name="mentor_ids" placeholder="Enter mentor IDs, one per line" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Set Status</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="set_mentor_premium" name="set_mentor_premium" value="1">
+                            <label for="set_mentor_premium">Set as Premium</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="set_mentor_regular" name="set_mentor_regular" value="1">
+                            <label for="set_mentor_regular">Set as Regular (non-premium)</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Update Mentors</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Personality Tests Tab -->
+    <div id="tests" class="tab-content">
+        <div class="operation-card">
+            <h3>Bulk Update Test Availability</h3>
+            <div class="operation-description">
+                Update level requirements for multiple personality tests at once.
+            </div>
+            <form class="operation-form" action="{% url 'core:admin_bulk_operation' operation='update_test_levels' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Test IDs (one per line)</label>
+                    <textarea class="form-textarea" name="test_ids" placeholder="Enter test IDs, one per line" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Minimum Level Required</label>
+                    <input type="number" class="form-input" name="unlocked_at_level" min="1" value="1">
+                </div>
+                <button type="submit" class="btn">Update Tests</button>
+            </form>
+        </div>
+    </div>
+    
+    {% if result %}
+    <div class="result-message {% if error %}result-error{% else %}result-success{% endif %}">
+        {{ result }}
+    </div>
+    {% endif %}
+    
+    {% if preview_data %}
+    <div class="table-responsive">
+        <h3>Operation Preview</h3>
+        <table class="preview-table">
+            <thead>
+                <tr>
+                    {% for header in preview_headers %}
+                    <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in preview_data %}
+                <tr>
+                    {% for cell in row %}
+                    <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Activate clicked tab and its content
+            this.classList.add('active');
+            document.getElementById(target).classList.add('active');
+        });
+    });
+    
+    // Checkbox validation
+    const premiumCheckbox = document.getElementById('set_premium');
+    const regularCheckbox = document.getElementById('set_regular');
+    
+    if (premiumCheckbox && regularCheckbox) {
+        premiumCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                regularCheckbox.checked = false;
+            }
+        });
+        
+        regularCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                premiumCheckbox.checked = false;
+            }
+        });
+    }
+    
+    // Similar validation for mentor checkboxes
+    const mentorPremiumCheckbox = document.getElementById('set_mentor_premium');
+    const mentorRegularCheckbox = document.getElementById('set_mentor_regular');
+    
+    if (mentorPremiumCheckbox && mentorRegularCheckbox) {
+        mentorPremiumCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                mentorRegularCheckbox.checked = false;
+            }
+        });
+        
+        mentorRegularCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                mentorPremiumCheckbox.checked = false;
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

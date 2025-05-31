@@ -1,0 +1,262 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Recent Activities{% endblock %}
+{% block content %}
+<div class="activities-container">
+    <div class="activities-header">
+        <h1 class="activities-title">Recent Activities</h1>
+        <p class="activities-subtitle">See what's happening in the Desiq community</p>
+    </div>
+    
+    <div class="activities-content">
+        <div class="activities-card">
+            {% if activities %}
+                <div class="activity-list">
+                    {% for activity in activities %}
+                        <div class="activity-item">
+                            <div class="activity-user">
+                                <a href="{% url 'core:user_profile' activity.user.id %}" class="user-avatar">
+                                    {{ activity.user.username|first|upper }}
+                                </a>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-header">
+                                    <a href="{% url 'core:user_profile' activity.user.id %}" class="activity-username">
+                                        {{ activity.user.username }}
+                                    </a>
+                                    <span class="activity-type">
+                                        {% if activity.activity_type == 'login' %}
+                                            logged in
+                                        {% elif activity.activity_type == 'post' %}
+                                            created a post
+                                        {% elif activity.activity_type == 'comment' %}
+                                            commented on a post
+                                        {% elif activity.activity_type == 'join_group' %}
+                                            joined a group
+                                        {% elif activity.activity_type == 'like' %}
+                                            liked a post
+                                        {% elif activity.activity_type == 'message' %}
+                                            sent a message
+                                        {% elif activity.activity_type == 'chat' %}
+                                            participated in a chat
+                                        {% elif activity.activity_type == 'scenario' %}
+                                            completed a scenario
+                                        {% elif activity.activity_type == 'assessment' %}
+                                            completed an assessment
+                                        {% elif activity.activity_type == 'level_up' %}
+                                            leveled up
+                                        {% elif activity.activity_type == 'support_issue' %}
+                                            raised a support issue
+                                        {% elif activity.activity_type == 'issue_comment' %}
+                                            commented on a support issue
+                                        {% else %}
+                                            performed an activity
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">{{ activity.created_at|timesince }} ago</span>
+                                    <div class="activity-icon">
+                                        {% if activity.activity_type == 'login' %}
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        {% elif activity.activity_type == 'post' %}
+                                            <i class="fas fa-file-alt"></i>
+                                        {% elif activity.activity_type == 'comment' %}
+                                            <i class="fas fa-comment"></i>
+                                        {% elif activity.activity_type == 'join_group' %}
+                                            <i class="fas fa-users"></i>
+                                        {% elif activity.activity_type == 'like' %}
+                                            <i class="fas fa-heart"></i>
+                                        {% elif activity.activity_type == 'message' or activity.activity_type == 'chat' %}
+                                            <i class="fas fa-comment-dots"></i>
+                                        {% elif activity.activity_type == 'scenario' %}
+                                            <i class="fas fa-tasks"></i>
+                                        {% elif activity.activity_type == 'assessment' %}
+                                            <i class="fas fa-clipboard-check"></i>
+                                        {% elif activity.activity_type == 'level_up' %}
+                                            <i class="fas fa-level-up-alt"></i>
+                                        {% elif activity.activity_type == 'support_issue' %}
+                                            <i class="fas fa-ticket-alt"></i>
+                                        {% elif activity.activity_type == 'issue_comment' %}
+                                            <i class="fas fa-comment-alt"></i>
+                                        {% else %}
+                                            <i class="fas fa-check"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <p>No activities to display</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .activities-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .activities-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .activities-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #2d3436;
+    }
+    
+    .activities-subtitle {
+        color: #636e72;
+        font-size: 16px;
+    }
+    
+    .activities-content {
+        margin-bottom: 30px;
+    }
+    
+    .activities-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .activity-item {
+        padding: 20px;
+        border-bottom: 1px solid #f5f6fa;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-item:hover {
+        background-color: #f9f9ff;
+    }
+    
+    .activity-user {
+        flex-shrink: 0;
+    }
+    
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .activity-details {
+        flex: 1;
+    }
+    
+    .activity-header {
+        margin-bottom: 5px;
+        line-height: 1.4;
+        color: #2d3436;
+        font-size: 16px;
+    }
+    
+    .activity-username {
+        font-weight: 600;
+        color: #6c5ce7;
+        text-decoration: none;
+    }
+    
+    .activity-username:hover {
+        text-decoration: underline;
+    }
+    
+    .activity-type {
+        color: #2d3436;
+    }
+    
+    .activity-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #636e72;
+        font-size: 14px;
+    }
+    
+    .activity-time {
+        color: #636e72;
+    }
+    
+    .activity-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #f5f6fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c5ce7;
+        font-size: 12px;
+    }
+    
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+        color: #636e72;
+    }
+    
+    .empty-icon {
+        font-size: 50px;
+        color: #dfe6e9;
+        margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .activities-container {
+            padding: 15px;
+        }
+        
+        .activity-item {
+            padding: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+        
+        .activity-header {
+            font-size: 14px;
+        }
+        
+        .activity-meta {
+            font-size: 12px;
+        }
+    }
+</style>
+{% endblock %} 

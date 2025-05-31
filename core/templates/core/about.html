@@ -1,0 +1,575 @@
+{% extends 'core/base_no_login.html' %}
+{% load static %}
+
+{% block title %}About Us - DesiQ{% endblock %}
+
+{% block extra_css %}
+{% comment %} <link rel="stylesheet" href="{% static 'css/public_pages.css' %}">
+<link rel="stylesheet" href="{% static 'css/responsive.css' %}"> {% endcomment %}
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 20px;
+  }
+  
+  .page-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  
+  .page-header h1 {
+    font-size: 2.5rem;
+    color: #1b309a;
+    margin-bottom: 10px;
+  }
+  
+  .page-header p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .about-section, .team-section, .values-section {
+    margin-bottom: 60px;
+  }
+  
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .about-text {
+    flex: 2;
+  }
+  
+  .about-image {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .about-image img {
+    max-width: 300px;
+    height: auto;
+  }
+  
+  .team-grid, .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+  }
+  
+  .team-member {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  }
+  
+  .member-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+  }
+  
+  .member-photo.placeholder {
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+  }
+  
+  .team-member h3 {
+    font-size: 1.2rem;
+    color: #1b309a;
+    margin-bottom: 5px;
+  }
+  
+  .team-member p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 5px 0;
+  }
+  
+  .value-card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .value-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .value-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .value-icon img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  .value-card h3 {
+    font-size: 1.2rem;
+    color: #1b309a;
+    margin-bottom: 10px;
+  }
+  
+  .value-card p {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .cta-section {
+    text-align: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(255, 239, 246, 0.8), rgba(234, 218, 242, 0.8));
+    border-radius: 15px;
+  }
+  
+  .cta-section h2 {
+    font-size: 1.8rem;
+    color: #1b309a;
+    margin-bottom: 10px;
+  }
+  
+  .cta-section p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 25px;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  @media (min-width: 768px) {
+    .about-content {
+      flex-direction: column;
+    }
+    
+    .cta-buttons {
+      flex-wrap: nowrap;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+    
+    .page-header p {
+      font-size: 1rem;
+    }
+    
+    .about-image img {
+      max-width: 200px;
+    }
+    
+    .team-grid, .values-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .cta-section {
+      padding: 30px 20px;
+    }
+  }
+
+  .key-areas {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
+    margin-top: 25px;
+  }
+
+  .key-area-item {
+    display: flex;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .key-area-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .key-area-icon {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    padding: 10px;
+  }
+
+  .key-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .key-area-text {
+    flex: 1;
+  }
+
+  .key-area-text h3 {
+    font-size: 1.2rem;
+    color: #1b309a;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .key-area-text p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .key-areas {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 992px) {
+    .key-area-icon {
+      width: 70px;
+      height: 70px;
+      min-width: 70px;
+    }
+    
+    .key-area-icon i {
+      font-size: 32px;
+    }
+    
+    .key-area-text h3 {
+      font-size: 1.3rem;
+    }
+    
+    .key-area-text p {
+      font-size: 1rem;
+    }
+  }
+
+  .section-separator {
+    height: 3px;
+    width: 70px;
+    background: linear-gradient(90deg, #1b309a, #6964DE);
+    margin: 25px 0;
+    border-radius: 3px;
+  }
+
+  .key-areas-title {
+    font-size: 1.4rem;
+    color: #1b309a;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .key-areas-subtitle {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 992px) {
+    .key-areas-title {
+      font-size: 1.6rem;
+    }
+    
+    .key-areas-subtitle {
+      font-size: 1.1rem;
+    }
+    
+    .section-separator {
+      width: 100px;
+    }
+  }
+
+  .mission-card, .story-card, .approach-card {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    padding: 25px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .mission-card:hover, .story-card:hover, .approach-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  }
+
+  .section-icon {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    padding: 12px;
+  }
+
+  .section-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .section-text h2 {
+    font-size: 1.6rem;
+    color: #1b309a;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+
+  .section-text p {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+
+  @media (min-width: 768px) {
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .section-icon {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .section-icon i {
+      font-size: 38px;
+    }
+    
+    .section-text h2 {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container about-page">
+  <div class="page-header">
+    <h1>About DesiQ</h1>
+    <p>Empowering better decisions through AI and cognitive science</p>
+  </div>
+
+  <section class="about-section">
+    <div class="about-content">
+      <div class="mission-card">
+        <div class="section-icon">
+          <img src="{% static 'img/Trophy.svg' %}" alt="Mission" class="section-img">
+        </div>
+        <div class="section-text">
+          <h2>Our Mission</h2>
+          <p>At DesiQ, we're on a mission to help people make better decisions in their personal and professional lives. We combine the latest in artificial intelligence with proven cognitive science to create a platform that understands your unique decision-making style and helps you improve it.</p>
+        </div>
+      </div>
+      
+      <div class="story-card">
+        <div class="section-icon">
+          <img src="{% static 'img/Group 80.svg' %}" alt="Story" class="section-img">
+        </div>
+        <div class="section-text">
+          <h2>Our Story</h2>
+          <p>DesiQ was founded in 2022 by a team of cognitive scientists, AI specialists, and experienced decision makers who recognized a fundamental gap in today's fast-paced world: despite having more information than ever before, people still struggle to make good decisions.</p>
+          
+          <p>Drawing on decades of research in behavioral economics, psychology, and decision theory, we built DesiQ to be the decision assistant everyone wishes they had - one that adapts to your personal decision-making style, helps you recognize your biases, and guides you toward more rational, empathetic, and effective choices.</p>
+        </div>
+      </div>
+      
+      <div class="approach-card">
+        <div class="section-icon">
+          <img src="{% static 'img/Clipboard-Pulse--Streamline-Bootstrap.svg' %}" alt="Approach" class="section-img">
+        </div>
+        <div class="section-text">
+          <h2>Our Approach</h2>
+          <p>What makes DesiQ different is our personalized approach. We don't believe in one-size-fits-all advice. Through our personality assessments, decision scenarios, and AI mentors, we create a learning experience unique to you.</p>
+          
+          <div class="section-separator"></div>
+          
+          <h3 class="key-areas-title">Four Key Areas of Decision Excellence</h3>
+          <p class="key-areas-subtitle">We focus on developing these essential skills to help you make better decisions:</p>
+          
+          <div class="key-areas">
+            <div class="key-area-item">
+              <div class="key-area-icon">
+                <img src="{% static 'img/Rationality Score.svg' %}" alt="Rationality" class="key-icon">
+              </div>
+              <div class="key-area-text">
+                <h3>Rationality</h3>
+                <p>Making decisions based on facts and logic, not just emotion</p>
+              </div>
+            </div>
+            
+            <div class="key-area-item">
+              <div class="key-area-icon">
+                <img src="{% static 'img/fire.svg' %}" alt="Decisiveness" class="key-icon">
+              </div>
+              <div class="key-area-text">
+                <h3>Decisiveness</h3>
+                <p>Building confidence to act without unnecessary delay</p>
+              </div>
+            </div>
+            
+            <div class="key-area-item"> 
+              <div class="key-area-icon">
+                <img src="{% static 'img/Empathy.svg' %}" alt="Empathy" class="key-icon">
+              </div>
+              <div class="key-area-text">
+                <h3>Empathy</h3>
+                <p>Understanding how your decisions affect others</p>
+              </div>
+            </div>
+            
+            <div class="key-area-item">
+              <div class="key-area-icon">
+                <img src="{% static 'img/Lamp_duotone_line.svg' %}" alt="Clarity" class="key-icon">
+              </div>
+              <div class="key-area-text">
+                <h3>Clarity</h3>
+                <p>Gaining insight into complex situations and breaking them down effectively</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} <section class="team-section">
+    <h2>Our Team</h2>
+    <p>DesiQ is built by a diverse team of experts passionate about decision science and technology.</p>
+    
+    <div class="team-grid">
+      <div class="team-member">
+        <div class="member-photo placeholder"></div>
+        <h3>Alex Johnson</h3>
+        <p>CEO & Founder</p>
+        <p>Cognitive Science Researcher</p>
+      </div>
+      <div class="team-member">
+        <div class="member-photo placeholder"></div>
+        <h3>Mira Patel</h3>
+        <p>Chief AI Officer</p>
+        <p>NLP & Decision Systems Expert</p>
+      </div>
+      <div class="team-member">
+        <div class="member-photo placeholder"></div>
+        <h3>Carlos Rodriguez</h3>
+        <p>Head of Product</p>
+        <p>UX & Behavioral Psychology</p>
+      </div>
+      <div class="team-member">
+        <div class="member-photo placeholder"></div>
+        <h3>Sarah Kim</h3>
+        <p>Lead Data Scientist</p>
+        <p>Decision Analysis Expert</p>
+      </div>
+    </div>
+  </section> {% endcomment %}
+
+  <section class="values-section">
+    <h2>Our Values</h2>
+    
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">
+          <img src="{% static 'img/Evidence-Based.svg' %}" alt="Evidence-Based">
+        </div>
+        <h3>Evidence-Based</h3>
+        <p>We ground our platform in rigorous research and cognitive science, not just trends or opinions.</p>
+      </div>
+      
+      <div class="value-card">
+        <div class="value-icon">
+          <img src="{% static 'img/User-Centered.svg' %}" alt="User-Centered">
+        </div>
+        <h3>User-Centered</h3>
+        <p>We design every feature with your unique needs and decision-making style in mind.</p>
+      </div>
+      
+      <div class="value-card">
+        <div class="value-icon">
+          <img src="{% static 'img/Ethical AI.svg' %}" alt="Ethical AI">
+        </div>
+        <h3>Ethical AI</h3>
+        <p>We develop AI systems that augment human decision-making without replacing human judgment.</p>
+      </div>
+      
+      <div class="value-card">
+        <div class="value-icon">
+          <img src="{% static 'img/Community.svg' %}" alt="Community">
+        </div>
+        <h3>Community</h3>
+        <p>We believe in the power of learning from each other's experiences and insights.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>Join Our Journey</h2>
+    <p>Ready to make better decisions in all areas of your life?</p>
+    <div class="cta-buttons">
+      <a href="{% url 'core:register' %}" class="btn btn-primary">Get Started Free</a>
+      <a href="{% url 'core:home' %}#how-it-works" class="btn btn-secondary">Learn How It Works</a>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the homepage URL
+    const homeUrl = "{% url 'core:home' %}";
+    
+    // Ensure proper navigation in About page
+    const linkElements = document.querySelectorAll(`a[href^="${homeUrl}#"]`);
+    
+    linkElements.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // When clicking home.html#features links, let normal navigation happen
+        // This ensures proper loading of the home page first before scrolling to the section
+        // Don't trigger mobile menu on desktop
+        if (window.innerWidth >= 992) {
+          // Let default navigation happen - no preventDefault
+          return true;
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} 

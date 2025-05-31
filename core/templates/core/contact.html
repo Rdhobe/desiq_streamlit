@@ -1,0 +1,463 @@
+{% extends 'core/base_no_login.html' %}
+{% load static %}
+
+{% block title %}Contact Us - DesiQ{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  .page-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  
+  .page-header h1 {
+    font-size: 2.5rem;
+    color: #1b309a;
+    margin-bottom: 10px;
+  }
+  
+  .page-header p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .contact-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+  
+  .contact-info, .contact-form-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    padding: 30px;
+  }
+  
+  .contact-info h2, .contact-form-container h2, .faq-section h2 {
+    color: #1b309a;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .info-item {
+    display: flex;
+    margin-bottom: 25px;
+    align-items: flex-start;
+  }
+  
+  .info-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(234, 218, 242, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: #1b309a;
+    font-size: 1.2rem;
+  }
+  
+  .info-text h3 {
+    font-size: 1.2rem;
+    color: #1b309a;
+    margin-bottom: 8px;
+  }
+  
+  .info-text p {
+    margin: 0 0 5px;
+    color: #555;
+  }
+  
+  .text-muted {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(234, 218, 242, 0.3);
+    border-radius: 50%;
+    color: #1b309a;
+    transition: all 0.3s ease;
+  }
+  
+  .social-link:hover {
+    background: #1b309a;
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  .contact-form {
+    max-width: 100%;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+  }
+  
+  .form-group input, 
+  .form-group select, 
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #444;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-group input:focus, 
+  .form-group select:focus, 
+  .form-group textarea:focus {
+    border-color: #1b309a;
+    outline: none;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .checkbox-group input {
+    width: auto;
+    margin-right: 10px;
+    margin-top: 5px;
+  }
+  
+  .checkbox-group label {
+    font-weight: normal;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+  
+  .faq-section {
+    margin-top: 30px;
+  }
+  
+  .faq-container {
+    margin-top: 30px;
+  }
+  
+  .faq-item {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom: 15px;
+    overflow: hidden;
+  }
+  
+  .faq-question {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .faq-question:hover {
+    background: rgba(234, 218, 242, 0.1);
+  }
+  
+  .faq-question h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0;
+  }
+  
+  .faq-toggle {
+    font-size: 1.5rem;
+    color: #1b309a;
+    font-weight: 500;
+  }
+  
+  .faq-answer {
+    padding: 0 20px 20px;
+    display: none;
+  }
+  
+  .faq-answer p {
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  .faq-item.active .faq-answer {
+    display: block;
+  }
+  
+  .faq-item.active .faq-toggle {
+    transform: rotate(45deg);
+  }
+  
+  @media (min-width: 768px) {
+    .contact-container {
+      flex-direction: row;
+      align-items: stretch;
+    }
+    .btn-primary {
+      width: 100%;
+    }
+    .contact-info {
+      flex: 1;
+    }
+    
+    .contact-form-container {
+      flex: 2;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+    .btn-primary {
+      width: 100%;
+    }
+    
+    .page-header p {
+      font-size: 1rem;
+    }
+    
+    .contact-info h2, .contact-form-container h2, .faq-section h2 {
+      font-size: 1.5rem;
+    }
+  }
+  .alert.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+  }
+  .alert.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+  }
+  .alert.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+  }
+  .message-alert {
+    display: none;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid;
+    font-weight: 500;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container contact-page">
+  <div class="page-header">
+    <h1>Contact Us</h1>
+    <p>We'd love to hear from you. Get in touch with the DesiQ team.</p>
+  </div>
+
+  <div class="contact-container">
+    <div class="contact-info">
+      <h2>How to Reach Us</h2>
+      
+      <div class="info-item">
+        <div class="info-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="info-text">
+          <h3>Email</h3>
+          <p><a href="mailto:support@desiq.live">support@desiq.live</a></p>
+        </div>
+      </div>
+      
+      <div class="info-item">
+        <div class="info-icon">
+          <i class="fas fa-phone-alt"></i>
+        </div>
+        <div class="info-text">
+          <h3>Phone</h3>
+          <p>+1 (555) 123-4567</p>
+          <p class="text-muted">Monday to Friday, 9am to 6pm ET</p>
+        </div>
+      </div>
+      
+      <div class="info-item">
+        <div class="info-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="info-text">
+          <h3>Office</h3>
+          <p>123 Innovation Drive</p>
+          <p>Suite 400</p>
+          <p>San Francisco, CA 94103</p>
+        </div>
+      </div>
+      
+      <div class="info-item">
+        <div class="info-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <div class="info-text">
+          <h3>Social Media</h3>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="contact-form-container">
+      {% if message %}
+        {% if status == 200 %}
+          <div class="alert alert-success">
+             <p class="message-alert">{{ message }}</p>
+          </div>
+        {% else %}
+          <div class="alert alert-danger">
+            <p class="message-alert"></p>{{ message }}</p>
+          </div>
+        {% endif %}
+        
+      {% endif %}
+      <div id="js-alert" class="message-alert" style="display: none;"></div>
+      <h2>Send Us a Message</h2>
+      <form class="contact-form" id="contact-form" action="{% url 'core:contact' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="contact_form">
+        
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Your Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject" required>
+            <option value="">Select a subject</option>
+            <option value="general">General Inquiry</option>
+            <option value="support">Technical Support</option>
+            <option value="feedback">Feedback</option>
+            <option value="partnership">Partnership Opportunity</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" placeholder="Type your message here..." required></textarea>
+        </div>
+        
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="subscribe" name="subscribe">
+          <label for="subscribe">Subscribe to our newsletter for updates on new features and best practices</label>
+        </div>
+        
+        <button  type="submit" class="btn btn-primary" id="submit-btn">Send Message</button>
+      </form>
+    </div>
+  </div>
+  
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>How quickly will I receive a response?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>We aim to respond to all inquiries within 24-48 hours during business days.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>I'm having technical issues with the platform. What should I do?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>For urgent technical support, please use the Support section within the platform when you're logged in. This will help us resolve your issue more quickly. Alternatively, you can email us with "Technical Support" in the subject line.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">
+          <h3>Can I request a feature or suggest an improvement?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>Absolutely! We love hearing your ideas. Please use the contact form with "Feedback" as the subject, or use the feedback form in the platform.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set up FAQ accordions
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    
+    faqQuestions.forEach(question => {
+      question.addEventListener('click', function() {
+        const faqItem = this.parentElement;
+        const answer = faqItem.querySelector('.faq-answer');
+        const toggle = this.querySelector('.faq-toggle');
+        
+        // Toggle active class
+        faqItem.classList.toggle('active');
+        
+        // Change the toggle sign
+        if (faqItem.classList.contains('active')) {
+          toggle.textContent = '−';  // minus sign
+          answer.style.display = 'block';
+        } else {
+          toggle.textContent = '+';  // plus sign
+          answer.style.display = 'none';
+        }
+      });
+    });
+    
+  });
+
+</script>
+
+{% endblock %} 

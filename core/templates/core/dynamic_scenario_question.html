@@ -1,0 +1,229 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ scenario.title }} - Question {{ current_question }} - Desiq{% endblock %}
+
+{% block content %}
+<div class="dynamic-scenario-container">
+    <div class="dynamic-scenario-card">
+        <div class="scenario-header">
+            <h1>{{ scenario.title }}</h1>
+            <div class="scenario-meta">
+                <span class="category">{{ scenario.get_category_display }}</span>
+                <span class="difficulty">
+                    Difficulty: 
+                    {% for i in "123"|make_list %}
+                        {% if forloop.counter <= scenario.difficulty %}
+                            <span class="star filled">★</span>
+                        {% else %}
+                            <span class="star">☆</span>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-text">Question {{ current_question }} of {{ total_questions }}</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progress_percentage }}%;"></div>
+            </div>
+        </div>
+
+        <div class="scenario-content">
+            {% if current_question == 1 %}
+                <div class="scenario-description">
+                    <p>{{ scenario.description }}</p>
+                </div>
+            {% endif %}
+
+            <div class="question-container">
+                <h2 class="question-text">{{ question.question_text }}</h2>
+                
+                <form method="post" action="{% url 'core:dynamic_scenario_question_with_number' scenario.id current_question %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="question_id" value="{{ question.id }}">
+                    <div class="answer-container">
+                        <textarea name="answer" id="answer" rows="5" placeholder="Type your answer here..." required></textarea>
+                    </div>
+                    
+                    <div class="question-actions">
+                        <a href="{% url 'core:scenarios' %}" class="btn-secondary">Cancel</a>
+                        <button type="submit" class="btn-primary">Next Question</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dynamic-scenario-container {
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(
+            245deg,
+            rgba(255, 255, 255, 1) 8%,
+            rgba(255, 239, 246, 1) 40%,
+            rgba(234, 218, 242, 1) 67%,
+            rgba(210, 182, 227, 1) 82%
+        );
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+    }
+
+    .dynamic-scenario-card {
+        background-color: #ffffff;
+        border-radius: 34px;
+        border: 1px solid #00000022;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 40px;
+        box-shadow: inset 0px -4px 5.6px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    .scenario-header {
+        margin-bottom: 2rem;
+    }
+
+    .scenario-header h1 {
+        color: #1b309a;
+        margin-bottom: 1rem;
+        font-size: 28px;
+    }
+
+    .scenario-meta {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .category {
+        background-color: #ede1f0;
+        color: #1b309a;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .difficulty {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .star {
+        color: #ddd;
+    }
+
+    .star.filled {
+        color: #ffb400;
+    }
+
+    .progress-container {
+        margin-bottom: 2rem;
+    }
+
+    .progress-text {
+        text-align: center;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .progress-bar {
+        height: 10px;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background-color: #1b309a;
+        border-radius: 5px;
+    }
+
+    .scenario-content {
+        margin-bottom: 2rem;
+    }
+
+    .scenario-description {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
+
+    .scenario-description p {
+        white-space: pre-line;
+        line-height: 1.6;
+    }
+
+    .question-container {
+        margin-bottom: 1rem;
+    }
+
+    .question-text {
+        color: #1b309a;
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+    }
+
+    .answer-container {
+        margin-bottom: 2rem;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+    }
+
+    .question-actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 169px;
+        height: 41px;
+        border-radius: 20.5px;
+        border: none;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.44);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background-color: #1b309a;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-primary:hover {
+        background-color: #142270;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+{% endblock %} 

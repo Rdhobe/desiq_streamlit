@@ -1,0 +1,312 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Payment Successful - Desiq{% endblock %}
+{% block header %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="m9 12 2 2 4-4"></path>
+        </svg>
+    </div>
+    
+    <h1>Thank You For Your Payment!</h1>
+    <p class="subtitle">Your premium subscription has been activated successfully.</p>
+    
+    <div class="subscription-details">
+        <h2>Subscription Details</h2>
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Plan:</span>
+                <span class="detail-value">{{ plan_name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value">{{ plan_price }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Next billing date:</span>
+                <span class="detail-value">{{ next_billing_date }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Payment ID:</span>
+                <span class="detail-value">{{ payment_id }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="whats-next">
+        <h2>What's Next?</h2>
+        <div class="next-steps">
+            <div class="step-item">
+                <div class="step-icon mentor-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="step-content">
+                    <h3>Access Premium Mentors</h3>
+                    <p>Connect with our top-tier mentors for personalized guidance on your decision-making journey.</p>
+                    <a href="{% url 'core:mentor' %}" class="step-link">Explore Mentors</a>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-icon challenge-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m12 8-9.04 9.06a2.82 2.82 0 1 0 3.98 3.98L16 12"></path>
+                        <circle cx="17" cy="7" r="5"></circle>
+                    </svg>
+                </div>
+                <div class="step-content">
+                    <h3>Daily Challenges</h3>
+                    <p>You now have access to 3 daily challenges to improve your decision-making skills.</p>
+                    <a href="{% url 'core:dashboard' %}" class="step-link">View Challenges</a>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-icon scenario-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h20"></path>
+                        <path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"></path>
+                        <path d="m7 21 5-5 5 5"></path>
+                    </svg>
+                </div>
+                <div class="step-content">
+                    <h3>Generate More Scenarios</h3>
+                    <p>Create up to 3 custom decision scenarios per day to practice your skills.</p>
+                    <a href="{% url 'core:scenarios' %}" class="step-link">Create Scenarios</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="action-buttons">
+        <a href="{% url 'core:dashboard' %}" class="btn-primary">Go to Dashboard</a>
+        <a href="{% url 'core:setting' %}" class="btn-secondary">View Subscription Settings</a>
+    </div>
+    
+    <div class="support-info">
+        <p>If you have any questions about your subscription, please <a href="{% url 'core:support' %}">contact our support team</a>.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Success Container */
+    .success-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        text-align: center;
+    }
+    
+    /* Success Icon */
+    .success-icon {
+        margin-bottom: 20px;
+    }
+    
+    /* Headings */
+    h1 {
+        font-size: 32px;
+        font-weight: 600;
+        color: #1b309a;
+        margin-bottom: 10px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 40px;
+    }
+    
+    h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1b309a;
+        margin: 0 0 20px 0;
+        text-align: center;
+    }
+    
+    /* Subscription Details */
+    .subscription-details {
+        background: #f9f9f9;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 40px;
+    }
+    
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        text-align: left;
+    }
+    
+    .detail-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .detail-label {
+        font-weight: 500;
+        color: #555;
+        margin-right: 10px;
+    }
+    
+    .detail-value {
+        color: #1b309a;
+        font-weight: 600;
+    }
+    
+    /* What's Next Section */
+    .whats-next {
+        margin-bottom: 40px;
+    }
+    
+    .next-steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    .step-item {
+        background: #fff;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: left;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .step-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .step-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+    
+    .mentor-icon {
+        background: rgba(234, 218, 242, 0.2);
+        color: #9a3fb1;
+    }
+    
+    .challenge-icon {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ff9800;
+    }
+    
+    .scenario-icon {
+        background: rgba(33, 150, 243, 0.2);
+        color: #2196f3;
+    }
+    
+    .step-content h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1b309a;
+        margin: 0 0 10px 0;
+    }
+    
+    .step-content p {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+    }
+    
+    .step-link {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1b309a;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .step-link:hover {
+        text-decoration: underline;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .btn-primary, .btn-secondary {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(245deg, rgba(255, 255, 255, 1) 8%, rgba(255, 239, 246, 1) 40%, rgba(234, 218, 242, 1) 67%);
+        color: #1b309a;
+        border: 1px solid rgba(234, 218, 242, 0.5);
+    }
+    
+    .btn-primary:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #666;
+        border: 1px solid #ddd;
+    }
+    
+    .btn-secondary:hover {
+        background: #eee;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    /* Support Info */
+    .support-info {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .support-info a {
+        color: #1b309a;
+        text-decoration: none;
+    }
+    
+    .support-info a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Responsive */
+    @media (max-width: 991px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .next-steps {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %} 

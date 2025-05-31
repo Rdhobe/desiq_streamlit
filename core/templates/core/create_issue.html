@@ -1,0 +1,193 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Create Support Issue {% endblock %}
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="profile-title">Create Support Issue</h1>
+    </div>
+    
+    <div class="issue-form-container">
+        <form method="post" class="issue-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="form-error">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Description</label>
+                {{ form.description }}
+                <small class="form-text text-muted">Please provide as much detail as possible about your issue.</small>
+                {% if form.description.errors %}
+                    <div class="form-error">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.priority.id_for_label }}">Priority</label>
+                {{ form.priority }}
+                {% if form.priority.errors %}
+                    <div class="form-error">{{ form.priority.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.issue_type.id_for_label }}">Issue Type</label>
+                {{ form.issue_type }}
+                {% if form.issue_type.errors %}
+                    <div class="form-error">{{ form.issue_type.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Submit Issue</button>
+                <a href="{% url 'core:support' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .profile-header {
+        margin-bottom: 30px;
+        border-bottom: 2px solid #6c5ce7;
+        padding-bottom: 15px;
+    }
+    
+    .profile-title {
+        color: #2d3436;
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .issue-form-container {
+        max-width: 800px;
+        margin: 30px auto;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .issue-form .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .issue-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2d3436;
+        font-size: 16px;
+    }
+    
+    .issue-form input[type="text"],
+    .issue-form textarea,
+    .issue-form select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #dfe6e9;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #2d3436;
+        transition: all 0.3s ease;
+        background-color: #f5f6fa;
+    }
+    
+    .issue-form input[type="text"]:focus,
+    .issue-form textarea:focus,
+    .issue-form select:focus {
+        border-color: #6c5ce7;
+        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        outline: none;
+        background-color: #fff;
+    }
+    
+    .issue-form textarea {
+        min-height: 180px;
+        resize: vertical;
+    }
+    
+    .form-text {
+        font-size: 14px;
+        margin-top: 8px;
+        display: block;
+        color: #636e72;
+    }
+    
+    .form-error {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+    }
+    
+    .btn-secondary {
+        background: #f5f6fa;
+        color: #2d3436;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dfe6e9;
+    }
+    
+    .btn-secondary:hover {
+        background: #dfe6e9;
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .issue-form-container {
+            padding: 20px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,876 @@
+{% load static custom_filters %}
+
+{% block title %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% robust_static 'css/home.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content" data-aos="fade-right" data-aos-duration="1000">
+      <h1>Make Better Decisions with <span class="gradient-text">DesiQ</span></h1>
+      <p>Your AI-powered decision assistant to help you make smarter choices in life and work</p>
+      <div class="hero-buttons">
+        <a href="{% url 'core:register' %}" class="btn btn-primary">Get Started Free</a>
+        <a href="#how-it-works" class="btn btn-secondary">How It Works</a>
+      </div>
+    </div>
+    <div class="hero-image" data-aos="fade-left" data-aos-duration="1000">
+      <img src="{% static 'img/digital-brain-logo.svg' %}" alt="DesiQ Smart Decision Making">
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="section-header" data-aos="fade-up">
+      <h2>Key Features</h2>
+      <p>Tools to help you make better decisions</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" data-aos="zoom-in" data-aos-delay="100">
+        <div class="feature-icon">
+          <img src="{% static 'img/new_icons/personality/personality-test.svg' %}" alt="Personality Tests">
+        </div>
+        <h3>Personality Tests</h3>
+        <p>Understand your decision-making style and cognitive biases through personalized assessments</p>
+      </div>
+      <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
+        <div class="feature-icon">
+          <img src="{% static 'img/new_icons/decisions/decision-scenarios.svg' %}" alt="Decision Scenarios">
+        </div>
+        <h3>Decision Scenarios</h3>
+        <p>Practice with real-world decision scenarios tailored to your experience level</p>
+      </div>
+      <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
+        <div class="feature-icon">
+          <img src="{% static 'img/new_icons/mentor/smart-mentor.svg' %}" alt="Smart Mentor">
+        </div>
+        <h3>Smart Mentor</h3>
+        <p>Get personalized guidance from our AI mentors who adapt to your specific needs</p>
+      </div>
+      <div class="feature-card" data-aos="zoom-in" data-aos-delay="400">
+        <div class="feature-icon">
+          <img src="{% static 'img/new_icons/progress/progress-tracking.svg' %}" alt="Progress Tracking">
+        </div>
+        <h3>Progress Tracking</h3>
+        <p>Monitor your growth and see improvements in your decision-making abilities over time</p>
+      </div>
+      <div class="feature-card" data-aos="zoom-in" data-aos-delay="500">
+        <div class="feature-icon">
+          <img src="{% static 'img/new_icons/community/community-learning.svg' %}" alt="Community Learning">
+        </div>
+        <h3>Community Learning</h3>
+        <p>Share experiences and learn from others facing similar decision challenges</p>
+      </div>
+      <div class="feature-card" data-aos="zoom-in" data-aos-delay="600">
+        <div class="feature-icon">
+          <img src="{% static 'img/new_icons/challenges/daily-challenges.svg' %}" alt="Daily Challenges">
+        </div>
+        <h3>Daily Challenges</h3>
+        <p>Engage with bite-sized daily exercises to build your decision muscle</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Decision Scenario Section -->
+  <section class="demo-scenario-section" id="demo-scenario">
+    <div class="section-header" data-aos="fade-up">
+      <h2>Experience Our Decision Scenarios</h2>
+      <p>See how DesiQ helps you navigate complex choices with AI-powered guidance</p>
+    </div>
+    <div class="demo-scenario-container">
+      <div class="demo-scenario-content" data-aos="fade-right">
+        <div class="scenario-card">
+          <div class="scenario-header">
+            <div class="scenario-icon">
+              <img src="{% static 'img/career-choice 1.svg' %}" alt="Decision Scenarios">
+            </div>
+            <h3>Interactive Decision Scenarios</h3>
+          </div>
+          <div class="scenario-description">
+            <p>Our decision scenarios put your judgment to the test with real-world challenges across career, relationships, finance, and more. Get personalized feedback and detailed analysis on your decision-making approach.</p>
+          </div>
+          <div class="demo-actions">
+            <a href="{% url 'core:demo' %}" class="btn btn-primary">Try Full Demo</a>
+            <a href="{% url 'core:register' %}" class="btn btn-secondary">Sign Up For More</a>
+          </div>
+        </div>
+      </div>
+      <div class="demo-scenario-image" data-aos="fade-left">
+        <img src="{% static 'img/career_advisor.svg' %}" alt="Career Advisor" onerror="this.src='{% static 'img/career-choice 1.svg' %}'">
+        <div class="mentor-tip">
+          <div class="mentor-avatar">
+            <img src="{% static 'img/career_advisor.svg' %}" alt="Career Mentor" onerror="this.src='{% static 'img/career_advisor.svg' %}'">
+          </div>
+          <div class="tip-content">
+            <h4>Try Our Interactive Demo</h4>
+            <p>"Experience multiple decision scenarios and see detailed analysis of your decision-making style, cognitive biases, and improvement areas - no login required!"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section" id="how-it-works">
+    <div class="section-header" data-aos="fade-up">
+      <h2>How DesiQ Works</h2>
+      <p>Your journey to better decisions in 4 simple steps</p>
+    </div>
+    
+    <!-- Visual Flowchart -->
+    <div class="visual-flowchart" data-aos="fade-up" data-aos-delay="300">
+      <div class="flowchart-container">
+        <!-- Step 1 -->
+        <div class="flowchart-step active" data-step="1">
+          <div class="flowchart-icon">
+            <img src="{% static 'img/change 1.svg' %}" alt="Discover Your Style">
+            <span class="step-number">1</span>
+          </div>
+          <div class="flowchart-content">
+            <h3>Discover Your Style</h3>
+            <p>Take personality tests to understand your decision-making style and identify cognitive biases</p>
+          </div>
+        </div>
+        
+        <!-- Arrow -->
+        <div class="flowchart-arrow">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="flowchart-step" data-step="2">
+          <div class="flowchart-icon">
+            <img src="{% static 'img/Group 2.svg' %}" alt="Practice with Scenarios">
+            <span class="step-number">2</span>
+          </div>
+          <div class="flowchart-content">
+            <h3>Practice with Scenarios</h3>
+            <p>Work through relevant decision scenarios tailored to your interests and growth areas</p>
+          </div>
+        </div>
+        
+        <!-- Arrow -->
+        <div class="flowchart-arrow">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="flowchart-step" data-step="3">
+          <div class="flowchart-icon">
+            <img src="{% static 'img/Lamp_duotone_line.svg' %}" alt="Get Expert Guidance">
+            <span class="step-number">3</span>
+          </div>
+          <div class="flowchart-content">
+            <h3>Get Expert Guidance</h3>
+            <p>Chat with AI mentors specialized in different domains for personalized advice</p>
+          </div>
+        </div>
+        
+        <!-- Arrow -->
+        <div class="flowchart-arrow">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="flowchart-step" data-step="4">
+          <div class="flowchart-icon">
+            <img src="{% static 'img/Chart_light.svg' %}" alt="Track Your Growth">
+            <span class="step-number">4</span>
+          </div>
+          <div class="flowchart-content">
+            <h3>Track Your Growth</h3>
+            <p>Monitor your improvement through metrics and visualize your progress over time</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Flowchart Navigation -->
+      <div class="flowchart-nav">
+        <button class="flowchart-nav-btn active" data-target="1">1</button>
+        <button class="flowchart-nav-btn" data-target="2">2</button>
+        <button class="flowchart-nav-btn" data-target="3">3</button>
+        <button class="flowchart-nav-btn" data-target="4">4</button>
+      </div>
+    </div>
+    
+    <!-- Original workflow for fallback -->
+    <div class="workflow">
+      <div class="workflow-step" data-aos="fade-right" data-aos-delay="100">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Discover Your Style</h3>
+          <p>Take personality tests to understand your decision-making style and identify cognitive biases</p>
+        </div>
+        <div class="step-icon">
+          <img src="{% static 'img/change 1.svg' %}" alt="Discover Your Style">
+        </div>
+      </div>
+      <div class="workflow-step" data-aos="fade-right" data-aos-delay="200">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Practice with Scenarios</h3>
+          <p>Work through relevant decision scenarios tailored to your interests and growth areas</p>
+        </div>
+        <div class="step-icon">
+          <img src="{% static 'img/Group 2.svg' %}" alt="Practice with Scenarios">
+        </div>
+      </div>
+      <div class="workflow-step" data-aos="fade-right" data-aos-delay="300">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Get Expert Guidance</h3>
+          <p>Chat with AI mentors specialized in different domains for personalized advice</p>
+        </div>
+        <div class="step-icon">
+          <img src="{% static 'img/Lamp_duotone_line.svg' %}" alt="Get Expert Guidance">
+        </div>
+      </div>
+      <div class="workflow-step" data-aos="fade-right" data-aos-delay="400">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3>Track Your Growth</h3>
+          <p>Monitor your improvement through metrics and visualize your progress over time</p>
+        </div>
+        <div class="step-icon">
+          <img src="{% static 'img/Chart_light.svg' %}" alt="Track Your Growth">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why DesiQ Section -->
+  <section class="why-desiq-section" id="why-desiq">
+    <div class="section-header" data-aos="fade-up">
+      <h2>Why Choose DesiQ?</h2>
+      <p>Stand out from traditional decision-making tools</p>
+    </div>
+    <div class="benefits-container">
+      <div class="benefits-content">
+        <div class="benefit-item" data-aos="fade-up" data-aos-delay="100">
+          <div class="benefit-icon">
+            <img src="{% static 'img/new_icons/approach/personalized-approach.svg' %}" alt="Personalized">
+          </div>
+          <div class="benefit-text">
+            <h3>Personalized Approach</h3>
+            <p>Unlike generic advice, DesiQ adapts to your unique decision-making style and provides personalized guidance</p>
+          </div>
+        </div>
+        <div class="benefit-item" data-aos="fade-up" data-aos-delay="200">
+          <div class="benefit-icon">
+            <img src="{% static 'img/new_icons/community/supportive-community.svg' %}" alt="Supportive Community">
+          </div>
+          <div class="benefit-text">
+            <h3>Supportive Community</h3>
+            <p>Join thousands of others on their decision improvement journey. Share, learn, and grow together</p>
+          </div>
+        </div>
+        <div class="benefit-item" data-aos="fade-up" data-aos-delay="300">
+          <div class="benefit-icon">
+            <img src="{% static 'img/new_icons/challenges/daily-challenges.svg' %}" alt="Gamified">
+          </div>
+          <div class="benefit-text">
+            <h3>Gamified Experience</h3>
+            <p>Learning should be fun! Earn rewards, track progress, and celebrate as you improve your decision skills</p>
+          </div>
+        </div>
+        <div class="benefit-item" data-aos="fade-up" data-aos-delay="400">
+          <div class="benefit-icon">
+            <img src="{% static 'img/new_icons/mentor/smart-mentor.svg' %}" alt="Science-backed">
+          </div>
+          <div class="benefit-text">
+            <h3>Science-backed Approach</h3>
+            <p>Our methods are grounded in cognitive science and behavioral psychology research</p>
+          </div>
+        </div>
+      </div>
+      <div class="benefits-image" data-aos="zoom-in-left" data-aos-delay="300">
+        <img src="{% static 'img/1st img.svg' %}" alt="DesiQ Benefits">
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing-section" id="pricing">
+    <div class="section-header" data-aos="fade-up">
+      <h2>Choose Your Plan</h2>
+      <p>Find the perfect plan for your decision-making journey</p>
+    </div>
+    
+    <div class="pricing-container">
+      <div class="pricing-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="pricing-header">
+          <h3>Free</h3>
+          <div class="pricing-price">
+            <span class="price">$0</span>
+            <span class="period">/ month</span>
+          </div>
+        </div>
+        <div class="pricing-features">
+          <ul>
+            <li>Access to basic mentors only</li>
+            <li>5 messages per day with each mentor</li>
+            <li>1 daily challenge</li>
+            <li>1 scenario generation per day</li>
+            <li>Standard support</li>
+          </ul>
+        </div>
+        <div class="pricing-action">
+          <a href="{% url 'core:register' %}" class="btn btn-secondary">Get Started</a>
+        </div>
+      </div>
+      
+      <div class="pricing-card featured" data-aos="fade-up">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-header">
+          <h3>Monthly Premium</h3>
+          <div class="pricing-price">
+            <span class="price">$9.99</span>
+            <span class="period">/ month</span>
+          </div>
+        </div>
+        <div class="pricing-features">
+          <ul>
+            <li>Access to all premium mentors</li>
+            <li>20 messages per day with each mentor</li>
+            <li>3 daily challenges</li>
+            <li>3 scenario generations per day</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+        <div class="pricing-action">
+          <a href="{% url 'core:upgrade_subscription' %}" class="btn btn-primary">Upgrade Now</a>
+        </div>
+      </div>
+      
+      <div class="pricing-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="pricing-badge">Best Value</div>
+        <div class="pricing-header">
+          <h3>Annual Premium</h3>
+          <div class="pricing-price">
+            <span class="price">$99.99</span>
+            <span class="period">/ year</span>
+          </div>
+          <div class="pricing-savings">Save 17% compared to monthly</div>
+        </div>
+        <div class="pricing-features">
+          <ul>
+            <li>Access to all premium mentors</li>
+            <li>20 messages per day with each mentor</li>
+            <li>3 daily challenges</li>
+            <li>3 scenario generations per day</li>
+            <li>Priority support</li>
+            <li>Annual exclusive decision templates</li>
+          </ul>
+        </div>
+        <div class="pricing-action">
+          <a href="{% url 'core:upgrade_subscription' %}" class="btn btn-primary">Upgrade Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Animation Section -->
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="stat-item" data-aos="fade-up">
+        <div class="stat-counter" data-target="5000">0</div>
+        <div class="stat-label">Active Users</div>
+      </div>
+      <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+        <div class="stat-counter" data-target="1000">0</div>
+        <div class="stat-label">Scenarios</div>
+      </div>
+      <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-counter" data-target="8">0</div>
+        <div class="stat-label">AI Mentors</div>
+      </div>
+      <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+        <div class="stat-counter" data-target="25">0</div>
+        <div class="stat-label">Decision Tests</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section" id="faq">
+    <div class="section-header" data-aos="fade-up">
+      <h2>Frequently Asked Questions</h2>
+      <p>Get answers to common questions about DesiQ</p>
+    </div>
+    <div class="faq-container">
+      <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+        <div class="faq-question">
+          <h3>What is DesiQ?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>DesiQ is an AI-powered decision assistant that helps you make better choices in your personal and professional life. It combines personality assessments, decision scenarios, AI mentorship, and progress tracking to improve your decision-making skills.</p>
+        </div>
+      </div>
+      <div class="faq-item" data-aos="fade-up" data-aos-delay="150">
+        <div class="faq-question">
+          <h3>Is DesiQ free to use?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>DesiQ offers a free tier with limited daily usage and a premium subscription with additional features, unlimited scenarios, and access to all AI mentors. You can start with the free version and upgrade anytime.</p>
+        </div>
+      </div>
+      <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+        <div class="faq-question">
+          <h3>How does the AI mentorship work?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>Our AI mentors are specialized in different domains like career, finance, relationships, and more. They provide personalized guidance based on your profile, decision style, and specific situation to help you make better choices.</p>
+        </div>
+      </div>
+      <div class="faq-item" data-aos="fade-up" data-aos-delay="250">
+        <div class="faq-question">
+          <h3>How is my progress measured?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>DesiQ tracks four key decision-making metrics: rationality, decisiveness, empathy, and clarity. As you complete scenarios and challenges, your scores in these areas will improve, and you'll earn XP to level up your profile.</p>
+        </div>
+      </div>
+      <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+        <div class="faq-question">
+          <h3>Can I use DesiQ on mobile devices?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>Yes! DesiQ is fully responsive and works on all devices including smartphones, tablets, and desktop computers. You can access it anytime, anywhere to continue improving your decision-making skills.</p>
+        </div>
+      </div>
+      <div class="faq-item" data-aos="fade-up" data-aos-delay="350">
+        <div class="faq-question">
+          <h3>How secure is my data on DesiQ?</h3>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>We take data privacy seriously. Your personal information and decision histories are securely stored and never shared with third parties. You can review our privacy policy for more details on how we protect your data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feedback Form Section -->
+  <section class="feedback-section" id="feedback">
+    <div class="section-header" data-aos="fade-up">
+      <h2>We Value Your Feedback</h2>
+      <p>Help us improve DesiQ with your suggestions</p>
+    </div>
+    <div class="feedback-container">
+      <form class="feedback-form" id="feedbackForm" method="post" action="{% url 'core:visitor_feedback' %}" data-aos="fade-right">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Your email address" required>
+        </div>
+        <div class="form-group">
+          <label for="feedback_type">Feedback Type</label>
+          <select id="feedback_type" name="feedback_type" required>
+            <option value="">Select feedback type</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="bug">Bug Report</option>
+            <option value="feature">Feature Request</option>
+            <option value="praise">Praise</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Your feedback or suggestions" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+      </form>
+      <div class="feedback-image" data-aos="fade-left">
+        <img src="{% static 'img/Support.svg' %}" alt="Feedback">
+        <div class="rating">
+          <img src="{% static 'img/star 1.svg' %}" alt="Star">
+          <img src="{% static 'img/star 2.svg' %}" alt="Star">
+          <img src="{% static 'img/star 3.svg' %}" alt="Star">
+          <img src="{% static 'img/star 4.svg' %}" alt="Star">
+          <img src="{% static 'img/star 5.svg' %}" alt="Star">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="home-footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="{% static 'img/digital-brain-logo.svg' %}" alt="DesiQ">
+        <span>DesiQ</span>
+      </div>
+      <div class="footer-links">
+        <div class="footer-column">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#why-desiq">Why DesiQ</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="{% url 'core:community_public' %}">Community</a></li>
+            <li><a href="{% url 'core:support_public' %}">Support</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#feedback">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="{% url 'core:about' %}">About Us</a></li>
+            <li><a href="{% url 'core:contact' %}">Contact</a></li>
+            <li><a href="{% url 'core:privacy' %}">Privacy Policy</a></li>
+            <li><a href="{% url 'core:terms' %}">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {% now "Y" %} DesiQ. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </footer>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize AOS animation library
+    AOS.init({
+      once: true,
+      offset: 120,
+      duration: 800
+    });
+    
+    // FAQ Accordion
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      const answer = item.querySelector('.faq-answer');
+      const toggle = item.querySelector('.faq-toggle');
+      
+      // Initially hide all answers
+      answer.style.display = 'none';
+      
+      question.addEventListener('click', () => {
+        // Toggle current answer
+        const isOpen = answer.style.display === 'block';
+        
+        if (isOpen) {
+          answer.style.display = 'none';
+          toggle.textContent = '+';
+        } else {
+          answer.style.display = 'block';
+          toggle.textContent = '−';
+        }
+      });
+    });
+    
+    // Smooth scrolling for anchor links - ONLY for in-page anchors
+    document.querySelectorAll('.landing-page a[href^="#"]').forEach(anchor => {
+      // Skip links that are just "#" with no actual id
+      if (anchor.getAttribute('href') === '#') return;
+      
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 100,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+    
+    // Animated Flowchart Navigation
+    const flowchartSteps = document.querySelectorAll('.flowchart-step');
+    const flowchartNavBtns = document.querySelectorAll('.flowchart-nav-btn');
+    
+    flowchartNavBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetStep = btn.dataset.target;
+        
+        // Update active button
+        flowchartNavBtns.forEach(navBtn => {
+          navBtn.classList.remove('active');
+        });
+        btn.classList.add('active');
+        
+        // Update active step
+        flowchartSteps.forEach(step => {
+          step.classList.remove('active');
+          if (step.dataset.step === targetStep) {
+            step.classList.add('active');
+          }
+        });
+      });
+    });
+    
+    // Auto-cycle through flowchart steps
+    let currentStep = 1;
+    const totalSteps = flowchartSteps.length;
+    
+    function cycleFlowchartSteps() {
+      flowchartSteps.forEach(step => step.classList.remove('active'));
+      flowchartNavBtns.forEach(btn => btn.classList.remove('active'));
+      
+      const nextStep = document.querySelector(`.flowchart-step[data-step="${currentStep}"]`);
+      const nextBtn = document.querySelector(`.flowchart-nav-btn[data-target="${currentStep}"]`);
+      
+      if (nextStep) nextStep.classList.add('active');
+      if (nextBtn) nextBtn.classList.add('active');
+      
+      currentStep = currentStep >= totalSteps ? 1 : currentStep + 1;
+    }
+    
+    // Start auto-cycle if flowchart exists
+    const flowchartContainer = document.querySelector('.flowchart-container');
+    if (flowchartContainer) {
+      setInterval(cycleFlowchartSteps, 5000);
+    }
+    
+    // Animate stats counters
+    function animateCounter(counter, target) {
+      const speed = 200; // Lower is faster
+      const inc = target / speed;
+      const updateCount = () => {
+        const count = +counter.innerText;
+        if (count < target) {
+          counter.innerText = Math.ceil(count + inc);
+          setTimeout(updateCount, 20);
+        } else {
+          counter.innerText = target;
+        }
+      };
+      updateCount();
+    }
+    
+    // Run counter animation when in viewport
+    const statsSection = document.querySelector('.stats-section');
+    let hasAnimated = false;
+    
+    function checkIfInView() {
+      if (hasAnimated) return;
+      
+      if (statsSection) {
+        const rect = statsSection.getBoundingClientRect();
+        const isInViewport = (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+        
+        if (isInViewport) {
+          const counters = document.querySelectorAll('.stat-counter');
+          counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            animateCounter(counter, target);
+          });
+          hasAnimated = true;
+        }
+      }
+    }
+    
+    // Check if stats section is in viewport on scroll
+    window.addEventListener('scroll', checkIfInView);
+    // Initial check
+    checkIfInView();
+  });
+</script>
+
+<style>
+  /* Pricing Section Styles */
+  .pricing-section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+  }
+  
+  .pricing-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  .pricing-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    overflow: hidden;
+    width: 320px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    border: 1px solid #eee;
+  }
+  
+  .pricing-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  }
+  
+  .pricing-card.featured {
+    transform: scale(1.05);
+    border: 2px solid #1b309a;
+    z-index: 1;
+  }
+  
+  .pricing-card.featured:hover {
+    transform: scale(1.05) translateY(-10px);
+  }
+  
+  .pricing-badge {
+    position: absolute;
+    top: 12px;
+    right: -35px;
+    background: #1b309a;
+    color: white;
+    padding: 5px 40px;
+    font-size: 14px;
+    transform: rotate(45deg);
+    font-weight: 600;
+  }
+  
+  .pricing-header {
+    padding: 25px;
+    text-align: center;
+    background: linear-gradient(245deg, rgba(255, 255, 255, 1) 8%, rgba(255, 239, 246, 1) 40%, rgba(234, 218, 242, 1) 67%);
+    border-bottom: 1px solid #eee;
+  }
+  
+  .pricing-header h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1b309a;
+    margin: 0 0 15px 0;
+  }
+  
+  .pricing-price {
+    margin-bottom: 10px;
+  }
+  
+  .pricing-price .price {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1b309a;
+  }
+  
+  .pricing-price .period {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .pricing-savings {
+    display: inline-block;
+    background: rgba(27, 48, 154, 0.1);
+    color: #1b309a;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+  
+  .pricing-features {
+    padding: 25px;
+  }
+  
+  .pricing-features ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .pricing-features li {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    color: #555;
+    position: relative;
+    padding-left: 30px;
+  }
+  
+  .pricing-features li:before {
+    content: "✓";
+    color: #1b309a;
+    position: absolute;
+    left: 5px;
+    font-weight: bold;
+  }
+  
+  .pricing-features li:last-child {
+    border-bottom: none;
+  }
+  
+  .pricing-action {
+    padding: 0 25px 25px;
+    text-align: center;
+  }
+  
+  .pricing-action .btn {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 991px) {
+    .pricing-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .pricing-card, .pricing-card.featured {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+    
+    .pricing-card.featured {
+      order: -1;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,740 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Result: {{ scenario.title }} - Desiq{% endblock %}
+
+{% block content %}
+<div class="result-container">
+    <div class="result-card">
+        <div class="result-header">
+            <h1>Decision Result</h1>
+            <div class="scenario-title">{{ scenario.title }}</div>
+        </div>
+
+        <div class="result-content">
+            <div class="scenario-description">
+                <h2>Scenario</h2>
+                <p>{{ scenario.description }}</p>
+            </div>
+
+            <div class="your-choice">
+                <h2>Your Choice</h2>
+                <div class="choice-box">
+                    <p>{{ selected_option.text }}</p>
+                </div>
+            </div>
+
+            <div class="feedback">
+                <h2>Feedback</h2>
+                <div class="feedback-box">
+                    <p>{{ selected_option.feedback }}</p>
+                </div>
+            </div>
+
+            <div class="points-earned">
+                <h2>Points Earned</h2>
+                <div class="points-grid">
+                    <div class="point-item">
+                        <div class="point-label">XP</div>
+                        <div class="point-value">+{{ scenario.xp_reward }}</div>
+                    </div>
+                    <div class="point-item">
+                        <div class="point-label">Rationality</div>
+                        <div class="point-value">+{{ selected_option.rationality_points }}</div>
+                    </div>
+                    <div class="point-item">
+                        <div class="point-label">Decisiveness</div>
+                        <div class="point-value">+{{ selected_option.decisiveness_points }}</div>
+                    </div>
+                    <div class="point-item">
+                        <div class="point-label">Empathy</div>
+                        <div class="point-value">+{{ selected_option.empathy_points }}</div>
+                    </div>
+                    <div class="point-item">
+                        <div class="point-label">Clarity</div>
+                        <div class="point-value">+{{ selected_option.clarity_points }}</div>
+                    </div>
+                    <div class="point-item total">
+                        <div class="point-label">Total Score</div>
+                        <div class="point-value">{{ total_score }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if suggestions %}
+            <div class="improvement-suggestions">
+                <h2>Areas for Improvement</h2>
+                <ul class="suggestions-list">
+                    {% for suggestion in suggestions %}
+                    <li>{{ suggestion }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="completion-info">
+                <p>Completed on: {{ progress.completed_at|date:"F j, Y, g:i a" }}</p>
+            </div>
+            
+            <div class="share-section">
+                <h2>Share Your Results</h2>
+                <div class="share-options">
+                    <!-- <button class="btn-share" data-platform="community" onclick="openShareModal()">
+                        <i class="fas fa-users"></i> Share to Community
+                    </button> -->
+                    <button class="btn-share" data-platform="twitter" onclick="shareResult('twitter')">
+                        <i class="fab fa-twitter"></i> Share on Twitter
+                    </button>
+                    <button class="btn-share" data-platform="facebook" onclick="shareResult('facebook')">
+                        <i class="fab fa-facebook"></i> Share on Facebook
+                    </button>
+                    
+                </div>
+                
+                <!-- Share Modal -->
+                <div id="shareModal" class="share-modal">
+                    <div class="share-modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h3>Share with Friends</h3>
+                        <div class="modal-message"></div>
+                        <div class="search-container">
+                            <input type="text" id="userSearch" placeholder="Search users..." onkeyup="searchUsers()">
+                            <div id="searchResults" class="search-results"></div>
+                        </div>
+                        <div id="selectedUsers" class="selected-users"></div>
+                        <button id="sendToUsers" class="btn-primary">Share</button>
+                        {% csrf_token %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-actions">
+                
+                <a href="{% url 'core:scenarios' %}"><button class="btn-secondary">Back to Scenarios</button></a>
+                <a href="{% url 'core:dashboard' %}"><button class="btn-primary">Go to Dashboard</button></a>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-container {
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(
+            245deg,
+            rgba(255, 255, 255, 1) 8%,
+            rgba(255, 239, 246, 1) 40%,
+            rgba(234, 218, 242, 1) 67%,
+            rgba(210, 182, 227, 1) 82%
+        );
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+    }
+
+    .result-card {
+        background-color: #ffffff;
+        border-radius: 34px;
+        border: 1px solid #00000022;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 40px;
+        box-shadow: inset 0px -4px 5.6px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    .result-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .result-header h1 {
+        color: #1b309a;
+        margin-bottom: 0.5rem;
+        font-size: 28px;
+    }
+
+    .scenario-title {
+        font-size: 1.2rem;
+        color: #4b5563;
+    }
+
+    .result-content h2 {
+        color: #1b309a;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 0.5rem;
+    }
+
+    .scenario-description {
+        margin-bottom: 2rem;
+    }
+
+    .scenario-description p {
+        white-space: pre-line;
+        line-height: 1.6;
+    }
+
+    .your-choice, .feedback {
+        margin-bottom: 2rem;
+    }
+
+    .choice-box, .feedback-box {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .feedback-box {
+        background-color: #f0f9ff;
+        border-color: #bae6fd;
+    }
+
+    .points-earned {
+        margin-bottom: 2rem;
+    }
+
+    .points-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .point-item {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .point-item.total {
+        background-color: #e9f0ff;
+        border-color: #1b309a;
+    }
+
+    .point-label {
+        font-size: 0.9rem;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+    }
+
+    .point-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1b309a;
+    }
+    
+    .improvement-suggestions {
+        margin-bottom: 2rem;
+        background-color: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    .suggestions-list {
+        padding-left: 1.5rem;
+    }
+    
+    .suggestions-list li {
+        margin-bottom: 0.5rem;
+        color: #c2410c;
+    }
+
+    .completion-info {
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+        color: #6b7280;
+        text-align: center;
+    }
+    
+    .share-section {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
+    
+    .share-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        justify-content: center;
+    }
+    
+    .btn-share {
+        display: inline-flex;
+        align-items: center;
+        background-color: #f3f4f6;
+        color: #1f2937;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .btn-share:hover {
+        background-color: #e5e7eb;
+    }
+    
+    .btn-share[data-platform="community"] {
+        background-color: #e9f0ff;
+        color: #1b309a;
+        border-color: #1b309a;
+    }
+    
+    .btn-share[data-platform="twitter"] {
+        background-color: #e8f5fd;
+        color: #1da1f2;
+        border-color: #1da1f2;
+    }
+    
+    .btn-share[data-platform="facebook"] {
+        background-color: #e7f0f7;
+        color: #4267B2;
+        border-color: #4267B2;
+    }
+    
+    #share-url {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        font-size: 0.9rem;
+    }
+
+    .result-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .btn-primary, .btn-secondary {
+        min-width: 169px;
+        height: 41px;
+        border-radius: 20.5px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.44);
+        border: none;
+    }
+
+    .btn-primary {
+        background-color: #1b309a;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #142270;
+    }
+
+    .btn-secondary {
+        background-color: #f3f4f6;
+        color: #1f2937;
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e5e7eb;
+    }
+    
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+        border: 1px solid #ffecb5;
+    }
+
+    .alert-error, .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+    }
+
+    .alert-info {
+        background-color: #cff4fc;
+        color: #055160;
+        border: 1px solid #b6effb;
+    }
+    
+    /* Share Modal Styles */
+    .share-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    
+    .share-modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .close-modal:hover {
+        color: #333;
+    }
+    
+    .share-modal h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #1b309a;
+        font-size: 22px;
+    }
+    
+    .modal-message {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        display: none;
+    }
+    
+    .modal-message.error {
+        display: block;
+        background-color: #f8d7da;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+    }
+    
+    .modal-message.success {
+        display: block;
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+    
+    .search-container {
+        margin-bottom: 20px;
+    }
+    
+    #userSearch {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+    }
+    
+    .search-results {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+    
+    .user-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9fafb;
+        margin-bottom: 5px;
+    }
+    
+    .user-info {
+        flex: 1;
+    }
+    
+    .user-name {
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .user-email {
+        font-size: 12px;
+        color: #666;
+    }
+    
+    .add-user-btn {
+        background-color: #1b309a;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+    
+    .no-results {
+        padding: 10px;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+    }
+    
+    .selected-users {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .user-tag {
+        background-color: #e9f0ff;
+        color: #1b309a;
+        border: 1px solid #1b309a;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .remove-user {
+        margin-left: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Share result to social platforms
+    function shareResult(platform) {
+        const shareUrl = document.getElementById('share-url').value;
+        const title = "My Decision Result: {{ scenario.title }}";
+        const text = "I scored {{ total_score }} points on this decision scenario!";
+        
+        switch(platform) {
+            case 'twitter':
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+                break;
+            case 'facebook':
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+                break;
+        }
+    }
+    
+    // Copy share link to clipboard
+    function copyShareLink() {
+        const shareUrl = document.getElementById('share-url');
+        shareUrl.select();
+        document.execCommand('copy');
+        alert('Link copied to clipboard!');
+    }
+    
+    // Share modal functionality
+    const shareModal = document.getElementById('shareModal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const modalMessage = document.querySelector('.modal-message');
+    const userSearch = document.getElementById('userSearch');
+    const searchResults = document.getElementById('searchResults');
+    const selectedUsers = document.getElementById('selectedUsers');
+    const sendToUsersButton = document.getElementById('sendToUsers');
+    let selectedUserIds = [];
+    
+    // Open share modal
+    function openShareModal() {
+        shareModal.style.display = 'block';
+    }
+    
+    // Close modal when clicking X
+    closeModalBtn.addEventListener('click', function() {
+        shareModal.style.display = 'none';
+        resetModal();
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === shareModal) {
+            shareModal.style.display = 'none';
+            resetModal();
+        }
+    });
+    
+    // Reset modal state
+    function resetModal() {
+        modalMessage.className = 'modal-message';
+        modalMessage.textContent = '';
+        userSearch.value = '';
+        searchResults.innerHTML = '';
+        selectedUsers.innerHTML = '';
+        selectedUserIds = [];
+    }
+    
+    // Search users
+    function searchUsers() {
+        const query = userSearch.value.trim();
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+        
+        // Fetch matching users
+        fetch(`/api/search-users/?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                searchResults.innerHTML = '';
+                
+                if (data.users.length === 0) {
+                    searchResults.innerHTML = '<div class="no-results">No users found</div>';
+                    return;
+                }
+                
+                data.users.forEach(user => {
+                    if (!selectedUserIds.includes(user.id)) {
+                        const userItem = document.createElement('div');
+                        userItem.className = 'user-item';
+                        userItem.innerHTML = `
+                            <div class="user-info">
+                                <div class="user-name">${user.username}</div>
+                                <div class="user-email">${user.email || ''}</div>
+                            </div>
+                            <button class="add-user-btn" onclick="selectUser(${user.id}, '${user.username}')">Add</button>
+                        `;
+                        searchResults.appendChild(userItem);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error searching users:', error);
+                searchResults.innerHTML = '<div class="no-results">Error searching users</div>';
+            });
+    }
+    
+    // Select a user to share with
+    function selectUser(userId, username) {
+        if (!selectedUserIds.includes(userId)) {
+            selectedUserIds.push(userId);
+            
+            const userTag = document.createElement('div');
+            userTag.className = 'user-tag';
+            userTag.dataset.userId = userId;
+            userTag.innerHTML = `
+                ${username}
+                <span class="remove-user" onclick="removeUser(${userId})">×</span>
+            `;
+            selectedUsers.appendChild(userTag);
+            
+            // Clear search results and input
+            searchResults.innerHTML = '';
+            userSearch.value = '';
+        }
+    }
+    
+    // Remove a selected user
+    function removeUser(userId) {
+        selectedUserIds = selectedUserIds.filter(id => id !== userId);
+        const userTag = document.querySelector(`.user-tag[data-user-id="${userId}"]`);
+        if (userTag) {
+            userTag.remove();
+        }
+    }
+    
+    // Send button functionality
+    sendToUsersButton.addEventListener('click', function() {
+        if (selectedUserIds.length === 0) {
+            modalMessage.className = 'modal-message error';
+            modalMessage.textContent = 'Please select at least one user.';
+            return;
+        }
+        
+        // Show loading state
+        sendToUsersButton.disabled = true;
+        sendToUsersButton.textContent = 'Sending...';
+        
+        // Send result to selected users via AJAX
+        const scenarioId = {{ scenario.id }};
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        // Make the API call to share the result
+        fetch('/api/share-scenario-result/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                scenario_id: scenarioId,
+                user_ids: selectedUserIds,
+                scenario_title: "{{ scenario.title }}",
+                score: {{ total_score }}
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            modalMessage.className = 'modal-message success';
+            modalMessage.textContent = 'Result shared successfully!';
+            
+            // Reset selection
+            selectedUsers.innerHTML = '';
+            selectedUserIds = [];
+            
+            // Reset button
+            sendToUsersButton.disabled = false;
+            sendToUsersButton.textContent = 'Share';
+            
+            // Close modal after a delay
+            setTimeout(() => {
+                shareModal.style.display = 'none';
+                resetModal();
+            }, 2000);
+        })
+        .catch(error => {
+            console.error('Error sharing result:', error);
+            modalMessage.className = 'modal-message error';
+            modalMessage.textContent = 'Error sharing result. Please try again.';
+            
+            // Reset button
+            sendToUsersButton.disabled = false;
+            sendToUsersButton.textContent = 'Share';
+        });
+    });
+</script>
+{% endblock %} 

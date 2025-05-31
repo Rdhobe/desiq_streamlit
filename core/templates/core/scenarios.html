@@ -1,0 +1,709 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Scenarios{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/scenarios.css' %}">
+<style>
+    .how-it-works-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    
+    .how-it-works-card {
+        background: linear-gradient(
+            245deg,
+            rgba(27, 48, 154, 0.95) 8%,
+            rgba(142, 68, 173, 0.95) 82%
+        );
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .how-it-works-card:hover {
+        transform: scale(1.02);
+    }
+    
+    .how-it-works-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: white;
+    }
+    
+    .how-it-works-subtitle {
+        font-size: 16px;
+        margin-bottom: 25px;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    
+    .how-it-works-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .feature-icon {
+        margin-right: 15px;
+        font-size: 24px;
+        width: 40px;
+        text-align: center;
+    }
+    
+    .feature-text {
+        font-size: 14px;
+        flex-grow: 1;
+        text-align: left;
+    }
+    
+    @media (max-width: 600px) {
+        .how-it-works-card {
+            padding: 20px;
+        }
+    
+        .how-it-works-title {
+            font-size: 20px;
+        }
+    
+        .feature-item {
+            flex-direction: column;
+            text-align: center;
+        }
+    
+        .feature-icon {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+    }
+
+    /* scenarios.css */
+
+/* Main container */
+.scenarios-container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(
+        245deg,
+        rgba(255, 255, 255, 1) 8%,
+        rgba(255, 239, 246, 1) 40%,
+        rgba(234, 218, 242, 1) 67%,
+        rgba(210, 182, 227, 1) 82%
+    );
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+}
+
+/* Main title */
+.main-title {
+    font-size: 40px;
+    font-weight: 600;
+    margin: 20px 0 40px;
+    color: #000000;
+}
+
+/* Row layout for scenario cards */
+.scenario-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+/* Scenario card */
+.scenario-card {
+    width: 350px;
+    background-color: #ffffff;
+    border-radius: 34px;
+    border: 1px solid #00000022;
+    padding: 25px;
+    box-shadow: inset 0px -4px 5.6px 2px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card icon */
+.card-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+.card-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Card title */
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1b309a;
+}
+
+/* Card description */
+.card-description {
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #666666;
+    flex-grow: 1;
+}
+
+/* Button group for scenario generation */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Generate button */
+.generate-btn button {
+    width: 100%;
+    height: 41px;
+    background-color: #1b309a;
+    border-radius: 20.5px;
+    border: none;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.44);
+    transition: background-color 0.3s;
+}
+
+.generate-btn button:hover {
+    background-color: #152578;
+}
+
+.generate-btn button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Dynamic scenario button */
+.generate-btn.dynamic button {
+    background-color: #8e44ad;
+}
+
+.generate-btn.dynamic button:hover {
+    background-color: #703688;
+}
+
+/* Navigation links */
+.scenario-nav {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+    gap: 20px;
+}
+
+.nav-item {
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: #1b309a;
+    font-weight: 500;
+}
+
+/* Scenario features */
+.scenario-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.scenario-features-header {
+    margin: 30px 0 10px;
+    text-align: center;
+}
+
+.scenario-features-header h2 {
+    color: #1b309a;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Feature card */
+.feature-card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.feature-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1b309a;
+}
+
+.feature-description {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 15px;
+}
+
+/* Tag container */
+.tag-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+/* Card actions */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-view, .btn-start {
+    padding: 8px 15px;
+    border-radius: 15px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-view {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.btn-start {
+    background-color: #1b309a;
+    color: #ffffff;
+}
+
+.btn-share {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background-color: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.btn-share img {
+    width: 15px;
+    height: 15px;
+}
+
+/* No scenarios message */
+.no-scenarios {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .scenario-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .scenario-card {
+        width: 100%;
+        max-width: 350px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="scenarios-container">
+    <div class="how-it-works-container">
+        <div class="how-it-works-card">
+            <h2 class="how-it-works-title">3. Real-Life Decision Scenarios</h2>
+            <p class="how-it-works-subtitle">Practice making smarter decisions in a safe space.</p>
+            
+            <div class="how-it-works-features">
+                <div class="feature-item">
+                    <span class="feature-icon">🌿</span>
+                    <span class="feature-text">Scenario Types: Career, Finance, Relationships, Health, Education & more</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <span class="feature-text">Interactive, branching quizzes tailored to your choices</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📝</span>
+                    <span class="feature-text">Instant feedback with suggestions & scores</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">⏰</span>
+                    <span class="feature-text">Daily limits: Free Users: 1/day, Premium Users: 3/day</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔄</span>
+                    <span class="feature-text">2 attempts per scenario</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">👥</span>
+                    <span class="feature-text">Share reports with friends or community</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- First row of decision cards -->
+    <div class="scenario-row">
+        <div class="scenario-card">
+            <div class="card-icon">
+                <img src="{% static 'img/career-choice 1.svg' %}" alt="Career icon">
+            </div>
+            <h3 class="card-title">Career Decisions</h3>
+            <p class="card-description">Make strategic career choices and navigate professional challenges</p>
+            
+            <div class="button-group">
+                {% if user.profile.level >= 1 %}
+                <div class="generate-btn">
+                    <a href="{% url 'core:generate_scenario' category='career' %}"><button>Quick Scenario</button></a>
+                </div>
+                <div class="generate-btn dynamic">
+                    <a href="{% url 'core:generate_dynamic_scenario' category='career' %}"><button>In-Depth Analysis</button></a>
+                </div>
+                {% else %}
+                <div class="generate-btn">
+                    <button disabled>Unlock at Level 1</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="scenario-card">
+            <div class="card-icon">
+                <img src="{% static 'img/financial-insurance 1.svg' %}" alt="Financial icon">
+            </div>
+            <h3 class="card-title">Financial Decisions</h3>
+            <p class="card-description">Manage money, investments, and financial planning</p>
+            
+            <div class="button-group">
+                {% if user.profile.level >= 2 %}
+                <div class="generate-btn">
+                    <a href="{% url 'core:generate_scenario' category='financial' %}"><button>Quick Scenario</button></a>
+                </div>
+                <div class="generate-btn dynamic">
+                    <a href="{% url 'core:generate_dynamic_scenario' category='financial' %}"><button>In-Depth Analysis</button></a>
+                </div>
+                {% else %}
+                <div class="generate-btn">
+                    <button disabled>Unlock at Level 2</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="scenario-card">
+            <div class="card-icon">
+                <img src="{% static 'img/choice 1.svg' %}" alt="Relationship icon">
+            </div>
+            <h3 class="card-title">Relationship Decisions</h3>
+            <p class="card-description">Navigate personal and professional relationships effectively</p>
+            
+            <div class="button-group">
+                {% if user.profile.level >= 3 %}
+                <div class="generate-btn">
+                    <a href="{% url 'core:generate_scenario' category='relationship' %}"><button>Quick Scenario</button></a>
+                </div>
+                <div class="generate-btn dynamic">
+                    <a href="{% url 'core:generate_dynamic_scenario' category='relationship' %}"><button>In-Depth Analysis</button></a>
+                </div>
+                {% else %}
+                <div class="generate-btn">
+                    <button disabled>Unlock at Level 3</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Second row of decision cards -->
+    <div class="scenario-row">
+        <div class="scenario-card">
+            <div class="card-icon">
+                <img src="{% static 'img/Time-Clock-Share-1--Streamline-Freehand.svg' %}" alt="Time icon">
+            </div>
+            <h3 class="card-title">Time Management</h3>
+            <p class="card-description">Prioritize tasks and manage your time effectively</p>
+            
+            <div class="button-group">
+                {% if user.profile.level >= 4 %}
+                <div class="generate-btn">
+                    <a href="{% url 'core:generate_scenario' category='time' %}"><button>Quick Scenario</button></a>
+                </div>
+                <div class="generate-btn dynamic">
+                    <a href="{% url 'core:generate_dynamic_scenario' category='time' %}"><button>In-Depth Analysis</button></a>
+                </div>
+                {% else %}
+                <div class="generate-btn">
+                    <button disabled>Unlock at Level 4</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="scenario-card">
+            <div class="card-icon">
+                <img src="{% static 'img/Education--Streamline-Carbon.svg' %}" alt="Education icon">
+            </div>
+            <h3 class="card-title">Educational Decisions</h3>
+            <p class="card-description">Make choices about learning and personal development</p>
+            
+            <div class="button-group">
+                {% if user.profile.level >= 5 %}
+                <div class="generate-btn">
+                    <a href="{% url 'core:generate_scenario' category='educational' %}"><button>Quick Scenario</button></a>
+                </div>
+                <div class="generate-btn dynamic">
+                    <a href="{% url 'core:generate_dynamic_scenario' category='educational' %}"><button>In-Depth Analysis</button></a>
+                </div>
+                {% else %}
+                <div class="generate-btn">
+                    <button disabled>Unlock at Level 5</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="scenario-card">
+            <div class="card-icon">
+                <img src="{% static 'img/Clipboard-Pulse--Streamline-Bootstrap.svg' %}" alt="Health icon">
+            </div>
+            <h3 class="card-title">Health & Wellness</h3>
+            <p class="card-description">Make decisions about physical and mental well-being</p>
+            
+            <div class="button-group">
+                {% if user.profile.level >= 6 %}
+                <div class="generate-btn">
+                    <a href="{% url 'core:generate_scenario' category='health' %}"><button>Quick Scenario</button></a>
+                </div>
+                <div class="generate-btn dynamic">
+                    <a href="{% url 'core:generate_dynamic_scenario' category='health' %}"><button>In-Depth Analysis</button></a>
+                </div>
+                {% else %}
+                <div class="generate-btn">
+                    <button disabled>Unlock at Level 6</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function shareScenario(scenarioId, scenarioTitle) {
+        // Try to use the Web Share API first
+        if (navigator.share) {
+            navigator.share({
+                title: scenarioTitle,
+                text: 'Check out this decision scenario on Desiq!',
+                url: window.location.origin + '/scenarios/' + scenarioId + '/'
+            })
+            .then(() => console.log('Shared successfully'))
+            .catch((error) => {
+                console.log('Error sharing:', error);
+                showShareModal(scenarioId, scenarioTitle);
+            });
+        } else {
+            // Fallback to our custom share modal
+            showShareModal(scenarioId, scenarioTitle);
+        }
+    }
+    
+    function showShareModal(scenarioId, scenarioTitle) {
+        // Check if a modal element exists
+        var modal = document.getElementById('shareModal');
+        
+        // If modal doesn't exist, create it
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'shareModal';
+            modal.className = 'share-modal';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Share Scenario</h3>
+                        <span class="close-btn">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Share <strong id="modalScenarioTitle"></strong> with friends:</p>
+                        <div class="share-options">
+                            <button id="copyLinkBtn" class="share-btn">Copy Link</button>
+                            <button id="emailShareBtn" class="share-btn">Email</button>
+                        </div>
+                        <div class="copied-message">Link copied to clipboard!</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add event listeners
+            modal.querySelector('.close-btn').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('copyLinkBtn').addEventListener('click', function() {
+                const shareUrl = window.location.origin + '/scenarios/' + scenarioId + '/';
+                navigator.clipboard.writeText(shareUrl).then(function() {
+                    document.querySelector('.copied-message').style.display = 'block';
+                    setTimeout(function() {
+                        document.querySelector('.copied-message').style.display = 'none';
+                    }, 2000);
+                });
+            });
+            
+            document.getElementById('emailShareBtn').addEventListener('click', function() {
+                const shareUrl = window.location.origin + '/scenarios/' + scenarioId + '/';
+                window.location.href = `mailto:?subject=Check out this scenario on Desiq!&body=I thought you might be interested in this scenario: ${scenarioTitle}%0D%0A%0D%0ACheck it out here: ${shareUrl}`;
+            });
+        }
+        
+        // Set the scenario title in the modal
+        document.getElementById('modalScenarioTitle').textContent = scenarioTitle;
+        
+        // Show the modal
+        modal.style.display = 'flex';
+    }
+    
+    // Add modal styles
+    document.addEventListener('DOMContentLoaded', function() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .share-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            
+            .modal-content {
+                background-color: white;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 400px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            }
+            
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .modal-header h3 {
+                margin: 0;
+                color: #1b309a;
+            }
+            
+            .close-btn {
+                font-size: 24px;
+                cursor: pointer;
+                color: #666;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .share-options {
+                display: flex;
+                gap: 15px;
+                margin-top: 20px;
+            }
+            
+            .share-btn {
+                flex: 1;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 5px;
+                background-color: #1b309a;
+                color: white;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+            
+            .share-btn:hover {
+                background-color: #152376;
+            }
+            
+            .copied-message {
+                margin-top: 15px;
+                text-align: center;
+                color: green;
+                display: none;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+{% endblock %} 

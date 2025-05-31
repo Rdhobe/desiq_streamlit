@@ -1,0 +1,272 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .user-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .user-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .user-header h1 {
+        margin: 0;
+    }
+    
+    .user-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+    
+    .user-table th,
+    .user-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .user-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .user-table tr:hover {
+        background-color: #f9f9f9;
+    }
+    
+    .user-status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .status-premium {
+        background-color: #5cb85c;
+        color: white;
+    }
+    
+    .status-free {
+        background-color: #f0ad4e;
+        color: white;
+    }
+    
+    .status-admin {
+        background-color: #d9534f;
+        color: white;
+    }
+    
+    .user-actions-cell {
+        white-space: nowrap;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+    
+    .btn-small {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .btn-secondary {
+        background-color: #79aec8;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #609ab6;
+    }
+    
+    .btn-success {
+        background-color: #5cb85c;
+    }
+    
+    .btn-success:hover {
+        background-color: #4cae4c;
+    }
+    
+    .btn-danger {
+        background-color: #d9534f;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+    
+    .btn-warning {
+        background-color: #f0ad4e;
+    }
+    
+    .btn-warning:hover {
+        background-color: #eea236;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    .pagination a {
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        color: #417690;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    
+    .pagination a:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .pagination .active {
+        background-color: #417690;
+        color: white;
+        border: 1px solid #417690;
+    }
+    
+    .search-form {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-form input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        flex-grow: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="user-container">
+    <div class="user-header">
+        <h1>User Management</h1>
+        <a href="{% url 'core:admin_dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+    
+    <div class="user-actions">
+        <a href="{% url 'admin:auth_user_add' %}" class="btn">Add New User</a>
+        <a href="{% url 'core:admin_run_command' command='add_fake_users' %}" class="btn btn-warning">Generate Fake Users</a>
+    </div>
+    
+    <form class="search-form" method="get">
+        <input type="text" name="search" placeholder="Search by username, email or name" value="{{ request.GET.search }}">
+        <button type="submit" class="btn">Search</button>
+        {% if request.GET.search %}
+        <a href="{% url 'core:admin_user_management' %}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+    
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Date Joined</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td>
+                    {% if user.is_staff %}
+                    <span class="user-status status-admin">Admin</span>
+                    {% elif user.profile.is_premium %}
+                    <span class="user-status status-premium">Premium</span>
+                    {% else %}
+                    <span class="user-status status-free">Free</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.date_joined|date:"Y-m-d H:i" }}</td>
+                <td>{{ user.last_login|date:"Y-m-d H:i"|default:"Never" }}</td>
+                <td class="user-actions-cell">
+                    <a href="{% url 'admin:auth_user_change' user.id %}" class="btn btn-small btn-secondary">Edit</a>
+                    {% if not user.is_superuser %}
+                    <a href="{% url 'admin:auth_user_delete' user.id %}" class="btn btn-small btn-danger">Delete</a>
+                    {% endif %}
+                    {% if not user.is_staff %}
+                    <form method="post" action="{% url 'core:admin_toggle_premium' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        {% if user.profile.is_premium %}
+                        <button type="submit" class="btn btn-small btn-warning">Remove Premium</button>
+                        {% else %}
+                        <button type="submit" class="btn btn-small btn-success">Make Premium</button>
+                        {% endif %}
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 20px;">No users found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <a class="active">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

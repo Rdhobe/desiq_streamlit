@@ -1,0 +1,304 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .admin-dashboard {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .dashboard-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .stat-card h3 {
+        margin-top: 0;
+        color: #666;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+    
+    .stat-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #417690;
+        margin: 10px 0;
+    }
+    
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .action-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .action-card h3 {
+        margin-top: 0;
+        color: #417690;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+    
+    .btn-secondary {
+        background-color: #79aec8;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #609ab6;
+    }
+    
+    .btn-success {
+        background-color: #5cb85c;
+    }
+    
+    .btn-success:hover {
+        background-color: #4cae4c;
+    }
+    
+    .btn-danger {
+        background-color: #d9534f;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+    
+    .btn-warning {
+        background-color: #f0ad4e;
+    }
+    
+    .btn-warning:hover {
+        background-color: #eea236;
+    }
+    
+    .action-description {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+    }
+    
+    .recent-activity {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .recent-activity h3 {
+        margin-top: 0;
+        color: #417690;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .activity-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .activity-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 14px;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-time {
+        color: #999;
+        font-size: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome to the Desiq Admin Dashboard. Manage your application data and monitor system status.</p>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <div class="stat-value">{{ user_count }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Premium Users</h3>
+            <div class="stat-value">{{ premium_count }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Scenarios</h3>
+            <div class="stat-value">{{ scenario_count }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Mentors</h3>
+            <div class="stat-value">{{ mentor_count }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Support Tickets</h3>
+            <div class="stat-value">{{ open_tickets_count }}</div>
+            <a href="{% url 'core:admin_support_tickets' %}" class="btn btn-sm">View All</a>
+        </div>
+    </div>
+    
+    <div class="action-grid">
+        <div class="action-card">
+            <h3>User Management</h3>
+            <div class="action-description">
+                Add, edit or generate fake users for testing.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'admin:auth_user_add' %}" class="btn">Add New User</a>
+                <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-secondary">View All Users</a>
+                <a href="{% url 'core:admin_run_command' command='add_fake_users' %}" class="btn btn-warning">Generate Fake Users</a>
+            </div>
+        </div>
+        
+        <div class="action-card">
+            <h3>Mentor Management</h3>
+            <div class="action-description">
+                Add or edit mentors available in the system.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'admin:core_mentor_add' %}" class="btn">Add New Mentor</a>
+                <a href="{% url 'admin:core_mentor_changelist' %}" class="btn btn-secondary">View All Mentors</a>
+                <a href="{% url 'core:admin_run_command' command='add_mentors' %}" class="btn btn-warning">Add Default Mentors</a>
+            </div>
+        </div>
+        
+        <div class="action-card">
+            <h3>Scenario Management</h3>
+            <div class="action-description">
+                Create and manage scenarios and their options.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'admin:core_scenario_add' %}" class="btn">Add New Scenario</a>
+                <a href="{% url 'admin:core_scenario_changelist' %}" class="btn btn-secondary">View All Scenarios</a>
+                <a href="{% url 'core:admin_run_command' command='add_test_scenarios' %}" class="btn btn-warning">Generate Test Scenarios</a>
+            </div>
+        </div>
+        
+        <div class="action-card">
+            <h3>Personality Tests</h3>
+            <div class="action-description">
+                Manage personality tests and their questions.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'admin:core_personalitytest_add' %}" class="btn">Add New Test</a>
+                <a href="{% url 'admin:core_personalitytest_changelist' %}" class="btn btn-secondary">View All Tests</a>
+                <a href="{% url 'core:admin_run_command' command='add_personality_tests' %}" class="btn btn-warning">Add Default Tests</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="action-grid">
+        <div class="action-card">
+            <h3>Data Management</h3>
+            <div class="action-description">
+                Run data management commands and utilities.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'core:admin_run_command' command='setup_demo_data' %}" class="btn btn-success">Setup All Demo Data</a>
+                <a href="{% url 'core:admin_run_command' command='add_user_progress' %}" class="btn">Add User Progress</a>
+                <a href="{% url 'core:admin_backup_database' %}" class="btn btn-secondary">Backup Database</a>
+            </div>
+        </div>
+        
+        <div class="action-card">
+            <h3>System Management</h3>
+            <div class="action-description">
+                Manage system settings and maintenance tasks.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'core:admin_clear_cache' %}" class="btn">Clear Cache</a>
+                <a href="{% url 'core:admin_system_status' %}" class="btn btn-secondary">System Status</a>
+                <a href="{% url 'core:admin_background_tasks' %}" class="btn btn-info">Background Tasks</a>
+                <a href="{% url 'admin:index' %}" class="btn">Django Admin</a>
+            </div>
+        </div>
+        
+        <div class="action-card">
+            <h3>Analytics & Reporting</h3>
+            <div class="action-description">
+                View detailed analytics and generate reports.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'core:admin_analytics_dashboard' %}" class="btn">Analytics Dashboard</a>
+                <a href="{% url 'core:admin_support_tickets' %}" class="btn btn-secondary">Support Tickets</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="recent-activity">
+        <h3>Recent Activity</h3>
+        <ul class="activity-list">
+            {% for activity in recent_activities %}
+            <li class="activity-item">
+                {{ activity.message }}
+                <span class="activity-time">{{ activity.timestamp }}</span>
+            </li>
+            {% empty %}
+            <li class="activity-item">No recent activity</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %} 

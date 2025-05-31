@@ -1,0 +1,598 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Top Members{% endblock %}
+{% block content %}
+<div class="leaderboard-container">
+    <div class="leaderboard-header">
+        <h1 class="leaderboard-title">Top Members</h1>
+        <p class="leaderboard-subtitle">Members ranked by activity and contributions</p>
+    </div>
+    
+    <div class="leaderboard-content">
+        <div class="leaderboard-table-container">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th class="rank-col">Rank</th>
+                        <th class="name-col">Member</th>
+                        <th class="level-col">Level</th>
+                        <th class="xp-col">XP</th>
+                        <th class="streak-col">Streak</th>
+                        <th class="score-col">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in top_members %}
+                        <tr class="{% if user == request.user %}current-user{% endif %} {% if forloop.counter <= 3 %}top-rank-row-{{ forloop.counter }}{% endif %}">
+                            <td class="rank-col">
+                                <div class="rank-badge {% if forloop.counter <= 3 %}top-rank-{{ forloop.counter }}{% endif %}">
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-crown"></i>
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-medal"></i>
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-award"></i>
+                                    {% else %}
+                                        {{ user.rank }}
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="name-col">
+                                <a href="{% url 'core:user_profile' user.id %}" class="user-link">
+                                    <div class="user-avatar">{{ user.username|first|upper }}</div>
+                                    <div class="user-info">
+                                        <span class="user-name">{{ user.username }}</span>
+                                        {% if forloop.counter <= 3 %}
+                                            <span class="user-badge">
+                                                {% if forloop.counter == 1 %}
+                                                    Champion
+                                                {% elif forloop.counter == 2 %}
+                                                    Silver Elite
+                                                {% elif forloop.counter == 3 %}
+                                                    Bronze Star
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </td>
+                            <td class="level-col">
+                                <div class="level-badge">{{ user.level }}</div>
+                            </td>
+                            <td class="xp-col">
+                                <div class="xp-display">
+                                    <i class="fas fa-bolt xp-icon"></i>
+                                    <span>{{ user.xp }}</span>
+                                </div>
+                            </td>
+                            <td class="streak-col">
+                                <div class="streak-display">
+                                    <i class="fas fa-fire streak-icon"></i>
+                                    <span class="streak-count">{{ user.streak }}</span>
+                                </div>
+                            </td>
+                            <td class="score-col">
+                                <div class="score-display">{{ user.activity_score }}</div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <div class="empty-state-content">
+                                    <i class="fas fa-users empty-icon"></i>
+                                    <p>No members found</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .leaderboard-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 25px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .leaderboard-header {
+        margin-bottom: 30px;
+        text-align: center;
+        position: relative;
+        width: 100%;
+    }
+    
+    .leaderboard-title {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        color: #2d3436;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .leaderboard-subtitle {
+        color: #636e72;
+        font-size: 18px;
+        font-weight: 500;
+    }
+    
+    .leaderboard-content {
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        overflow: hidden;
+        width: fit-content;
+        max-width: 100%;
+        transition: box-shadow 0.3s ease;
+        margin: 0 auto;
+    }
+    
+    .leaderboard-content:hover {
+        box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+    }
+    
+    .leaderboard-table-container {
+        overflow-x: auto;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #a29bfe #f5f6fa;
+        max-width: 100%;
+    }
+    
+    .leaderboard-table-container::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .leaderboard-table-container::-webkit-scrollbar-track {
+        background: #f5f6fa;
+        border-radius: 4px;
+    }
+    
+    .leaderboard-table-container::-webkit-scrollbar-thumb {
+        background: #a29bfe;
+        border-radius: 4px;
+    }
+    
+    .leaderboard-table {
+        width: auto;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 18px 15px;
+        text-align: center;
+        border-bottom: 1px solid #f0f2f5;
+        vertical-align: middle;
+    }
+    
+    .leaderboard-table th {
+        background-color: #f8f9fc;
+        font-weight: 600;
+        color: #4a4a4a;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 1px;
+        padding: 20px 15px;
+        box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+        transition: background-color 0.3s ease;
+    }
+    
+    .leaderboard-table th:hover {
+        background-color: #f0f2f8;
+    }
+    
+    .leaderboard-table tbody tr {
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    
+    .leaderboard-table tbody tr:hover {
+        background-color: #f8f9fc;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        z-index: 5;
+        position: relative;
+    }
+    
+    .leaderboard-table tr.current-user {
+        background-color: rgba(108, 92, 231, 0.08);
+    }
+    
+    .leaderboard-table tr.current-user:hover {
+        background-color: rgba(108, 92, 231, 0.12);
+    }
+    
+    .top-rank-row-1 {
+        background-color: rgba(255, 193, 7, 0.05);
+    }
+    
+    .top-rank-row-2 {
+        background-color: rgba(176, 176, 176, 0.05);
+    }
+    
+    .top-rank-row-3 {
+        background-color: rgba(184, 115, 51, 0.05);
+    }
+    
+    /* Column widths */
+    .rank-col {
+        width: 12%;
+    }
+    
+    .name-col {
+        width: 38%;
+        text-align: left;
+    }
+    
+    .level-col {
+        width: 12%;
+    }
+    
+    .xp-col {
+        width: 12%;
+    }
+    
+    .streak-col {
+        width: 12%;
+    }
+    
+    .score-col {
+        width: 14%;
+    }
+    
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f0f2f5;
+        color: #2d3436;
+        font-weight: 700;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    tr:hover .rank-badge {
+        transform: scale(1.1);
+    }
+    
+    .top-rank-1 {
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        color: #fff;
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        font-size: 18px;
+    }
+    
+    .top-rank-2 {
+        background: linear-gradient(135deg, #E0E0E0 0%, #B0B0B0 100%);
+        color: #fff;
+        box-shadow: 0 5px 15px rgba(176, 176, 176, 0.4);
+        font-size: 16px;
+    }
+    
+    .top-rank-3 {
+        background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);
+        color: #fff;
+        box-shadow: 0 5px 15px rgba(184, 115, 51, 0.4);
+        font-size: 16px;
+    }
+    
+    .user-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s ease;
+        padding: 5px;
+        border-radius: 8px;
+    }
+    
+    .user-link:hover {
+        transform: translateX(5px);
+    }
+    
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 600;
+        flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+        border: 2px solid white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    tr:hover .user-avatar {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+    }
+    
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .user-name {
+        font-weight: 600;
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+        color: #2d3436;
+    }
+    
+    .user-badge {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+        margin-top: 4px;
+        display: inline-block;
+    }
+    
+    tr.top-rank-row-1 .user-badge {
+        background: rgba(255, 193, 7, 0.15);
+        color: #b78500;
+    }
+    
+    tr.top-rank-row-2 .user-badge {
+        background: rgba(176, 176, 176, 0.15);
+        color: #707070;
+    }
+    
+    tr.top-rank-row-3 .user-badge {
+        background: rgba(184, 115, 51, 0.15);
+        color: #8a5624;
+    }
+    
+    .level-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        box-shadow: 0 3px 8px rgba(108, 92, 231, 0.3);
+    }
+    
+    .xp-display, .streak-display, .score-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .xp-icon {
+        color: #3498db;
+    }
+    
+    .streak-icon {
+        color: #e74c3c;
+    }
+    
+    .score-display {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2d3436;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #636e72;
+    }
+    
+    .empty-state-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .empty-icon {
+        font-size: 36px;
+        color: #dfe6e9;
+        opacity: 0.7;
+    }
+    
+    /* Tablet and Mobile Styles */
+    @media (max-width: 992px) {
+        .leaderboard-container {
+            padding: 20px 15px;
+            width: 100%;
+        }
+        
+        .leaderboard-content {
+            width: 100%;
+        }
+        
+        .leaderboard-title {
+            font-size: 32px;
+        }
+        
+        .leaderboard-subtitle {
+            font-size: 16px;
+        }
+        
+        .leaderboard-table th, 
+        .leaderboard-table td {
+            padding: 15px 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+        
+        .rank-badge {
+            width: 36px;
+            height: 36px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .leaderboard-container {
+            padding: 15px 10px;
+            width: 100%;
+        }
+        
+        .leaderboard-header {
+            margin-bottom: 20px;
+        }
+        
+        .leaderboard-title {
+            font-size: 28px;
+        }
+        
+        .leaderboard-subtitle {
+            font-size: 14px;
+        }
+        
+        .leaderboard-content {
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        
+        .leaderboard-table {
+            min-width: 550px;
+            width: 100%;
+            margin: 0;
+        }
+        
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 12px 8px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 14px;
+        }
+        
+        .user-name {
+            max-width: 150px;
+            font-size: 14px;
+        }
+        
+        .user-badge {
+            font-size: 10px;
+            padding: 1px 6px;
+        }
+        
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+        }
+        
+        .level-badge {
+            min-width: 30px;
+            height: 30px;
+            font-size: 14px;
+        }
+        
+        .xp-display, .streak-display, .score-display {
+            font-size: 14px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .leaderboard-container {
+            padding: 10px;
+        }
+        
+        .leaderboard-title {
+            font-size: 24px;
+        }
+        
+        .leaderboard-subtitle {
+            font-size: 13px;
+        }
+        
+        .leaderboard-table {
+            min-width: 480px;
+            width: 100%;
+        }
+        
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 10px 6px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 13px;
+            border-width: 1px;
+        }
+        
+        .user-name {
+            max-width: 120px;
+            font-size: 13px;
+        }
+        
+        .rank-badge {
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
+        
+        .level-badge {
+            min-width: 26px;
+            height: 26px;
+            font-size: 12px;
+            padding: 0 6px;
+        }
+        
+        .xp-display, .streak-display, .score-display {
+            font-size: 12px;
+            gap: 4px;
+        }
+        
+        .xp-icon, .streak-icon {
+            font-size: 10px;
+        }
+    }
+</style>
+{% endblock %} 

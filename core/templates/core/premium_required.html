@@ -1,0 +1,285 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Premium Required - Desiq{% endblock %}
+
+{% block content %}
+<div class="premium-container">
+    <div class="premium-content">
+        <div class="premium-header">
+            <h1>Premium Access Required</h1>
+            <p class="subtitle">This mentor is only available to premium users</p>
+        </div>
+
+        <div class="mentor-preview">
+            <div class="mentor-image">
+                {% if mentor.image %}
+                    <img src="{{ mentor.get_image_url }}" alt="{{ mentor.name }}">
+                {% else %}
+                    <img src="{% static 'img/avatar.png' %}" alt="{{ mentor.name }}">
+                {% endif %}
+            </div>
+            <div class="mentor-info">
+                <h3>{{ mentor.name }}</h3>
+                <div class="mentor-expertise">{{ mentor.expertise }}</div>
+                <p class="mentor-description">{{ mentor.description|truncatechars:120 }}</p>
+                <div class="premium-badge">Premium</div>
+            </div>
+        </div>
+
+        <div class="premium-benefits">
+            <h2>Premium Benefits</h2>
+            <ul>
+                <li>Access to all premium mentors</li>
+                <li>20 messages per day with each mentor (instead of 5)</li>
+                <li>3 daily challenges (instead of 1)</li>
+                <li>3 scenario generations per day (instead of 1)</li>
+                <li>Priority support</li>
+            </ul>
+        </div>
+
+        <div class="premium-cta">
+            <a href="#" class="btn-upgrade">Upgrade to Premium</a>
+            <a href="{% url 'core:mentor_list' mentor.type %}" class="btn-back">Back to Mentors</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .premium-container {
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(
+            245deg,
+            rgba(255, 255, 255, 1) 8%,
+            rgba(255, 239, 246, 1) 40%,
+            rgba(234, 218, 242, 1) 67%,
+            rgba(210, 182, 227, 1) 82%
+        );
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+    }
+
+    .premium-content {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 34px;
+        padding: 40px;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .premium-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .premium-header h1 {
+        font-size: 36px;
+        font-weight: 600;
+        margin: 10px 0;
+        color: #1b309a;
+    }
+
+    .subtitle {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .mentor-preview {
+        display: flex;
+        align-items: center;
+        background-color: #ffffff;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 2px solid #ffc107;
+        position: relative;
+    }
+
+    .mentor-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+        border: 3px solid #e9f0ff;
+        flex-shrink: 0;
+    }
+
+    .mentor-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .mentor-info {
+        flex-grow: 1;
+    }
+
+    .mentor-info h3 {
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: #1b309a;
+    }
+
+    .mentor-expertise {
+        font-size: 14px;
+        font-weight: 500;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .mentor-description {
+        font-size: 13px;
+        line-height: 1.4;
+        margin-bottom: 10px;
+    }
+
+    .premium-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: #ffc107;
+        color: #333;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    .premium-benefits {
+        margin-bottom: 30px;
+    }
+
+    .premium-benefits h2 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 15px;
+        color: #1b309a;
+    }
+
+    .premium-benefits ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .premium-benefits li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .premium-benefits li:before {
+        content: "✓";
+        color: #1b309a;
+        position: absolute;
+        left: 5px;
+        font-weight: bold;
+    }
+
+    .premium-cta {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .btn-upgrade {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #ffc107;
+        border-radius: 20.5px;
+        color: #333;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    .btn-upgrade:hover {
+        background-color: #ffb300;
+        transform: translateY(-2px);
+    }
+
+    .btn-back {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #1b309a;
+        border-radius: 20.5px;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background-color: #142270;
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+        border: 1px solid #ffecb5;
+    }
+
+    .alert-error, .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+    }
+
+    @media (max-width: 768px) {
+        .premium-content {
+            padding: 20px;
+        }
+
+        .premium-cta {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mentor-preview {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .mentor-image {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+
+        .premium-badge {
+            position: static;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    }
+</style>
+{% endblock %} 

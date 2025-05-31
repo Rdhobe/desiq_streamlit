@@ -1,0 +1,673 @@
+{% extends 'core/base_no_login.html' %}
+{% load static %}
+
+{% block title %}Community - DesiQ{% endblock %}
+
+{% block content %}
+<div class="page-container community-page">
+  <div class="page-header">
+    <h1>Community</h1>
+    <p>Join our thriving community of decision-makers</p>
+  </div>
+
+  <div class="community-content">
+    <div class="community-features">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <h3>Real-time Discussions</h3>
+        <p>Engage in lively discussions with fellow users about decision-making strategies, challenges, and success stories.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h3>Top Members</h3>
+        <p>Learn from our most active and experienced members who have mastered the art of decision-making.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-share-alt"></i>
+        </div>
+        <h3>Share Your Progress</h3>
+        <p>Share your decision scenarios and receive valuable feedback from a supportive community.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <h3>Collaborative Learning</h3>
+        <p>Learn from others' experiences and gain diverse perspectives to improve your decision-making process.</p>
+      </div>
+    </div>
+
+    <div class="community-preview">
+      <h2>Join the Conversation</h2>
+      <div class="preview-container">
+        <div class="chat-preview">
+          <div class="message-item message-other">
+            <div class="message-avatar">J</div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-sender">JaneDoe</span>
+                <span class="message-time">10:45 AM</span>
+              </div>
+              <div class="message-text">
+                Just completed a challenging career decision scenario and scored 85% on rationality!
+              </div>
+            </div>
+          </div>
+          <div class="message-item message-other">
+            <div class="message-avatar">M</div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-sender">MarkSmith</span>
+                <span class="message-time">10:47 AM</span>
+              </div>
+              <div class="message-text">
+                That's impressive! Which of the AI mentors have you been working with?
+              </div>
+            </div>
+          </div>
+          <div class="message-item message-other">
+            <div class="message-avatar">J</div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-sender">JaneDoe</span>
+                <span class="message-time">10:49 AM</span>
+              </div>
+              <div class="message-text">
+                The Career Coach mentor has been incredibly helpful. Got some insights I hadn't considered before.
+              </div>
+            </div>
+          </div>
+          <div class="message-blur-overlay">
+            <div class="message-blur-content">
+              <h3>Want to join the conversation?</h3>
+              <p>Create an account to access our community and start improving your decision-making skills today.</p>
+              <div class="action-buttons">
+                <a href="{% url 'core:register' %}" class="btn btn-primary">Sign Up Free</a>
+                <a href="{% url 'core:login' %}" class="btn btn-secondary">Login</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-members-preview">
+      <h2>Our Top Decision Makers</h2>
+      <div class="members-list">
+        <div class="member-item">
+          <div class="member-rank">1</div>
+          <div class="member-info">
+            <h3 class="member-name">RationalThinker</h3>
+            <div class="member-stats">
+              <span class="member-level">Level 28</span>
+              <span class="member-badge"><i class="fas fa-award"></i> Master Strategist</span>
+            </div>
+          </div>
+        </div>
+        <div class="member-item">
+          <div class="member-rank">2</div>
+          <div class="member-info">
+            <h3 class="member-name">DecisionPro</h3>
+            <div class="member-stats">
+              <span class="member-level">Level 25</span>
+              <span class="member-badge"><i class="fas fa-star"></i> Elite Problem Solver</span>
+            </div>
+          </div>
+        </div>
+        <div class="member-item">
+          <div class="member-rank">3</div>
+          <div class="member-info">
+            <h3 class="member-name">ClearMinded</h3>
+            <div class="member-stats">
+              <span class="member-level">Level 23</span>
+              <span class="member-badge"><i class="fas fa-brain"></i> Analytical Expert</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="member-blur-overlay">
+        <div class="member-blur-content">
+          <h3>Meet the Community</h3>
+          <p>Join now to connect with top decision makers and learn from their experiences.</p>
+          <a href="{% url 'core:register' %}" class="btn btn-primary">Get Started</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonials">
+      <h2>What Our Community Members Say</h2>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>"Being part of the DesiQ community has transformed how I approach decisions. The feedback I receive is invaluable."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">A</div>
+            <div class="author-info">
+              <h4>Alex Johnson</h4>
+              <p>Member since 2022</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>"I've learned more from community discussions than any book on decision-making. The diverse perspectives are eye-opening."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">S</div>
+            <div class="author-info">
+              <h4>Sarah Williams</h4>
+              <p>Member since 2023</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>"The support from fellow members helped me through some tough career decisions. This community is truly special."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">M</div>
+            <div class="author-info">
+              <h4>Michael Chen</h4>
+              <p>Member since 2022</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <h2>Ready to Join Our Community?</h2>
+      <p>Create your free account today and start connecting with decision-makers from around the world.</p>
+      <div class="cta-buttons">
+        <a href="{% url 'core:register' %}" class="btn btn-primary">Sign Up Free</a>
+        <a href="{% url 'core:login' %}" class="btn btn-secondary">Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 20px;
+  }
+  
+  .page-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  
+  .page-header h1 {
+    font-size: 2.5rem;
+    color: #1b309a;
+    margin-bottom: 10px;
+  }
+  
+  .page-header p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .community-content {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+  }
+  
+  .community-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+  }
+  
+  .feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    text-align: center;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+  
+  .feature-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, rgba(255, 239, 246, 0.8), rgba(234, 218, 242, 0.8));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.8rem;
+    color: #1b309a;
+  }
+  
+  .feature-card h3 {
+    color: #1b309a;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  
+  .feature-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .community-preview, .top-members-preview {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: relative;
+  }
+  
+  .community-preview h2, .top-members-preview h2, .testimonials h2 {
+    color: #1b309a;
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  
+  .preview-container {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    max-height: 400px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .chat-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .message-item {
+    display: flex;
+    gap: 15px;
+    max-width: 80%;
+  }
+  
+  .message-other {
+    align-self: flex-start;
+  }
+  
+  .message-avatar {
+    width: 40px;
+    height: 40px;
+    background: #1b309a;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .message-content {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .message-sender {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .message-time {
+    font-size: 0.8rem;
+    color: #999;
+  }
+  
+  .message-text {
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  .message-blur-overlay, .member-blur-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .message-blur-content, .member-blur-content {
+    text-align: center;
+    background: rgba(255,255,255,0.9);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 400px;
+  }
+  
+  .message-blur-content h3, .member-blur-content h3 {
+    color: #1b309a;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+  }
+  
+  .message-blur-content p, .member-blur-content p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+  }
+  
+  .members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .member-item {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    transition: transform 0.3s ease;
+  }
+  
+  .member-item:hover {
+    transform: scale(1.02);
+  }
+  
+  .member-rank {
+    width: 30px;
+    height: 30px;
+    background: #1b309a;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 15px;
+  }
+  
+  .member-info {
+    flex: 1;
+  }
+  
+  .member-name {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 1.1rem;
+  }
+  
+  .member-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+  }
+  
+  .member-level {
+    color: #1b309a;
+    font-weight: bold;
+  }
+  
+  .member-badge {
+    background: linear-gradient(135deg, rgba(255, 239, 246, 0.8), rgba(234, 218, 242, 0.8));
+    color: #1b309a;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+  }
+  
+  .testimonials {
+    padding: 40px 0;
+  }
+  
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+  }
+  
+  .testimonial-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .testimonial-content {
+    margin-bottom: 20px;
+  }
+  
+  .testimonial-content p {
+    color: #555;
+    line-height: 1.7;
+    font-style: italic;
+    position: relative;
+  }
+  
+  .testimonial-content p::before, .testimonial-content p::after {
+    content: '"';
+    color: #1b309a;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .author-avatar {
+    width: 40px;
+    height: 40px;
+    background: #1b309a;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .author-info h4 {
+    margin: 0;
+    color: #333;
+    font-size: 1rem;
+  }
+  
+  .author-info p {
+    margin: 5px 0 0;
+    color: #999;
+    font-size: 0.8rem;
+  }
+  
+  .cta-section {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255, 239, 246, 0.8), rgba(234, 218, 242, 0.8));
+    padding: 50px 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+  }
+  
+  .cta-section h2 {
+    color: #1b309a;
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  
+  .cta-section p {
+    color: #555;
+    margin-bottom: 30px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary {
+    background-color: #1b309a;
+    color: white;
+    box-shadow: 0 5px 15px rgba(27, 48, 154, 0.2);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(27, 48, 154, 0.3);
+  }
+  
+  .btn-secondary {
+    background-color: white;
+    color: #1b309a;
+    border: 2px solid #1b309a;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #f5f7ff;
+    transform: translateY(-2px);
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 991px) {
+    .page-header h1 {
+      font-size: 2.2rem;
+    }
+    
+    .community-features {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .testimonial-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .page-container {
+      padding: 30px 15px;
+    }
+    
+    .page-header {
+      margin-bottom: 30px;
+    }
+    
+    .page-header h1 {
+      font-size: 2rem;
+    }
+    
+    .community-features {
+      grid-template-columns: 1fr;
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+    }
+    
+    .testimonial-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons {
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .page-header h1 {
+      font-size: 1.8rem;
+    }
+    
+    .feature-card, .testimonial-card, .community-preview, .top-members-preview {
+      padding: 20px;
+    }
+    
+    .message-blur-content, .member-blur-content {
+      padding: 15px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the homepage URL
+    const homeUrl = "{% url 'core:home' %}";
+    
+    // Ensure proper navigation in Community page
+    const linkElements = document.querySelectorAll(`a[href^="${homeUrl}#"]`);
+    
+    linkElements.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // When clicking home.html#features links, let normal navigation happen
+        // This ensures proper loading of the home page first before scrolling to the section
+        // Don't trigger mobile menu on desktop
+        if (window.innerWidth >= 992) {
+          // Let default navigation happen - no preventDefault
+          return true;
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} 

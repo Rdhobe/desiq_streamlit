@@ -1,0 +1,498 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Desiq - Smart Mentors{% endblock %}
+
+{% block content %}
+<div class="mentor-container">
+    <div class="how-it-works-container">
+        <div class="how-it-works-card">
+          <div class="card-header">
+            <h2>Meet Your Smart Mentor</h2>
+            <p class="tagline">AI-powered life coaches for every area of life</p>
+          </div>
+          
+          <div class="card-content">
+            <div class="feature-item">
+              <div class="feature-icon">🎓</div>
+              <div class="feature-text">
+                <h3>Choose your coach</h3>
+                <p>Career, Mental Health, Finance, Relationships & more</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">💬</div>
+              <div class="feature-text">
+                <h3>Human-like conversations</h3>
+                <p>Talk with specialized mentors like John the Career Coach</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">❓</div>
+              <div class="feature-text">
+                <h3>Daily Questions</h3>
+                <p><span class="highlight">Free:</span> 5/day &nbsp;|&nbsp; <span class="highlight">Premium:</span> 100/day</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">✨</div>
+              <div class="feature-text">
+                <h3>Special Coaches</h3>
+                <p>AstroCoach available for Astrology, Numerology & Vedic insights</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div class="mentor-cards">
+    <div class="mentor-row">
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/life_coach.svg' %}" alt="Life Coach">
+            </div>
+            <div class="mentor-title">Life Coach</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Helps you navigate life transitions and achieve personal goals</div>
+            <div class="mentor-button">
+               <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Life Coach" onclick="window.location.href='{% url 'core:mentor_list' 'life_coach' %}'">
+            </div>
+        </div>
+        
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/career_advisor.svg' %}" alt="Career Coach">
+            </div>
+            <div class="mentor-title">Career Coach</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Provides guidance on career development and professional growth</div>
+            <div class="mentor-button">
+                <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Career Coach" onclick="window.location.href='{% url 'core:mentor_list' 'career_coach' %}'">
+            </div>
+        </div>
+        
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/financial_advisor.svg' %}" alt="Financial Advisor">
+            </div>
+            <div class="mentor-title">Financial Advisor</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Helps with financial planning and decision-making</div>
+            <div class="mentor-button">
+               <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Financial Advisor" onclick="window.location.href='{% url 'core:mentor_list' 'financial_advisor' %}'">
+            </div>
+        </div>
+    </div>
+    
+        <div class="mentor-row">
+            <div class="mentor-card">
+                <div class="mentor-image">
+                <img src="{% static 'img/relationship_counselor.svg' %}" alt="Relationship Counselor">
+            </div>
+            <div class="mentor-title">Relationship Counselor</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Helps you navigate interpersonal relationships and communication</div>
+            <div class="mentor-button">
+                <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Relationship Counselor" onclick="window.location.href='{% url 'core:mentor_list' 'relationship_counselor' %}'">
+            </div>
+        </div>
+        
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/health_wellness.svg' %}" alt="Health & Wellness Coach">
+            </div>
+            <div class="mentor-title">Health & Wellness Coach</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Supports physical wellbeing and healthy lifestyle choices</div>
+            <div class="mentor-button">
+                <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Health & Wellness Coach" onclick="window.location.href='{% url 'core:mentor_list' 'health_wellness_coach' %}'">
+            </div>
+        </div>
+        
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/career_advisor.svg' %}" alt="Time Management Expert">
+            </div>
+            <div class="mentor-title">Time Management Expert</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Helps with productivity and time optimization</div>
+            <div class="mentor-button">
+                <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Time Management Expert" onclick="window.location.href='{% url 'core:mentor_list' 'time_management_expert' %}'">
+            </div>
+        </div>
+    </div>
+    <div class="mentor-row">
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/career_advisor.svg' %}" alt="Creative Thinking Coach">
+            </div>
+            <div class="mentor-title">Creative Thinking Coach</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Helps with innovative problem-solving and creative approaches</div>
+            <div class="mentor-button">
+                <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Creative Thinking Coach" onclick="window.location.href='{% url 'core:mentor_list' 'creative_thinking_coach' %}'">
+            </div>
+        </div>
+
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/career_advisor.svg' %}" alt="Educational Consultant">
+            </div>
+            <div class="mentor-title">Educational Consultant</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Provides guidance on educational paths and learning strategies</div>
+            <div class="mentor-button">
+                <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Educational Consultant" onclick="window.location.href='{% url 'core:mentor_list' 'educational_consultant' %}'">
+            </div>
+        </div>
+
+        <div class="mentor-card">
+            <div class="mentor-image">
+                <img src="{% static 'img/career_advisor.svg' %}" alt="Astrology Expert">
+            </div>
+            <div class="mentor-title">Astrology Expert</div>
+            <div class="mentor-quota-bar">
+                <div class="mentor-quota-text">{{is_premium}} Questions/day</div>
+            </div>
+            <div class="mentor-description">Provides insights into astrological influences and compatibility</div>
+            <div class="mentor-button">
+                <img class="mentor-icon" src="{% static 'img/Group 80.svg' %}" alt="Astrology Expert" onclick="window.location.href='{% url 'core:mentor_list' 'astrology_expert' %}'">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_css %}
+<style>
+    .mentor-cards {
+        background: linear-gradient(
+            245deg,
+            rgba(255, 255, 255, 1) 8%,
+            rgba(255, 239, 246, 1) 40%,
+            rgba(234, 218, 242, 1) 67%,
+            rgba(210, 182, 227, 1) 82%
+        );
+    }
+    
+    /* Compact How it works container styles */
+    .how-it-works-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .how-it-works-card {
+      background: linear-gradient(145deg, #ffffff, #f8f9ff);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+    
+    .card-header h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .card-content {
+      padding: 20px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    .feature-item {
+      display: flex;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .feature-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .feature-icon {
+      font-size: 24px;
+      margin-right: 15px;
+      background: linear-gradient(145deg, #f0f0f0, #ffffff);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+      flex-shrink: 0;
+    }
+    
+    .feature-text {
+      flex-grow: 1;
+    }
+    
+    .feature-text h3 {
+      margin: 0 0 5px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .feature-text p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.4;
+    }
+    
+    .card-footer {
+      padding: 15px 20px;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+    
+    .start-button {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(110, 142, 251, 0.3);
+    }
+    
+    .start-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(110, 142, 251, 0.4);
+    }
+    
+    .start-button:active {
+      transform: translateY(1px);
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 480px) {
+      .how-it-works-container {
+        padding: 10px;
+      }
+      
+      .how-it-works-card {
+        max-width: 100%;
+      }
+      
+      .card-content {
+        flex-direction: column;
+        align-items: center;  
+      }
+      
+      .feature-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .feature-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+      
+      .start-button {
+        width: 100%;
+      }
+    }
+    /* Mentor Page Styles */
+    .mentor-container {
+        width: 100%;
+        background: linear-gradient(251.62deg, #fff 7.91%, #ffeff6 39.9%, #eadaf2 66.83%, #d2b6e3 81.73%);
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .mentor-row {
+        display: flex;
+        
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .mentor-card {
+        position: relative;
+        width: 320px;
+        height: 200px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0px 0px 8.6px rgba(0, 0, 0, 0.25);
+        padding: 20px;
+        margin-bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .mentor-title {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        line-height: 121.05%;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    .mentor-quota-bar {
+        width: 90px;
+        height: 15px;
+        background-color: rgba(0, 0, 0, 0.74);
+        border-radius: 5px;
+        margin: 5px auto;
+        position: relative;
+    }
+    
+    .mentor-quota-text {
+        font-size: 10px;
+        letter-spacing: 0.01em;
+        line-height: 121.05%;
+        color: #fff;
+        text-align: center;
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+    
+    .mentor-description {
+        font-size: 14px;
+        letter-spacing: 0.01em;
+        line-height: 1.4;
+        color: #1b309a;
+        text-align: center;
+        margin-bottom: 5px;
+        padding: 0 5px;
+    }
+    
+    .mentor-button {
+        position: absolute;
+        width: 174px;
+        height: 41px;
+        background-color: #fff;
+        border-radius: 24px;
+        box-shadow: 0px 3px 11px rgba(0, 0, 0, 0.19);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        cursor: pointer;
+        z-index: 10;
+    }
+    
+    .mentor-icon {
+        width: 150px;
+        height: 25px;
+        object-fit: cover;
+        border-radius: inherit;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 1200px) {
+        .mentor-row {
+            justify-content: space-around;
+        }
+        
+        .mentor-card {
+            margin: 0 15px 60px;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .mentor-container {
+            padding: 30px;
+        }
+        
+        .mentor-row {
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .mentor-card {
+            margin: 0 0 40px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .mentor-container {
+            padding: 20px;
+        }
+        
+        .mentor-card {
+            width: 280px;
+            height: 180px;
+        }
+        
+        .mentor-title {
+            font-size: 18px;
+        }
+        
+        .mentor-description {
+            font-size: 11px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .mentor-row {
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+            margin-top: 30px;
+        }
+        
+        .mentor-card {
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 50px;
+        }
+    }
+</style>
+{% endblock %}

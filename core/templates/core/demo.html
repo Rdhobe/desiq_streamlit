@@ -1,0 +1,1463 @@
+{% extends 'core/base_no_login.html' %}
+{% load static %}
+
+{% block title %}Decision Scenario Demo | DesiQ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/demo.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<style>
+  .demo-page {
+    padding-top: 40px;
+    padding-bottom: 80px;
+    background-color: #f9fafc;
+    min-height: 100vh;
+  }
+  
+  .demo-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .demo-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #1b309a;
+  }
+  
+  .demo-header p {
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+    color: #555;
+  }
+  
+  .scenario-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  
+  .scenario-tab {
+    padding: 12px 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .scenario-tab.active {
+    background-color: #1b309a;
+    color: white;
+  }
+  
+  .scenario-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .scenario {
+    display: none;
+    padding: 30px;
+  }
+  
+  .scenario.active {
+    display: block;
+  }
+  
+  .scenario-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .scenario-icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+  }
+  
+  .scenario-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  .scenario-title h2 {
+    font-size: 1.6rem;
+    margin: 0 0 5px;
+    color: #1b309a;
+  }
+  
+  .scenario-title p {
+    font-size: 1rem;
+    margin: 0;
+    color: #666;
+  }
+  
+  .progress-tracker {
+    margin: 20px 0;
+  }
+  
+  .progress-bar {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .progress-step {
+    flex: 1;
+    position: relative;
+    padding-top: 25px;
+    text-align: center;
+  }
+  
+  .progress-step:before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  
+  .progress-step:after {
+    content: '';
+    position: absolute;
+    top: 19px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+  }
+  
+  .progress-step:first-child:after {
+    left: 50%;
+    width: 50%;
+  }
+  
+  .progress-step:last-child:after {
+    width: 50%;
+  }
+  
+  .progress-step.active:before,
+  .progress-step.completed:before {
+    background: #1b309a;
+  }
+  
+  .progress-step.active:after,
+  .progress-step.completed:after {
+    background: #1b309a;
+  }
+  
+  .progress-step-label {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .progress-step.active .progress-step-label {
+    color: #1b309a;
+    font-weight: 600;
+  }
+  
+  .question-content {
+    padding: 20px 0;
+  }
+  
+  .scenario-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .scenario-question {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 20px 0;
+    color: #333;
+  }
+  
+  .option-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .option-item:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .option-item.selected {
+    border-color: #1b309a;
+    background-color: rgba(27, 48, 154, 0.05);
+  }
+  
+  .option-item input {
+    margin-right: 10px;
+  }
+  
+  .scenario-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .results-container {
+    padding: 20px 0;
+  }
+  
+  .results-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .results-header h2 {
+    color: #1b309a;
+  }
+  
+  .results-summary {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 30px;
+  }
+  
+  .metric {
+    margin-bottom: 15px;
+  }
+  
+  .metric-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .metric-name {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .metric-value {
+    font-weight: 600;
+    color: #1b309a;
+  }
+  
+  .metric-bar {
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .metric-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1b309a, #7055c6);
+    border-radius: 5px;
+    width: 0%;
+    transition: width 1s ease-in-out;
+  }
+  
+  .results-details {
+    margin-top: 30px;
+  }
+  
+  .results-section {
+    margin-bottom: 30px;
+  }
+  
+  .results-section h3 {
+    color: #1b309a;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+  }
+  
+  .mentor-feedback {
+    display: flex;
+    background-color: rgba(27, 48, 154, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  
+  .mentor-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+    flex-shrink: 0;
+  }
+  
+  .mentor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .mentor-message {
+    flex: 1;
+  }
+  
+  .mentor-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #1b309a;
+  }
+  
+  .call-to-action {
+    text-align: center;
+    margin: 40px 0 20px;
+  }
+  
+  .call-to-action .btn {
+    margin: 0 10px;
+  }
+  
+  .bias-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .bias-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #1b309a;
+  }
+  
+  .bias-description {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
+  .strength-card {
+    background-color: #e9f7ef;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .improvement-card {
+    background-color: #fdf2e9;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .recommendation-card {
+    display: flex;
+    align-items: flex-start;
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .recommendation-icon {
+    margin-right: 15px;
+    color: #1b309a;
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .scenario-container {
+      margin: 0 20px;
+    }
+    
+    .scenario {
+      padding: 20px;
+    }
+    
+    .scenario-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .scenario-actions .btn {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="demo-page">
+  <div class="container">
+    <div class="demo-header">
+      <h1>DesiQ Decision Scenario Demo</h1>
+      <p>Experience how our AI-powered decision assistant helps you make better choices. Try these demo scenarios without creating an account.</p>
+    </div>
+    
+    <div class="scenario-tabs">
+      <div class="scenario-tab active" data-scenario="career">Career</div>
+      <div class="scenario-tab" data-scenario="financial">Financial</div>
+      <div class="scenario-tab" data-scenario="relationship">Relationship</div>
+    </div>
+    
+    <!-- Career Scenario -->
+    <div class="scenario-container">
+      <div id="career-scenario" class="scenario active">
+        <div class="scenario-header">
+          <div class="scenario-icon">
+            <img src="{% static 'img/career-choice 1.svg' %}" alt="Career Decision">
+          </div>
+          <div class="scenario-title">
+            <h2>Career Crossroads</h2>
+            <p>Navigate a challenging career decision with multiple factors to consider</p>
+          </div>
+        </div>
+        
+        <div class="progress-tracker">
+          <ul class="progress-bar">
+            <li class="progress-step active" data-step="1">
+              <span class="progress-step-label">Background</span>
+            </li>
+            <li class="progress-step" data-step="2">
+              <span class="progress-step-label">Question 1</span>
+            </li>
+            <li class="progress-step" data-step="3">
+              <span class="progress-step-label">Question 2</span>
+            </li>
+            <li class="progress-step" data-step="4">
+              <span class="progress-step-label">Question 3</span>
+            </li>
+            <li class="progress-step" data-step="5">
+              <span class="progress-step-label">Results</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Career Step 1: Background -->
+        <div class="question-content active" id="career-step-1">
+          <div class="scenario-description">
+            <p>You're a mid-level marketing specialist with 5 years of experience. After an intensive job search, you've received two compelling offers:</p>
+            
+            <p><strong>Offer A: Marketing Manager at EstablishedCorp</strong><br>
+            A large, stable company with 500+ employees and 20+ years in the market. They offer a competitive salary that's 20% higher than your current one, standard benefits, and a clear promotion path. The role involves managing a team of 3 people and handling traditional marketing campaigns. Your potential boss seems professional but somewhat rigid.</p>
+            
+            <p><strong>Offer B: Head of Marketing at InnovateStartup</strong><br>
+            A promising startup with 30 employees that has secured Series A funding. They offer a salary comparable to your current one but with equity options. The role would put you in charge of all marketing efforts, reporting directly to the CEO, who is charismatic and values creative thinking. The company culture seems dynamic but sometimes chaotic.</p>
+            
+            <p>You need to make a decision within the next 3 days.</p>
+          </div>
+          
+          <div class="scenario-actions">
+            <div></div> <!-- Empty div for spacing -->
+            <button class="btn btn-primary next-btn" data-next="2">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Career Step 2: Question 1 -->
+        <div class="question-content" id="career-step-2" style="display: none;">
+          <div class="scenario-question">
+            Which factors are most important to you in making this decision? (Choose up to 2)
+          </div>
+          
+          <div class="option-group" data-max-select="2">
+            <div class="option-item">
+              <input type="checkbox" id="career-q1-opt1" name="career-q1" value="financial">
+              <label for="career-q1-opt1">Financial security and stability</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="career-q1-opt2" name="career-q1" value="growth">
+              <label for="career-q1-opt2">Professional growth and learning opportunities</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="career-q1-opt3" name="career-q1" value="autonomy">
+              <label for="career-q1-opt3">Autonomy and creative freedom</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="career-q1-opt4" name="career-q1" value="work-life">
+              <label for="career-q1-opt4">Work-life balance and predictable hours</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="1">Back</button>
+            <button class="btn btn-primary next-btn" data-next="3">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Career Step 3: Question 2 -->
+        <div class="question-content" id="career-step-3" style="display: none;">
+          <div class="scenario-question">
+            What do you see as the biggest risk in this decision?
+          </div>
+          
+          <div class="option-group">
+            <div class="option-item">
+              <input type="radio" id="career-q2-opt1" name="career-q2" value="stability">
+              <label for="career-q2-opt1">Giving up stability for an uncertain opportunity</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="career-q2-opt2" name="career-q2" value="growth-ceiling">
+              <label for="career-q2-opt2">Hitting a growth ceiling at the established company</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="career-q2-opt3" name="career-q2" value="startup-fail">
+              <label for="career-q2-opt3">The startup failing within the next few years</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="career-q2-opt4" name="career-q2" value="wrong-fit">
+              <label for="career-q2-opt4">Choosing a company culture that doesn't fit your work style</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="2">Back</button>
+            <button class="btn btn-primary next-btn" data-next="4">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Career Step 4: Question 3 -->
+        <div class="question-content" id="career-step-4" style="display: none;">
+          <div class="scenario-question">
+            What action will you take?
+          </div>
+          
+          <div class="option-group">
+            <div class="option-item">
+              <input type="radio" id="career-q3-opt1" name="career-q3" value="established">
+              <label for="career-q3-opt1">Accept the offer from EstablishedCorp for stability and higher pay</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="career-q3-opt2" name="career-q3" value="startup">
+              <label for="career-q3-opt2">Accept the offer from InnovateStartup for growth potential and autonomy</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="career-q3-opt3" name="career-q3" value="negotiate">
+              <label for="career-q3-opt3">Try to negotiate better terms with your preferred company before deciding</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="career-q3-opt4" name="career-q3" value="more-info">
+              <label for="career-q3-opt4">Request more information from both companies about specific concerns</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="3">Back</button>
+            <button class="btn btn-primary" id="analyze-career">Analyze My Decision</button>
+          </div>
+        </div>
+        
+        <!-- Career Results -->
+        <div class="results-container" id="career-results" style="display: none;">
+          <div class="results-header">
+            <h2>Your Decision Analysis</h2>
+            <p>Based on your responses, here's an analysis of your decision-making approach:</p>
+          </div>
+          
+          <div class="results-summary">
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Rationality</span>
+                <span class="metric-value">78%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="rationality-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Risk Assessment</span>
+                <span class="metric-value">65%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="risk-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Long-term Thinking</span>
+                <span class="metric-value">82%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="longterm-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Information Gathering</span>
+                <span class="metric-value">70%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="info-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="results-details">
+            <div class="results-section">
+              <h3>Cognitive Biases Detected</h3>
+              <div class="bias-card">
+                <div class="bias-name">Status Quo Bias</div>
+                <div class="bias-description">You may be overvaluing stability and familiar situations while undervaluing potential opportunities that involve change.</div>
+              </div>
+              <div class="bias-card">
+                <div class="bias-name">Short-term Focus</div>
+                <div class="bias-description">Your decision process appears to prioritize immediate benefits over potential long-term advantages.</div>
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Decision Strengths</h3>
+              <div class="strength-card">
+                <strong>Thorough Information Analysis</strong>: You considered multiple factors before making your choice.
+              </div>
+              <div class="strength-card">
+                <strong>Balanced Risk Assessment</strong>: You showed awareness of the risks involved with each option.
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Areas for Improvement</h3>
+              <div class="improvement-card">
+                <strong>Expand Creative Options</strong>: Consider generating more alternative solutions beyond the initial choices presented.
+              </div>
+              <div class="improvement-card">
+                <strong>Deeper Stakeholder Analysis</strong>: Consider how your decision affects all parties involved, including future team members.
+              </div>
+            </div>
+            
+            <div class="mentor-feedback">
+              <div class="mentor-avatar">
+                <img src="{% static 'img/career_advisor.svg' %}" alt="Career Mentor">
+              </div>
+              <div class="mentor-message">
+                <div class="mentor-name">Career Mentor</div>
+                <p>"Your approach shows a thoughtful balance between immediate concerns and future prospects. To strengthen your decision further, I'd recommend exploring how each opportunity aligns with your 5-year career vision. Remember that the 'right' choice depends on your individual values and goals—there's no one-size-fits-all answer to career decisions."</p>
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Recommended Actions</h3>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">📝</div>
+                <div>Create a detailed pros and cons list for each option, assigning weight to each factor based on your personal values.</div>
+              </div>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">🔍</div>
+                <div>Research the growth trajectory of both companies over the past 3 years to better assess future opportunities.</div>
+              </div>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">👥</div>
+                <div>Have informal conversations with potential team members at both companies to assess cultural fit.</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="call-to-action">
+            <button class="btn btn-secondary restart-btn">Try Another Scenario</button>
+            <a href="{% url 'core:register' %}" class="btn btn-primary">Sign Up For Full Access</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Financial Scenario (Hidden initially) -->
+      <div id="financial-scenario" class="scenario">
+        <div class="scenario-header">
+          <div class="scenario-icon">
+            <img src="{% static 'img/financial-icon.svg' %}" alt="Financial Decision" onerror="this.src='{% static 'img/Chart_light.svg' %}'">
+          </div>
+          <div class="scenario-title">
+            <h2>Investment Dilemma</h2>
+            <p>Decide how to allocate your savings for optimal financial outcomes</p>
+          </div>
+        </div>
+        
+        <div class="progress-tracker">
+          <ul class="progress-bar">
+            <li class="progress-step active" data-step="1">
+              <span class="progress-step-label">Background</span>
+            </li>
+            <li class="progress-step" data-step="2">
+              <span class="progress-step-label">Question 1</span>
+            </li>
+            <li class="progress-step" data-step="3">
+              <span class="progress-step-label">Question 2</span>
+            </li>
+            <li class="progress-step" data-step="4">
+              <span class="progress-step-label">Question 3</span>
+            </li>
+            <li class="progress-step" data-step="5">
+              <span class="progress-step-label">Results</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Financial Step 1: Background -->
+        <div class="question-content active" id="financial-step-1">
+          <div class="scenario-description">
+            <p>You've managed to save $30,000 and are deciding how to invest it. You have several options:</p>
+            
+            <p><strong>Option A: Real Estate Investment</strong><br>
+            Join a real estate investment group that pools money to purchase rental properties. Expected return: 8-12% annually, but your money will be locked for at least 5 years.</p>
+            
+            <p><strong>Option B: Index Fund Portfolio</strong><br>
+            Invest in a diversified mix of low-cost index funds. Historical returns average 7% annually with moderate volatility and good liquidity.</p>
+            
+            <p><strong>Option C: High-Interest Savings</strong><br>
+            Place the money in a high-yield savings account offering 3% annual interest with complete liquidity and virtually no risk.</p>
+            
+            <p><strong>Option D: Small Business Investment</strong><br>
+            Invest in your friend's promising bakery business. They're projecting 20% ROI annually, but it's a new venture with significant risk.</p>
+            
+            <p>Your financial goals include buying a house within 3-5 years, but you also want to grow your wealth long-term.</p>
+          </div>
+          
+          <div class="scenario-actions">
+            <div></div> <!-- Empty div for spacing -->
+            <button class="btn btn-primary next-btn" data-next="2">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Financial Step 2: Question 1 -->
+        <div class="question-content" id="financial-step-2" style="display: none;">
+          <div class="scenario-question">
+            Which factors are most important to you in this decision? (Choose up to 2)
+          </div>
+          
+          <div class="option-group" data-max-select="2">
+            <div class="option-item">
+              <input type="checkbox" id="financial-q1-opt1" name="financial-q1" value="return">
+              <label for="financial-q1-opt1">Potential return on investment</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="financial-q1-opt2" name="financial-q1" value="risk">
+              <label for="financial-q1-opt2">Risk level and capital preservation</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="financial-q1-opt3" name="financial-q1" value="liquidity">
+              <label for="financial-q1-opt3">Liquidity and access to funds</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="financial-q1-opt4" name="financial-q1" value="timeline">
+              <label for="financial-q1-opt4">Timeline for achieving financial goals</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="1">Back</button>
+            <button class="btn btn-primary next-btn" data-next="3">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Financial Step 3: Question 2 -->
+        <div class="question-content" id="financial-step-3" style="display: none;">
+          <div class="scenario-question">
+            What is your biggest concern about this investment decision?
+          </div>
+          
+          <div class="option-group">
+            <div class="option-item">
+              <input type="radio" id="financial-q2-opt1" name="financial-q2" value="loss">
+              <label for="financial-q2-opt1">Losing a significant portion of my savings</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="financial-q2-opt2" name="financial-q2" value="missed">
+              <label for="financial-q2-opt2">Missing out on higher returns</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="financial-q2-opt3" name="financial-q2" value="timeline">
+              <label for="financial-q2-opt3">Not having access to funds when needed</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="financial-q2-opt4" name="financial-q2" value="analysis">
+              <label for="financial-q2-opt4">Not having enough knowledge to make the right decision</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="2">Back</button>
+            <button class="btn btn-primary next-btn" data-next="4">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Financial Step 4: Question 3 -->
+        <div class="question-content" id="financial-step-4" style="display: none;">
+          <div class="scenario-question">
+            What will you do with your $30,000?
+          </div>
+          
+          <div class="option-group">
+            <div class="option-item">
+              <input type="radio" id="financial-q3-opt1" name="financial-q3" value="realestate">
+              <label for="financial-q3-opt1">Invest in the real estate investment group</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="financial-q3-opt2" name="financial-q3" value="index">
+              <label for="financial-q3-opt2">Invest in a diversified index fund portfolio</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="financial-q3-opt3" name="financial-q3" value="savings">
+              <label for="financial-q3-opt3">Place in a high-yield savings account</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="financial-q3-opt4" name="financial-q3" value="business">
+              <label for="financial-q3-opt4">Invest in your friend's bakery business</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="financial-q3-opt5" name="financial-q3" value="split">
+              <label for="financial-q3-opt5">Split the money across multiple investments</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="3">Back</button>
+            <button class="btn btn-primary" id="analyze-financial">Analyze My Decision</button>
+          </div>
+        </div>
+        
+        <!-- Financial Results -->
+        <div class="results-container" id="financial-results" style="display: none;">
+          <div class="results-header">
+            <h2>Your Decision Analysis</h2>
+            <p>Based on your responses, here's an analysis of your decision-making approach:</p>
+          </div>
+          
+          <div class="results-summary">
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Risk Assessment</span>
+                <span class="metric-value">76%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="financial-risk-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Goal Alignment</span>
+                <span class="metric-value">68%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="goal-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Financial Literacy</span>
+                <span class="metric-value">82%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="literacy-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Diversification</span>
+                <span class="metric-value">74%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="diversification-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="results-details">
+            <div class="results-section">
+              <h3>Cognitive Biases Detected</h3>
+              <div class="bias-card">
+                <div class="bias-name">Recency Bias</div>
+                <div class="bias-description">You may be giving too much weight to recent market performance in your decision-making.</div>
+              </div>
+              <div class="bias-card">
+                <div class="bias-name">Overconfidence</div>
+                <div class="bias-description">You might be overestimating your ability to predict investment outcomes or manage risks.</div>
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Decision Strengths</h3>
+              <div class="strength-card">
+                <strong>Risk Awareness</strong>: You've demonstrated a balanced understanding of potential risks.
+              </div>
+              <div class="strength-card">
+                <strong>Goal Orientation</strong>: Your decision seems aligned with your stated financial goals.
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Areas for Improvement</h3>
+              <div class="improvement-card">
+                <strong>Diversification Strategy</strong>: Consider a more strategic asset allocation approach.
+              </div>
+              <div class="improvement-card">
+                <strong>Time Horizon Planning</strong>: More clearly define short, medium, and long-term financial goals.
+              </div>
+            </div>
+            
+            <div class="mentor-feedback">
+              <div class="mentor-avatar">
+                <img src="{% static 'img/financial-icon.svg' %}" alt="Financial Advisor">
+              </div>
+              <div class="mentor-message">
+                <div class="mentor-name">Financial Advisor</div>
+                <p>"Your investment approach shows good attention to both opportunity and risk. For your house purchase goal within 3-5 years, consider if you might need some portion of your funds to remain highly liquid and stable. Remember that investment decisions don't have to be all-or-nothing—a diversified approach can often provide both security and growth potential."</p>
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Recommended Actions</h3>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">📝</div>
+                <div>Create a detailed timeline of your financial needs over the next 5 years.</div>
+              </div>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">🔍</div>
+                <div>Research the historical performance of each investment option through different economic cycles.</div>
+              </div>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">👥</div>
+                <div>Consider consulting a certified financial planner for personalized investment advice.</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="call-to-action">
+            <button class="btn btn-secondary restart-btn">Try Another Scenario</button>
+            <a href="{% url 'core:register' %}" class="btn btn-primary">Sign Up For Full Access</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Relationship Scenario (Hidden initially) -->
+      <div id="relationship-scenario" class="scenario">
+        <div class="scenario-header">
+          <div class="scenario-icon">
+            <img src="{% static 'img/relationship-icon.svg' %}" alt="Relationship Decision" onerror="this.src='{% static 'img/communication-icon.svg' %}'">
+          </div>
+          <div class="scenario-title">
+            <h2>Relocation Challenge</h2>
+            <p>Navigate a complex relationship decision involving career and personal life</p>
+          </div>
+        </div>
+        
+        <div class="progress-tracker">
+          <ul class="progress-bar">
+            <li class="progress-step active" data-step="1">
+              <span class="progress-step-label">Background</span>
+            </li>
+            <li class="progress-step" data-step="2">
+              <span class="progress-step-label">Question 1</span>
+            </li>
+            <li class="progress-step" data-step="3">
+              <span class="progress-step-label">Question 2</span>
+            </li>
+            <li class="progress-step" data-step="3">
+              <span class="progress-step-label">Question 3</span>
+            </li>
+            <li class="progress-step" data-step="5">
+              <span class="progress-step-label">Results</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Relationship Step 1: Background -->
+        <div class="question-content active" id="relationship-step-1">
+          <div class="scenario-description">
+            <p>You've been in a committed relationship for 2 years. Your partner has received a career-advancing job offer in another city, 500 miles away. They're excited about this opportunity, which would advance their career significantly and increase their salary by 40%.</p>
+            
+            <p>You have a stable job in your current city that you enjoy, and your close friends and family live nearby. Your employer doesn't offer remote work options for your position, so relocating would mean finding a new job.</p>
+            
+            <p>The relationship has been going well, and you've discussed marriage, though no formal commitment has been made. Your partner has asked you to move with them, stating this opportunity is too good to pass up.</p>
+            
+            <p>You have 3 weeks to make a decision.</p>
+          </div>
+          
+          <div class="scenario-actions">
+            <div></div> <!-- Empty div for spacing -->
+            <button class="btn btn-primary next-btn" data-next="2">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Relationship Step 2: Question 1 -->
+        <div class="question-content" id="relationship-step-2" style="display: none;">
+          <div class="scenario-question">
+            Which factors are most important to you in this decision? (Choose up to 2)
+          </div>
+          
+          <div class="option-group" data-max-select="2">
+            <div class="option-item">
+              <input type="checkbox" id="relationship-q1-opt1" name="relationship-q1" value="career">
+              <label for="relationship-q1-opt1">Your partner's career advancement</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="relationship-q1-opt2" name="relationship-q1" value="stability">
+              <label for="relationship-q1-opt2">Your personal career stability</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="relationship-q1-opt3" name="relationship-q1" value="relationship">
+              <label for="relationship-q1-opt3">Long-term relationship prospects</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="relationship-q1-opt4" name="relationship-q1" value="network">
+              <label for="relationship-q1-opt4">Proximity to friends and family</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="1">Back</button>
+            <button class="btn btn-primary next-btn" data-next="3">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Relationship Step 3: Question 2 -->
+        <div class="question-content" id="relationship-step-3" style="display: none;">
+          <div class="scenario-question">
+            What concerns you most about this decision?
+          </div>
+          
+          <div class="option-group">
+            <div class="option-item">
+              <input type="radio" id="relationship-q2-opt1" name="relationship-q2" value="distance">
+              <label for="relationship-q2-opt1">Long distance could strain the relationship if you don't move</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="relationship-q2-opt2" name="relationship-q2" value="sacrifice">
+              <label for="relationship-q2-opt2">Moving might feel like you're making all the sacrifices</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="relationship-q2-opt3" name="relationship-q2" value="unknown">
+              <label for="relationship-q2-opt3">Moving to a new city with no job lined up is risky</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="relationship-q2-opt4" name="relationship-q2" value="regret">
+              <label for="relationship-q2-opt4">Making the wrong choice could lead to regret or resentment</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="2">Back</button>
+            <button class="btn btn-primary next-btn" data-next="4">Continue</button>
+          </div>
+        </div>
+        
+        <!-- Relationship Step 4: Question 3 -->
+        <div class="question-content" id="relationship-step-4" style="display: none;">
+          <div class="scenario-question">
+            What will you do?
+          </div>
+          
+          <div class="option-group">
+            <div class="option-item">
+              <input type="radio" id="relationship-q3-opt1" name="relationship-q3" value="move">
+              <label for="relationship-q3-opt1">Relocate with your partner and find a new job</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="relationship-q3-opt2" name="relationship-q3" value="stay">
+              <label for="relationship-q3-opt2">Stay in your current city and try long-distance</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="relationship-q3-opt3" name="relationship-q3" value="compromise">
+              <label for="relationship-q3-opt3">Propose a compromise (like moving halfway or after a trial period)</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="relationship-q3-opt4" name="relationship-q3" value="evaluate">
+              <label for="relationship-q3-opt4">Suggest postponing the decision to evaluate more options</label>
+            </div>
+          </div>
+          
+          <div class="scenario-actions">
+            <button class="btn btn-secondary prev-btn" data-prev="3">Back</button>
+            <button class="btn btn-primary" id="analyze-relationship">Analyze My Decision</button>
+          </div>
+        </div>
+        
+        <!-- Relationship Results -->
+        <div class="results-container" id="relationship-results" style="display: none;">
+          <div class="results-header">
+            <h2>Your Decision Analysis</h2>
+            <p>Based on your responses, here's an analysis of your decision-making approach:</p>
+          </div>
+          
+          <div class="results-summary">
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Emotional Intelligence</span>
+                <span class="metric-value">85%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="emotional-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Balanced Consideration</span>
+                <span class="metric-value">72%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="balanced-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Communication</span>
+                <span class="metric-value">79%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="communication-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">
+                <span class="metric-name">Future Orientation</span>
+                <span class="metric-value">68%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-fill" id="future-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="results-details">
+            <div class="results-section">
+              <h3>Cognitive Biases Detected</h3>
+              <div class="bias-card">
+                <div class="bias-name">Present Bias</div>
+                <div class="bias-description">You may be overweighting immediate concerns over long-term considerations.</div>
+              </div>
+              <div class="bias-card">
+                <div class="bias-name">Optimism Bias</div>
+                <div class="bias-description">You might be underestimating the challenges of adapting to a new environment.</div>
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Decision Strengths</h3>
+              <div class="strength-card">
+                <strong>Relationship Prioritization</strong>: You've shown a thoughtful approach to balancing relationship needs.
+              </div>
+              <div class="strength-card">
+                <strong>Consideration of Alternatives</strong>: You've explored multiple options rather than seeing this as a binary choice.
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Areas for Improvement</h3>
+              <div class="improvement-card">
+                <strong>Risk Assessment</strong>: Consider creating more specific contingency plans for various outcomes.
+              </div>
+              <div class="improvement-card">
+                <strong>Articulating Needs</strong>: Practice clearly expressing your own needs and boundaries in the relationship.
+              </div>
+            </div>
+            
+            <div class="mentor-feedback">
+              <div class="mentor-avatar">
+                <img src="{% static 'img/relationship-icon.svg' %}" alt="Relationship Mentor">
+              </div>
+              <div class="mentor-message">
+                <div class="mentor-name">Relationship Mentor</div>
+                <p>"This decision involves balancing personal and relationship needs. While it's natural to focus on the immediate impact, I encourage you to think about how this decision reflects your shared values and long-term vision as a couple. Remember that major life transitions often require ongoing negotiation and mutual support."</p>
+              </div>
+            </div>
+            
+            <div class="results-section">
+              <h3>Recommended Actions</h3>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">📝</div>
+                <div>Have a dedicated conversation about your 5-year plan as a couple and how this move fits into it.</div>
+              </div>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">🔍</div>
+                <div>Research job opportunities in the new city before making a final decision.</div>
+              </div>
+              <div class="recommendation-card">
+                <div class="recommendation-icon">👥</div>
+                <div>Discuss how you'll maintain important relationships with friends and family if you move.</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="call-to-action">
+            <button class="btn btn-secondary restart-btn">Try Another Scenario</button>
+            <a href="{% url 'core:register' %}" class="btn btn-primary">Sign Up For Full Access</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Tab switching functionality
+  const scenarioTabs = document.querySelectorAll('.scenario-tab');
+  const scenarios = document.querySelectorAll('.scenario');
+  
+  scenarioTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and scenarios
+      scenarioTabs.forEach(t => t.classList.remove('active'));
+      scenarios.forEach(s => s.classList.remove('active'));
+      
+      // Add active class to clicked tab and corresponding scenario
+      tab.classList.add('active');
+      const scenarioId = tab.dataset.scenario + '-scenario';
+      document.getElementById(scenarioId).classList.add('active');
+      
+      // Reset progress for the selected scenario
+      resetScenario(tab.dataset.scenario);
+    });
+  });
+  
+  // Function to reset a scenario to its initial state
+  function resetScenario(scenarioType) {
+    const scenario = document.getElementById(`${scenarioType}-scenario`);
+    
+    // Hide all question contents except the first one
+    const questionContents = scenario.querySelectorAll('.question-content');
+    questionContents.forEach((content, index) => {
+      if (index === 0) {
+        content.style.display = 'block';
+      } else {
+        content.style.display = 'none';
+      }
+    });
+    
+    // Hide results container
+    const resultsContainer = scenario.querySelector('.results-container');
+    if (resultsContainer) {
+      resultsContainer.style.display = 'none';
+    }
+    
+    // Reset progress tracker
+    updateProgressTracker(scenarioType, '1');
+    
+    // Reset form selections
+    const inputs = scenario.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+    inputs.forEach(input => {
+      input.checked = false;
+      input.closest('.option-item').classList.remove('selected');
+    });
+    
+    // Reset metric fills
+    const metricFills = scenario.querySelectorAll('.metric-fill');
+    metricFills.forEach(fill => {
+      fill.style.width = '0%';
+    });
+  }
+  
+  // Question navigation (next/previous)
+  const nextButtons = document.querySelectorAll('.next-btn');
+  const prevButtons = document.querySelectorAll('.prev-btn');
+  
+  nextButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const currentStep = btn.closest('.question-content');
+      const nextStep = btn.getAttribute('data-next');
+      const scenarioId = currentStep.id.split('-step-')[0];
+      
+      // Hide current step
+      currentStep.style.display = 'none';
+      
+      // Show next step
+      document.getElementById(`${scenarioId}-step-${nextStep}`).style.display = 'block';
+      
+      // Update progress tracker
+      updateProgressTracker(scenarioId, nextStep);
+    });
+  });
+  
+  prevButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const currentStep = btn.closest('.question-content');
+      const prevStep = btn.getAttribute('data-prev');
+      const scenarioId = currentStep.id.split('-step-')[0];
+      
+      // Hide current step
+      currentStep.style.display = 'none';
+      
+      // Show previous step
+      document.getElementById(`${scenarioId}-step-${prevStep}`).style.display = 'block';
+      
+      // Update progress tracker
+      updateProgressTracker(scenarioId, prevStep);
+    });
+  });
+  
+  function updateProgressTracker(scenarioId, activeStep) {
+    const progressSteps = document.querySelector(`#${scenarioId}-scenario .progress-bar`).children;
+    
+    for (let i = 0; i < progressSteps.length; i++) {
+      const step = progressSteps[i];
+      const stepNum = step.getAttribute('data-step');
+      
+      step.classList.remove('active', 'completed');
+      
+      if (parseInt(stepNum) < parseInt(activeStep)) {
+        step.classList.add('completed');
+      } else if (stepNum === activeStep) {
+        step.classList.add('active');
+      }
+    }
+  }
+  
+  // Option selection (highlight selected options)
+  const optionItems = document.querySelectorAll('.option-item');
+  
+  optionItems.forEach(item => {
+    item.addEventListener('click', e => {
+      const input = item.querySelector('input');
+      
+      if (input.type === 'radio') {
+        // For radio buttons, remove selection from all siblings
+        const name = input.getAttribute('name');
+        document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+          radio.closest('.option-item').classList.remove('selected');
+          radio.checked = false;
+        });
+        
+        item.classList.add('selected');
+        input.checked = true;
+      } else if (input.type === 'checkbox') {
+        // For checkboxes, toggle selection
+        item.classList.toggle('selected');
+        input.checked = !input.checked;
+        
+        // Check if we need to enforce max selection
+        const optionGroup = item.closest('.option-group');
+        const maxSelect = optionGroup.getAttribute('data-max-select');
+        
+        if (maxSelect && input.checked) {
+          const checkedCount = optionGroup.querySelectorAll('input:checked').length;
+          
+          if (checkedCount > maxSelect) {
+            // Uncheck the first checked item
+            const firstChecked = optionGroup.querySelector('input:checked');
+            firstChecked.checked = false;
+            firstChecked.closest('.option-item').classList.remove('selected');
+          }
+        }
+      }
+    });
+  });
+  
+  // Career Analyze button functionality
+  document.getElementById('analyze-career').addEventListener('click', () => {
+    // Hide question content
+    document.getElementById('career-step-4').style.display = 'none';
+    
+    // Show results
+    document.getElementById('career-results').style.display = 'block';
+    
+    // Update progress tracker
+    updateProgressTracker('career', '5');
+    
+    // Generate random values between 50-100
+    const rationalityValue = Math.floor(Math.random() * 51) + 50;
+    const riskValue = Math.floor(Math.random() * 51) + 50;
+    const longtermValue = Math.floor(Math.random() * 51) + 50;
+    const infoValue = Math.floor(Math.random() * 51) + 50;
+    
+    // Update displayed percentages
+    document.querySelector('#rationality-fill').closest('.metric').querySelector('.metric-value').textContent = rationalityValue + '%';
+    document.querySelector('#risk-fill').closest('.metric').querySelector('.metric-value').textContent = riskValue + '%';
+    document.querySelector('#longterm-fill').closest('.metric').querySelector('.metric-value').textContent = longtermValue + '%';
+    document.querySelector('#info-fill').closest('.metric').querySelector('.metric-value').textContent = infoValue + '%';
+    
+    // Animate metrics
+    setTimeout(() => {
+      document.getElementById('rationality-fill').style.width = rationalityValue + '%';
+      document.getElementById('risk-fill').style.width = riskValue + '%';
+      document.getElementById('longterm-fill').style.width = longtermValue + '%';
+      document.getElementById('info-fill').style.width = infoValue + '%';
+    }, 300);
+  });
+  
+  // Relationship Analyze button functionality
+  document.getElementById('analyze-relationship').addEventListener('click', () => {
+    // Hide question content
+    document.getElementById('relationship-step-4').style.display = 'none';
+    
+    // Show results
+    document.getElementById('relationship-results').style.display = 'block';
+    
+    // Update progress tracker
+    updateProgressTracker('relationship', '5');
+    
+    // Generate random values between 50-100
+    const emotionalValue = Math.floor(Math.random() * 51) + 50;
+    const balancedValue = Math.floor(Math.random() * 51) + 50;
+    const communicationValue = Math.floor(Math.random() * 51) + 50;
+    const futureValue = Math.floor(Math.random() * 51) + 50;
+    
+    // Update displayed percentages
+    document.querySelector('#emotional-fill').closest('.metric').querySelector('.metric-value').textContent = emotionalValue + '%';
+    document.querySelector('#balanced-fill').closest('.metric').querySelector('.metric-value').textContent = balancedValue + '%';
+    document.querySelector('#communication-fill').closest('.metric').querySelector('.metric-value').textContent = communicationValue + '%';
+    document.querySelector('#future-fill').closest('.metric').querySelector('.metric-value').textContent = futureValue + '%';
+    
+    // Animate metrics
+    setTimeout(() => {
+      document.getElementById('emotional-fill').style.width = emotionalValue + '%';
+      document.getElementById('balanced-fill').style.width = balancedValue + '%';
+      document.getElementById('communication-fill').style.width = communicationValue + '%';
+      document.getElementById('future-fill').style.width = futureValue + '%';
+    }, 300);
+  });
+
+  // Financial Analyze button functionality
+  document.getElementById('analyze-financial').addEventListener('click', () => {
+    // Hide question content
+    document.getElementById('financial-step-4').style.display = 'none';
+    
+    // Show results
+    document.getElementById('financial-results').style.display = 'block';
+    
+    // Update progress tracker
+    updateProgressTracker('financial', '5');
+    
+    // Generate random values between 50-100
+    const financialRiskValue = Math.floor(Math.random() * 51) + 50;
+    const goalValue = Math.floor(Math.random() * 51) + 50;
+    const literacyValue = Math.floor(Math.random() * 51) + 50;
+    const diversificationValue = Math.floor(Math.random() * 51) + 50;
+    
+    // Update displayed percentages
+    document.querySelector('#financial-risk-fill').closest('.metric').querySelector('.metric-value').textContent = financialRiskValue + '%';
+    document.querySelector('#goal-fill').closest('.metric').querySelector('.metric-value').textContent = goalValue + '%';
+    document.querySelector('#literacy-fill').closest('.metric').querySelector('.metric-value').textContent = literacyValue + '%';
+    document.querySelector('#diversification-fill').closest('.metric').querySelector('.metric-value').textContent = diversificationValue + '%';
+    
+    // Animate metrics
+    setTimeout(() => {
+      document.getElementById('financial-risk-fill').style.width = financialRiskValue + '%';
+      document.getElementById('goal-fill').style.width = goalValue + '%';
+      document.getElementById('literacy-fill').style.width = literacyValue + '%';
+      document.getElementById('diversification-fill').style.width = diversificationValue + '%';
+    }, 300);
+  });
+
+  // Restart button functionality
+  document.querySelectorAll('.restart-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const scenarioType = btn.closest('.scenario').id.split('-')[0];
+      resetScenario(scenarioType);
+    });
+  });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,553 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - {{ profile_user.username }}'s Profile{% endblock %}
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-cover"></div>
+        <div class="profile-info">
+            <div class="profile-avatar">
+                {{ profile_user.username|first|upper }}
+            </div>
+            <div class="profile-details">
+                <h1 class="profile-name">{{ profile_user.username }}</h1>
+                <div class="profile-meta">
+                    <span class="profile-joined">Joined {{ profile_user.date_joined|date:"F Y" }}</span>
+                    {% if profile.is_premium %}
+                        <span class="profile-badge premium-badge">Premium</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if profile_user != request.user %}
+                <div class="profile-actions">
+                    <a href="{% url 'core:create_personal_chat' %}?user_id={{ profile_user.id }}" class="btn btn-primary">
+                        <i class="fas fa-comment-dots"></i> Message
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="profile-content">
+        <!-- Left Column: Stats & Info -->
+        <div class="profile-main">
+            <!-- User Stats Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-line"></i> Stats</h2>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon level-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ user_stats.level }}</span>
+                                <span class="stat-label">Level</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon xp-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ user_stats.xp }}</span>
+                                <span class="stat-label">XP</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon rank-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ user_stats.rank }}</span>
+                                <span class="stat-label">Rank</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon streak-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ user_stats.streak }}</span>
+                                <span class="stat-label">Streak</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon scenarios-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ user_stats.scenarios_completed }}</span>
+                                <span class="stat-label">Scenarios</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon score-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ user_stats.activity_score }}</span>
+                                <span class="stat-label">Score</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activities Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> Recent Activities</h2>
+                </div>
+                <div class="card-body">
+                    {% if recent_activities %}
+                        <div class="activity-list">
+                            {% for activity in recent_activities %}
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        {% if activity.activity_type == 'login' %}
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        {% elif activity.activity_type == 'post' %}
+                                            <i class="fas fa-file-alt"></i>
+                                        {% elif activity.activity_type == 'comment' %}
+                                            <i class="fas fa-comment"></i>
+                                        {% elif activity.activity_type == 'join_group' %}
+                                            <i class="fas fa-users"></i>
+                                        {% elif activity.activity_type == 'like' %}
+                                            <i class="fas fa-heart"></i>
+                                        {% elif activity.activity_type == 'message' or activity.activity_type == 'chat' %}
+                                            <i class="fas fa-comment-dots"></i>
+                                        {% elif activity.activity_type == 'scenario' %}
+                                            <i class="fas fa-tasks"></i>
+                                        {% elif activity.activity_type == 'assessment' %}
+                                            <i class="fas fa-clipboard-check"></i>
+                                        {% elif activity.activity_type == 'level_up' %}
+                                            <i class="fas fa-level-up-alt"></i>
+                                        {% elif activity.activity_type == 'support_issue' %}
+                                            <i class="fas fa-ticket-alt"></i>
+                                        {% elif activity.activity_type == 'issue_comment' %}
+                                            <i class="fas fa-comment-alt"></i>
+                                        {% else %}
+                                            <i class="fas fa-check"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            {% if activity.activity_type == 'login' %}
+                                                Logged in
+                                            {% elif activity.activity_type == 'post' %}
+                                                Created a post
+                                            {% elif activity.activity_type == 'comment' %}
+                                                Commented on a post
+                                            {% elif activity.activity_type == 'join_group' %}
+                                                Joined a group
+                                            {% elif activity.activity_type == 'like' %}
+                                                Liked a post
+                                            {% elif activity.activity_type == 'message' %}
+                                                Sent a message
+                                            {% elif activity.activity_type == 'chat' %}
+                                                Participated in a chat
+                                            {% elif activity.activity_type == 'scenario' %}
+                                                Completed a scenario
+                                            {% elif activity.activity_type == 'assessment' %}
+                                                Completed an assessment
+                                            {% elif activity.activity_type == 'level_up' %}
+                                                Reached level {{ profile.level }}
+                                            {% elif activity.activity_type == 'support_issue' %}
+                                                Raised a support issue
+                                            {% elif activity.activity_type == 'issue_comment' %}
+                                                Commented on a support issue
+                                            {% else %}
+                                                Performed an activity
+                                            {% endif %}
+                                        </div>
+                                        <span class="activity-time">{{ activity.created_at|timesince }} ago</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <p>No recent activities</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Sidebar -->
+        <div class="profile-sidebar">
+            <!-- This entire section is being removed -->
+            <!-- No need to replace with anything -->
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .profile-header {
+        position: relative;
+        margin-bottom: 30px;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .profile-cover {
+        height: 150px;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    }
+    
+    .profile-info {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        position: relative;
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: 700;
+        margin-top: -50px;
+        border: 5px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .profile-details {
+        margin-left: 20px;
+        flex: 1;
+    }
+    
+    .profile-name {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0 0 5px 0;
+        color: #2d3436;
+    }
+    
+    .profile-meta {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: #636e72;
+        font-size: 14px;
+    }
+    
+    .premium-badge {
+        background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .profile-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .profile-content {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 25px;
+    }
+    
+    .profile-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        margin-bottom: 25px;
+    }
+    
+    .card-header {
+        padding: 20px;
+        border-bottom: 1px solid #f5f6fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #2d3436;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .card-header h2 i {
+        color: #6c5ce7;
+    }
+    
+    .card-body {
+        padding: 0;
+    }
+    
+    .card-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #f5f6fa;
+        text-align: center;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background-color: #f5f6fa;
+    }
+    
+    .stat-item {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background-color: white;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+    }
+    
+    .level-icon {
+        background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+    }
+    
+    .xp-icon {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    }
+    
+    .rank-icon {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+    
+    .streak-icon {
+        background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    }
+    
+    .scenarios-icon {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    }
+    
+    .score-icon {
+        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    }
+    
+    .stat-info {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2d3436;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #636e72;
+    }
+    
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .activity-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f5f6fa;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: #f5f6fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c5ce7;
+        font-size: 14px;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-text {
+        margin-bottom: 5px;
+        line-height: 1.4;
+        color: #2d3436;
+    }
+    
+    .activity-time {
+        font-size: 12px;
+        color: #636e72;
+    }
+    
+    .chat-list {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f5f6fa;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        text-decoration: none;
+        color: #2d3436;
+        transition: background-color 0.2s ease;
+    }
+    
+    .chat-item:last-child {
+        border-bottom: none;
+    }
+    
+    .chat-item:hover {
+        background-color: #f9f9ff;
+    }
+    
+    .chat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+    }
+    
+    .chat-info {
+        flex: 1;
+    }
+    
+    .chat-name {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    
+    .chat-participants {
+        font-size: 12px;
+        color: #636e72;
+    }
+    
+    .empty-state {
+        padding: 40px 20px;
+        text-align: center;
+        color: #636e72;
+    }
+    
+    .empty-icon {
+        font-size: 40px;
+        color: #dfe6e9;
+        margin-bottom: 15px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        font-size: 14px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+    }
+    
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+    
+    @media (max-width: 992px) {
+        .profile-content {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .profile-info {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .profile-details {
+            margin-left: 0;
+            margin-top: 15px;
+        }
+        
+        .profile-meta {
+            justify-content: center;
+        }
+        
+        .profile-actions {
+            margin-top: 15px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %} 

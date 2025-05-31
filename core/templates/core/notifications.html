@@ -1,0 +1,149 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notification-list {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .notification-item {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid #eaeaea;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .notification-item:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .notification-unread {
+        background-color: #f0f4ff;
+        border-left: 4px solid #1b309a;
+    }
+    
+    .notification-read {
+        background-color: #fff;
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        font-size: 18px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    
+    .notification-message {
+        color: #555;
+        margin-bottom: 10px;
+        white-space: pre-line;
+    }
+    
+    .notification-time {
+        font-size: 12px;
+        color: #777;
+    }
+    
+    .notification-icon {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        font-size: 24px;
+    }
+    
+    .notification-actions {
+        text-align: right;
+    }
+    
+    .notification-empty {
+        text-align: center;
+        padding: 30px;
+        color: #777;
+    }
+    
+    .header-actions {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+    
+    .notification-type-welcome { color: #2196F3; }
+    .notification-type-profile { color: #4CAF50; }
+    .notification-type-scenario { color: #FF9800; }
+    .notification-type-level_up { color: #9C27B0; }
+    .notification-type-daily_challenge { color: #F44336; }
+    .notification-type-system { color: #607D8B; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Notifications</h1>
+    
+    {% if notifications %}
+    <div class="header-actions">
+        <a href="{% url 'core:notifications' %}?mark_all_read=true" class="btn btn-sm btn-outline-primary">
+            Mark All as Read
+        </a>
+    </div>
+    
+    <div class="notification-list">
+        {% for notification in notifications %}
+        <div class="notification-item {% if notification.is_read %}notification-read{% else %}notification-unread{% endif %}">
+            <div class="notification-icon notification-type-{{ notification.notification_type }}">
+                {% if notification.notification_type == 'welcome' %}
+                👋
+                {% elif notification.notification_type == 'profile' %}
+                ✅
+                {% elif notification.notification_type == 'scenario' %}
+                🎯
+                {% elif notification.notification_type == 'level_up' %}
+                🏆
+                {% elif notification.notification_type == 'daily_challenge' %}
+                🔥
+                {% else %}
+                📢
+                {% endif %}
+            </div>
+            
+            <div class="notification-title">{{ notification.title }}</div>
+            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-time">{{ notification.created_at|date:"M d, Y H:i" }}</div>
+            
+            {% if not notification.is_read %}
+            <div class="notification-actions">
+                <form method="POST" action="{% url 'core:mark_notification_read' notification.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-link">Mark as Read</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% else %}
+    <div class="notification-empty">
+        <h3>No notifications yet</h3>
+        <p>You'll see your notifications here when they arrive.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Update notification counter in header when this page is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.updateNotificationCounter) {
+            window.updateNotificationCounter();
+        }
+    });
+</script>
+{% endblock %} 

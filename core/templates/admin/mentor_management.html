@@ -1,0 +1,274 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .mentor-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .mentor-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .mentor-header h1 {
+        margin: 0;
+    }
+    
+    .mentor-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .mentor-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+    
+    .mentor-table th,
+    .mentor-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .mentor-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .mentor-table tr:hover {
+        background-color: #f9f9f9;
+    }
+    
+    .mentor-type {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+    }
+    
+    .type-career {
+        background-color: #5cb85c;
+    }
+    
+    .type-leadership {
+        background-color: #f0ad4e;
+    }
+    
+    .type-personal {
+        background-color: #5bc0de;
+    }
+    
+    .type-technical {
+        background-color: #d9534f;
+    }
+    
+    .mentor-actions-cell {
+        white-space: nowrap;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+    
+    .btn-small {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .btn-secondary {
+        background-color: #79aec8;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #609ab6;
+    }
+    
+    .btn-success {
+        background-color: #5cb85c;
+    }
+    
+    .btn-success:hover {
+        background-color: #4cae4c;
+    }
+    
+    .btn-danger {
+        background-color: #d9534f;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+    
+    .search-form {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-form input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        flex-grow: 1;
+    }
+    
+    .mentor-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    .pagination a {
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        color: #417690;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    
+    .pagination a:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .pagination .active {
+        background-color: #417690;
+        color: white;
+        border: 1px solid #417690;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mentor-container">
+    <div class="mentor-header">
+        <h1>Mentor Management</h1>
+        <a href="{% url 'core:admin_dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+    
+    <div class="mentor-actions">
+        <a href="{% url 'admin:core_mentor_add' %}" class="btn">Add New Mentor</a>
+        <a href="{% url 'core:admin_run_command' command='add_mentors' %}" class="btn btn-warning">Add Default Mentors</a>
+    </div>
+    
+    <form class="search-form" method="get">
+        <input type="text" name="search" placeholder="Search by name or specialty" value="{{ request.GET.search }}">
+        <button type="submit" class="btn">Search</button>
+        {% if request.GET.search %}
+        <a href="{% url 'core:admin_mentor_management' %}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+    
+    <table class="mentor-table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Specialty</th>
+                <th>Description</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mentor in mentors %}
+            <tr>
+                <td>
+                    {% if mentor.image %}
+                    <img src="{{ mentor.image.url }}" alt="{{ mentor.name }}" class="mentor-image">
+                    {% else %}
+                    <div class="mentor-image" style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: #999;">No image</span>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>{{ mentor.name }}</td>
+                <td>
+                    <span class="mentor-type type-{{ mentor.mentor_type }}">
+                        {{ mentor.get_mentor_type_display }}
+                    </span>
+                </td>
+                <td>{{ mentor.specialty }}</td>
+                <td>{{ mentor.description|truncatechars:50 }}</td>
+                <td>{{ mentor.is_active|yesno:"Yes,No" }}</td>
+                <td class="mentor-actions-cell">
+                    <a href="{% url 'admin:core_mentor_change' mentor.id %}" class="btn btn-small btn-secondary">Edit</a>
+                    <a href="{% url 'admin:core_mentor_delete' mentor.id %}" class="btn btn-small btn-danger">Delete</a>
+                    <a href="{% url 'core:chat_with_mentor' mentor.id %}" class="btn btn-small">Test Chat</a>
+                    <form method="post" action="{% url 'core:admin_toggle_mentor_status' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="mentor_id" value="{{ mentor.id }}">
+                        {% if mentor.is_active %}
+                        <button type="submit" class="btn btn-small btn-warning">Deactivate</button>
+                        {% else %}
+                        <button type="submit" class="btn btn-small btn-success">Activate</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 20px;">No mentors found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">&laquo; First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <a class="active">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Last &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

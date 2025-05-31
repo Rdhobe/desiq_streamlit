@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+  
+  <!-- Face -->
+  <circle cx="50" cy="40" r="20" fill="#f5d6a7"/>
+  
+  <!-- Hair -->
+  <path d="M30 35c0-11 9-20 20-20s20 9 20 20c0 0-5-10-20-10s-20 10-20 10z" fill="#795548"/>
+  
+  <!-- Eyes -->
+  <circle cx="42" cy="38" r="3" fill="#333"/>
+  <circle cx="58" cy="38" r="3" fill="#333"/>
+  
+  <!-- Smile -->
+  <path d="M40 48c0 0 5 5 10 5s10-5 10-5" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Body -->
+  <path d="M30 75v-15c0 0 5-10 20-10s20 10 20 10v15" fill="#388e3c"/>
+  
+  <!-- Clock -->
+  <circle cx="50" cy="80" r="12" fill="#fff" stroke="#4caf50" stroke-width="2"/>
+  <circle cx="50" cy="80" r="1" fill="#333"/>
+  <line x1="50" y1="80" x2="50" y2="72" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  <line x1="50" y1="80" x2="56" y2="83" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Clock markings -->
+  <line x1="50" y1="68" x2="50" y2="70" stroke="#333" stroke-width="1"/>
+  <line x1="50" y1="90" x2="50" y2="92" stroke="#333" stroke-width="1"/>
+  <line x1="38" y1="80" x2="40" y2="80" stroke="#333" stroke-width="1"/>
+  <line x1="60" y1="80" x2="62" y2="80" stroke="#333" stroke-width="1"/>
+</svg> 

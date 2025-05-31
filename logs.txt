@@ -1,0 +1,50 @@
+2025-05-28T08:17:04.36157825Z     context = processor(self.request)
+2025-05-28T08:17:04.36157989Z               ^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.3615821Z   File "/opt/render/project/src/core/context_processors.py", line 23, in user_data
+2025-05-28T08:17:04.36158377Z     'user_profile': request.user.profile,
+2025-05-28T08:17:04.36158541Z                     ^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.36158705Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/functional.py", line 253, in inner
+2025-05-28T08:17:04.36158875Z     return func(_wrapped, *args)
+2025-05-28T08:17:04.361590391Z            ^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361603701Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/models/fields/related_descriptors.py", line 520, in __get__
+2025-05-28T08:17:04.361606941Z     rel_obj = self.get_queryset(instance=instance).get(**filter_args)
+2025-05-28T08:17:04.361609801Z               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361612521Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 645, in get
+2025-05-28T08:17:04.361615301Z     num = len(clone)
+2025-05-28T08:17:04.361617792Z           ^^^^^^^^^^
+2025-05-28T08:17:04.361619572Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 382, in __len__
+2025-05-28T08:17:04.361621232Z     self._fetch_all()
+2025-05-28T08:17:04.361623992Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+2025-05-28T08:17:04.361634753Z     self._result_cache = list(self._iterable_class(self))
+2025-05-28T08:17:04.361637693Z                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361640413Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+2025-05-28T08:17:04.361643143Z     results = compiler.execute_sql(
+2025-05-28T08:17:04.361645973Z               ^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361648433Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1572, in execute_sql
+2025-05-28T08:17:04.361650113Z     cursor = self.connection.cursor()
+2025-05-28T08:17:04.361651943Z              ^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361653573Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+2025-05-28T08:17:04.361655263Z     return func(*args, **kwargs)
+2025-05-28T08:17:04.361656943Z            ^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361658623Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+2025-05-28T08:17:04.361660254Z     return self._cursor()
+2025-05-28T08:17:04.361661884Z            ^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361663514Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 297, in _cursor
+2025-05-28T08:17:04.361665224Z     with self.wrap_database_errors:
+2025-05-28T08:17:04.361666874Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+2025-05-28T08:17:04.361668604Z     raise dj_exc_value.with_traceback(traceback) from exc_value
+2025-05-28T08:17:04.361670244Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 298, in _cursor
+2025-05-28T08:17:04.361671854Z     return self._prepare_cursor(self.create_cursor(name))
+2025-05-28T08:17:04.361673494Z                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361675144Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+2025-05-28T08:17:04.361676764Z     return func(*args, **kwargs)
+2025-05-28T08:17:04.361678395Z            ^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361680115Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 429, in create_cursor
+2025-05-28T08:17:04.361681775Z     cursor = self.connection.cursor()
+2025-05-28T08:17:04.361683415Z              ^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-28T08:17:04.361685145Z django.db.utils.InterfaceError: connection already closed
+2025-05-28T08:17:04.361686715Z 
+2025-05-28T08:17:04.362135296Z ERROR 2025-05-28 08:17:04,362 middleware 85 132115592215424 Database connection error: connection already closed
+2025-05-28T08:17:04.362140846Z 2025-05-28 08:17:04,362 [ERROR] core.middleware: Database connection error: connection already closed
+2025-05-28T08:17:04.382048201Z ERROR 2025-05-28 08:17:04,381 log 85 132115592215424 Internal Server Error: /api/notifications/unread-count/
+2025-05-28T08:17:04.455231178Z 127.0.0.1 - - [28/May/2025:08:17:04 +0000] "GET /api/notifications/unread-count/ HTTP/1.1" 500 12111 "https://desiq-2853.onrender.com/setting/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"

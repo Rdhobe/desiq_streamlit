@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}DesiQ Notification{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header img {
+            max-height: 60px;
+        }
+        .content {
+            padding: 30px 20px;
+            line-height: 1.7;
+            color: #444;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #777;
+            border-top: 1px solid #e0e0e0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 15px 0;
+            background-color: #1b309a;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        h1 {
+            color: #1b309a;
+        }
+        h2 {
+            color: #333;
+        }
+        .icon {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DesiQ</h1>
+        </div>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="footer">
+            <p>© {% now "Y" %} DesiQ. All rights reserved.</p>
+            <p>If you have any questions, please contact our support at {{ support_email }}</p>
+        </div>
+    </div>
+</body>
+</html> 

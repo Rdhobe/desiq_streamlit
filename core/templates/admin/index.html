@@ -1,0 +1,12 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border-left: 4px solid #417690;">
+    <h2 style="margin-top: 0;">Desiq Custom Admin Dashboard</h2>
+    <p>Access our custom admin dashboard with enhanced features for managing users, mentors, scenarios, and more.</p>
+    <a href="{% url 'core:admin_dashboard' %}" class="button" style="background: #417690; padding: 10px 15px; color: white; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px;">Go to Custom Dashboard</a>
+</div>
+
+{{ block.super }}
+{% endblock %} 

@@ -1,0 +1,193 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Cancel Subscription - Desiq{% endblock %}
+{% block header %}Cancel Subscription{% endblock %}
+
+{% block content %}
+<div class="cancel-container">
+    <div class="cancel-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F44336" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+    </div>
+    
+    <h1>Cancel Your Subscription?</h1>
+    <p class="subtitle">We're sorry to see you go. Before you cancel, please consider the following:</p>
+    
+    <div class="cancel-info">
+        <div class="features-lost">
+            <h2>You will lose access to:</h2>
+            <ul>
+                <li>Premium mentors</li>
+                <li>20 messages per day with each mentor</li>
+                <li>3 daily challenges</li>
+                <li>3 scenario generations per day</li>
+                <li>Priority support</li>
+            </ul>
+        </div>
+        
+        <div class="cancel-note">
+            <p>If you cancel, your premium features will remain active until <strong>{{ user.profile.premium_expires|date:"F j, Y" }}</strong>, the end of your current billing period.</p>
+            <p>After this date, your account will revert to the free plan.</p>
+        </div>
+    </div>
+    
+    <div class="action-buttons">
+        <form method="post" action="{% url 'core:cancel_subscription' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Confirm Cancellation</button>
+        </form>
+        <a href="{% url 'core:setting' %}" class="btn-secondary">Keep My Subscription</a>
+    </div>
+    
+    <div class="support-info">
+        <p>If you're having issues with our service or have feedback, please <a href="{% url 'core:support' %}">contact our support team</a> before canceling.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Cancel Container */
+    .cancel-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        text-align: center;
+    }
+    
+    /* Cancel Icon */
+    .cancel-icon {
+        margin-bottom: 20px;
+    }
+    
+    /* Headings */
+    h1 {
+        font-size: 32px;
+        font-weight: 600;
+        color: #1b309a;
+        margin-bottom: 10px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 40px;
+    }
+    
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1b309a;
+        margin: 0 0 20px 0;
+        text-align: left;
+    }
+    
+    /* Cancel Info */
+    .cancel-info {
+        background: #fff;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 40px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: left;
+    }
+    
+    .features-lost ul {
+        padding-left: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .features-lost li {
+        margin-bottom: 8px;
+        color: #555;
+    }
+    
+    .cancel-note {
+        padding: 15px;
+        background-color: #fff3cd;
+        color: #664d03;
+        border-radius: 8px;
+        border: 1px solid #ffecb5;
+    }
+    
+    .cancel-note p {
+        margin: 0 0 10px 0;
+    }
+    
+    .cancel-note p:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+    
+    .btn-danger, .btn-secondary {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .btn-danger {
+        background: #f44336;
+        color: white;
+        border: none;
+    }
+    
+    .btn-danger:hover {
+        background: #d32f2f;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #666;
+        border: 1px solid #ddd;
+        display: inline-block;
+    }
+    
+    .btn-secondary:hover {
+        background: #eee;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    /* Support Info */
+    .support-info {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .support-info a {
+        color: #1b309a;
+        text-decoration: none;
+    }
+    
+    .support-info a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Responsive */
+    @media (max-width: 767px) {
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-danger, .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,5 @@
+/* Placeholder file for Jazzmin CSS */
+/* Basic styles to make the admin interface usable */
+body { font-family: sans-serif; }
+.sidebar-dark-primary { background-color: #343a40; }
+.nav-sidebar .nav-link { color: #fff; }

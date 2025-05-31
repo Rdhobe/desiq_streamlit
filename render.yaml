@@ -1,0 +1,80 @@
+services:
+  - type: web
+    name: desiq
+    env: python
+    buildCommand: bash ./render-build.sh
+    startCommand: gunicorn desiq.wsgi:application -c gunicorn_config.py
+    # Update health check path to match our actual endpoint
+    healthCheckPath: /health/
+    # Add auto restart for better error recovery
+    autoDeploy: true
+    # Add automatic restart on crash
+    automaticRestart: true
+    # Use a more memory-efficient plan
+    plan: starter
+    # Explicitly set runtime
+    runtime: python
+    # Add port configuration
+    port: 8000
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DEBUG
+        value: false
+      - key: PORT
+        value: 8000
+      - key: WEB_CONCURRENCY
+        value: 2  # Using 2 workers for better memory efficiency
+      - key: GUNICORN_THREADS
+        value: 4  # Using 4 threads for better concurrency balance
+      - key: GUNICORN_TIMEOUT
+        value: 120  # Increased timeout for long requests
+      - key: GUNICORN_MAX_REQUESTS
+        value: 300  # Reduced from 500 for more frequent worker recycling
+      - key: GUNICORN_WORKER_CLASS
+        value: sync
+      - key: GUNICORN_LOG_LEVEL
+        value: info
+      - key: DJANGO_SETTINGS_MODULE
+        value: desiq.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: STATIC_ROOT
+        value: /var/data/staticfiles
+      - key: STATIC_URL
+        value: /static/
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: desiq_db
+          property: connectionString
+      - key: AI_REQUEST_TIMEOUT  # Timeout for AI-related requests
+        value: 110
+      - key: WORKER_TIME_LIMIT  # Time limit before worker terminates a request 
+        value: 110
+      - key: WORKER_MEMORY_LIMIT_MB  # Memory limit before recycling worker
+        value: 450
+      - key: MAX_CONCURRENT_AI_REQUESTS  # Limit concurrent AI requests
+        value: 2
+      # Add new environment variable to force Django version
+      - key: DJANGO_VERSION
+        value: "4.2.11"
+      # Add template directory to make sure error templates are found
+      - key: TEMPLATE_DIRS
+        value: "core/templates"
+    # Configure persistent disks properly
+    disks:
+      - name: data_disk
+        mountPath: /var/data
+        sizeGB: 1
+
+databases:
+  - name: desiq_db
+    plan: free
+    databaseName: desiq
+    user: desiq 

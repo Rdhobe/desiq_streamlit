@@ -1,0 +1,287 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .scenario-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .scenario-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .scenario-header h1 {
+        margin: 0;
+    }
+    
+    .scenario-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .scenario-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+    
+    .scenario-table th,
+    .scenario-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .scenario-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .scenario-table tr:hover {
+        background-color: #f9f9f9;
+    }
+    
+    .scenario-category {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+    }
+    
+    .category-career {
+        background-color: #5cb85c;
+    }
+    
+    .category-leadership {
+        background-color: #f0ad4e;
+    }
+    
+    .category-personal {
+        background-color: #5bc0de;
+    }
+    
+    .category-technical {
+        background-color: #d9534f;
+    }
+    
+    .scenario-actions-cell {
+        white-space: nowrap;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+    
+    .btn-small {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .btn-secondary {
+        background-color: #79aec8;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #609ab6;
+    }
+    
+    .btn-success {
+        background-color: #5cb85c;
+    }
+    
+    .btn-success:hover {
+        background-color: #4cae4c;
+    }
+    
+    .btn-danger {
+        background-color: #d9534f;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+    
+    .search-form {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-form input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        flex-grow: 1;
+    }
+    
+    .filter-form {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .filter-form select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    .pagination a {
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        color: #417690;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    
+    .pagination a:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .pagination .active {
+        background-color: #417690;
+        color: white;
+        border: 1px solid #417690;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="scenario-container">
+    <div class="scenario-header">
+        <h1>Scenario Management</h1>
+        <a href="{% url 'core:admin_dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+    
+    <div class="scenario-actions">
+        <a href="{% url 'admin:core_scenario_add' %}" class="btn">Add New Scenario</a>
+        <a href="{% url 'core:admin_run_command' command='add_test_scenarios' %}" class="btn btn-warning">Generate Test Scenarios</a>
+    </div>
+    
+    <div class="filter-form">
+        <form method="get" style="display: flex; gap: 10px; align-items: center; width: 100%;">
+            <div style="flex-grow: 1;">
+                <input type="text" name="search" placeholder="Search by title or description" value="{{ request.GET.search }}" style="width: 100%;">
+            </div>
+            <div>
+                <select name="category">
+                    <option value="">All Categories</option>
+                    <option value="career" {% if request.GET.category == 'career' %}selected{% endif %}>Career</option>
+                    <option value="leadership" {% if request.GET.category == 'leadership' %}selected{% endif %}>Leadership</option>
+                    <option value="personal" {% if request.GET.category == 'personal' %}selected{% endif %}>Personal</option>
+                    <option value="technical" {% if request.GET.category == 'technical' %}selected{% endif %}>Technical</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn">Filter</button>
+                {% if request.GET.search or request.GET.category %}
+                <a href="{% url 'core:admin_scenario_management' %}" class="btn btn-secondary">Clear</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    
+    <table class="scenario-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Difficulty</th>
+                <th>Options</th>
+                <th>Created</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for scenario in scenarios %}
+            <tr>
+                <td>{{ scenario.title|truncatechars:50 }}</td>
+                <td>
+                    <span class="scenario-category category-{{ scenario.category }}">
+                        {{ scenario.get_category_display }}
+                    </span>
+                </td>
+                <td>{{ scenario.get_difficulty_display }}</td>
+                <td>{{ scenario.scenariooption_set.count }}</td>
+                <td>{{ scenario.created_at|date:"Y-m-d" }}</td>
+                <td>{{ scenario.is_active|yesno:"Yes,No" }}</td>
+                <td class="scenario-actions-cell">
+                    <a href="{% url 'admin:core_scenario_change' scenario.id %}" class="btn btn-small btn-secondary">Edit</a>
+                    <a href="{% url 'admin:core_scenario_delete' scenario.id %}" class="btn btn-small btn-danger">Delete</a>
+                    <a href="{% url 'core:scenario_detail' scenario.id %}" class="btn btn-small">View</a>
+                    <form method="post" action="{% url 'core:admin_toggle_scenario_status' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="scenario_id" value="{{ scenario.id }}">
+                        {% if scenario.is_active %}
+                        <button type="submit" class="btn btn-small btn-warning">Deactivate</button>
+                        {% else %}
+                        <button type="submit" class="btn btn-small btn-success">Activate</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 20px;">No scenarios found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">&laquo; First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Previous</a>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <a class="active">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Last &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

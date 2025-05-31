@@ -1,0 +1,316 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Take {{ test.title }} - Desiq{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="test-container">
+    <div class="test-header">
+      <div class="test-icon {{ test.icon|lower }}">
+        {% if test.icon == 'Brain' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"></path></svg>
+        {% elif test.icon == 'Sparkles' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg>
+        {% elif test.icon == 'Workflow' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="8" x="3" y="3" rx="2"></rect><path d="M7 11v4a2 2 0 0 0 2 2h4"></path><rect width="8" height="8" x="13" y="13" rx="2"></rect></svg>
+        {% elif test.icon == 'Lightbulb' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+        {% elif test.icon == 'Heart' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+        {% elif test.icon == 'TrendingUp' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+        {% endif %}
+      </div>
+      <h1>{{ test.title }}</h1>
+      <p class="test-description">{{ test.description }}</p>
+      <div class="test-meta">
+        <span>{{ questions|length }} Questions</span>
+        <span>•</span>
+        <span>{{ test.time_to_complete }}</span>
+      </div>
+    </div>
+    
+    <form method="post" class="test-form">
+      {% csrf_token %}
+      
+      {% for question in questions %}
+      <div class="question-card" id="question-{{ question.id }}">
+        <div class="question-number">Question {{ forloop.counter }} of {{ questions|length }}</div>
+        <h3 class="question-text">{{ question.question }}</h3>
+        
+        <div class="options">
+          {% for option in question.options %}
+          <div class="option">
+            <input type="radio" name="question_{{ question.id }}" id="q{{ question.id }}_{{ forloop.counter0 }}" value="{{ forloop.counter0 }}" required>
+            <label for="q{{ question.id }}_{{ forloop.counter0 }}">{{ option }}</label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+      
+      <div class="test-actions">
+        <button type="submit" class="btn-submit">Submit Answers</button>
+        <a href="{% url 'core:personality_test_detail' test.slug %}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  body {
+    background-color: #fef6ff;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  .test-container {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .test-header {
+    background: linear-gradient(135deg, #6750A4 0%, #9980D5 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+  }
+  
+  .test-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+  }
+  
+  .test-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .brain { color: #1b309a; }
+  .sparkles { color: #ff8a00; }
+  .workflow { color: #2e8b57; }
+  .lightbulb { color: #ffc107; }
+  .heart { color: #ff4d6d; }
+  .trendingup { color: #2196f3; }
+  
+  .test-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+  
+  .test-description {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 15px;
+  }
+  
+  .test-meta {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+  
+  .test-meta span {
+    margin: 0 5px;
+  }
+  
+  .test-form {
+    padding: 30px;
+  }
+  
+  .question-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+  }
+  
+  .question-number {
+    font-size: 14px;
+    color: #6750A4;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  
+  .question-text {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .option {
+    position: relative;
+  }
+  
+  .option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .option label {
+    display: block;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .option input[type="radio"]:checked + label {
+    background-color: #e8f0fe;
+    border-color: #6750A4;
+    color: #6750A4;
+  }
+  
+  .option label:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .test-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .btn-submit, .btn-cancel {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-submit {
+    background-color: #6750A4;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .btn-submit:hover {
+    background-color: #57448c;
+  }
+  
+  .btn-cancel {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  
+  .btn-cancel:hover {
+    background-color: #d0d0d0;
+  }
+  
+  @media (max-width: 768px) {
+    .test-header {
+      padding: 20px;
+    }
+    
+    .test-form {
+      padding: 20px;
+    }
+    
+    .question-card {
+      padding: 20px;
+    }
+    
+    .test-actions {
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .btn-submit, .btn-cancel {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add progress tracking
+    const questionCards = document.querySelectorAll('.question-card');
+    const totalQuestions = questionCards.length;
+    
+    // Create progress bar
+    const progressContainer = document.createElement('div');
+    progressContainer.className = 'progress-container';
+    progressContainer.innerHTML = `
+      <div class="progress-bar">
+        <div class="progress" style="width: 0%"></div>
+      </div>
+      <div class="progress-text">0/${totalQuestions} completed</div>
+    `;
+    
+    const testForm = document.querySelector('.test-form');
+    testForm.insertBefore(progressContainer, testForm.firstChild);
+    
+    // Update progress when a radio button is clicked
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(radio => {
+      radio.addEventListener('change', updateProgress);
+    });
+    
+    function updateProgress() {
+      const answeredQuestions = document.querySelectorAll('.question-card:has(input:checked)').length;
+      const progressPercent = (answeredQuestions / totalQuestions) * 100;
+      
+      document.querySelector('.progress').style.width = `${progressPercent}%`;
+      document.querySelector('.progress-text').textContent = `${answeredQuestions}/${totalQuestions} completed`;
+    }
+  });
+</script>
+
+<style>
+  .progress-container {
+    margin-bottom: 20px;
+  }
+  
+  .progress-bar {
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  
+  .progress {
+    height: 100%;
+    background-color: #6750A4;
+    transition: width 0.3s ease;
+  }
+  
+  .progress-text {
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+  }
+</style>
+{% endblock %} 

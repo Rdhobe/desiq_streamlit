@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Background circle with premium gradient -->
+  <defs>
+    <linearGradient id="premiumGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fce4ec" />
+      <stop offset="100%" stop-color="#f8bbd0" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="50" cy="50" r="48" fill="url(#premiumGradient)" stroke="#ffd700" stroke-width="3"/>
+  
+  <!-- Crown to indicate premium -->
+  <path d="M30 25l5 10 10-5 5 12 5-12 10 5 5-10-5 15h-30z" fill="#ffd700" stroke="#e6b800" stroke-width="1"/>
+  
+  <!-- Face -->
+  <circle cx="50" cy="40" r="20" fill="#f5d6a7"/>
+  
+  <!-- Hair -->
+  <path d="M30 35c0-11 9-20 20-20s20 9 20 20c0 0-5-10-20-10s-20 10-20 10z" fill="#4a2700"/>
+  <path d="M70 35c0 0-5 10-5 15s5 10 5 5 0-10 0-10" fill="#4a2700"/>
+  
+  <!-- Eyes -->
+  <circle cx="42" cy="38" r="3" fill="#333"/>
+  <circle cx="58" cy="38" r="3" fill="#333"/>
+  
+  <!-- Smile -->
+  <path d="M40 48c0 0 5 5 10 5s10-5 10-5" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Premium body -->
+  <path d="M30 75v-15c0 0 5-10 20-10s20 10 20 10v15" fill="#880e4f"/>
+  
+  <!-- Gold heart symbol -->
+  <path d="M50 75l-10-10c-5-5 0-10 5-5l5 5 5-5c5-5 10 0 5 5z" fill="#ffd700"/>
+  
+  <!-- Premium conversation bubbles -->
+  <circle cx="35" cy="85" r="8" fill="#c2185b"/>
+  <circle cx="65" cy="85" r="8" fill="#c2185b"/>
+  <path d="M35 80l5 2M65 80l-5 2" fill="none" stroke="#ffd700" stroke-width="1.5"/>
+  
+  <!-- Gold sparkles -->
+  <path d="M30 65l-3-3 3-3 3 3z" fill="#ffd700"/>
+  <path d="M70 65l-3-3 3-3 3 3z" fill="#ffd700"/>
+  <path d="M50 90l-2-2 2-2 2 2z" fill="#ffd700"/>
+</svg> 

@@ -1,0 +1,249 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}{{ test.title }} - Desiq{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="test-detail">
+    <div class="test-header">
+      <div class="test-icon {{ test.icon|lower }}">
+        {% if test.icon == 'Brain' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"></path></svg>
+        {% elif test.icon == 'Sparkles' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg>
+        {% elif test.icon == 'Workflow' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="8" x="3" y="3" rx="2"></rect><path d="M7 11v4a2 2 0 0 0 2 2h4"></path><rect width="8" height="8" x="13" y="13" rx="2"></rect></svg>
+        {% elif test.icon == 'Lightbulb' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+        {% elif test.icon == 'Heart' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+        {% elif test.icon == 'TrendingUp' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+        {% endif %}
+      </div>
+      <h1>{{ test.title }}</h1>
+    </div>
+    
+    <div class="test-info">
+      <div class="info-card">
+        <h3>About this test</h3>
+        <p>{{ test.description }}</p>
+        
+        <div class="test-meta">
+          <div class="meta-item">
+            <span class="meta-label">Questions:</span>
+            <span class="meta-value">{{ test.question_count }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Time to complete:</span>
+            <span class="meta-value">{{ test.time_to_complete }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Last updated:</span>
+            <span class="meta-value">{{ test.updated_at|date:"F j, Y" }}</span>
+          </div>
+        </div>
+        
+        {% if previous_results %}
+        <div class="previous-results">
+          <h4>You've taken this test before</h4>
+          <p>Your last result: <strong>{{ previous_results.result.title }}</strong></p>
+          <p>Taken on {{ previous_results.timestamp|date:"F j, Y" }}</p>
+          <div class="action-buttons">
+            <a href="{% url 'core:personality_test_result' previous_results.id %}" class="btn btn-secondary">View Previous Result</a>
+            <a href="{% url 'core:take_personality_test' test.slug %}" class="btn btn-primary">Retake Test</a>
+          </div>
+        </div>
+        {% else %}
+        <div class="action-buttons">
+          <a href="{% url 'core:take_personality_test' test.slug %}" class="btn btn-primary">Start Test</a>
+          <a href="{% url 'core:personality_test' %}" class="btn btn-secondary">Back to Tests</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  body {
+    background-color: #fef6ff;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  .test-detail {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .test-header {
+    background: linear-gradient(135deg, #6750A4 0%, #9980D5 100%);
+    color: white;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+  }
+  
+  .test-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+  
+  .test-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .brain { color: #1b309a; }
+  .sparkles { color: #ff8a00; }
+  .workflow { color: #2e8b57; }
+  .lightbulb { color: #ffc107; }
+  .heart { color: #ff4d6d; }
+  .trendingup { color: #2196f3; }
+  
+  .test-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .test-info {
+    padding: 20px;
+  }
+  
+  .info-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 30px;
+  }
+  
+  .info-card h3 {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .info-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 25px;
+  }
+  
+  .test-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .meta-item {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .meta-label {
+    font-size: 14px;
+    color: #777;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .meta-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .previous-results {
+    background-color: #e8f4ff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+  
+  .previous-results h4 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #1b309a;
+  }
+  
+  .previous-results p {
+    margin-bottom: 10px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .btn-primary {
+    background-color: #6750A4;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #57448c;
+  }
+  
+  .btn-secondary {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #d0d0d0;
+  }
+  
+  @media (max-width: 768px) {
+    .test-header {
+      padding: 30px 20px;
+    }
+    
+    .test-header h1 {
+      font-size: 24px;
+    }
+    
+    .info-card {
+      padding: 20px;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+    }
+  }
+</style>
+{% endblock %} 

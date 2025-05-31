@@ -1,0 +1,611 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Profile{% endblock %}
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="profile-title">Profile</h1>
+    </div>
+    
+    <div class="profile-grid">
+        <!-- First Row: Profile Info and Account Stats -->
+        <div class="profile-row profile-row-top">
+            <!-- Profile Information Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2>Profile Information</h2>
+                </div>
+                <div class="card-body">
+                    <div class="profile-avatar">
+                        <img src="{% static 'img/default-avatar.png' %}" alt="Avatar">
+                    </div>
+                    <div class="profile-info">
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                        <p><strong>Premium:</strong> {% if user.profile.is_premium %}<span class="premium-badge">Yes</span>{% else %}No{% endif %}</p>
+                    </div>
+                    <a href="{% url 'core:setting' %}" class="profile-edit-btn">Edit Profile</a>
+                </div>
+            </div>
+            
+            <!-- Account Stats Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2>Account Stats</h2>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <img src="{% static 'img/Rationality Score.svg' %}" alt="Rationality">
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Rationality</p>
+                            <div class="stat-progress">
+                                <div class="stat-bar" style="width: {{ user.profile.rationality_score }}%;"></div>
+                            </div>
+                            <p class="stat-value">{{ user.profile.rationality_score }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <img src="{% static 'img/Lamp_duotone_line.svg' %}" alt="Decisiveness">
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Decisiveness</p>
+                            <div class="stat-progress">
+                                <div class="stat-bar" style="width: {{ user.profile.decisiveness_score }}%;"></div>
+                            </div>
+                            <p class="stat-value">{{ user.profile.decisiveness_score }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <img src="{% static 'img/mental_health.svg' %}" alt="Empathy">
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Empathy</p>
+                            <div class="stat-progress">
+                                <div class="stat-bar" style="width: {{ user.profile.empathy_score }}%;"></div>
+                            </div>
+                            <p class="stat-value">{{ user.profile.empathy_score }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <img src="{% static 'img/Progress Tracking.svg' %}" alt="Clarity">
+                        </div>
+                        <div class="stat-info">
+                            <p class="stat-label">Clarity</p>
+                            <div class="stat-progress">
+                                <div class="stat-bar" style="width: {{ user.profile.clarity_score }}%;"></div>
+                            </div>
+                            <p class="stat-value">{{ user.profile.clarity_score }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row: Level Progress and Achievements -->
+        <div class="profile-row profile-row-bottom">
+            <!-- Level Progress Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2>Level Progress</h2>
+                </div>
+                <div class="card-body">
+                    <div class="level-info">
+                        <div class="level-badge">
+                            <span>{{ user.profile.level }}</span>
+                        </div>
+                        <div class="level-details">
+                            <p class="current-level">Level {{ user.profile.level }}</p>
+                            <p class="xp-points">{{ user.profile.xp_points }} XP</p>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-container">
+                            {% with xp_percentage=user.profile.xp_points|divisibleby:100 %}
+                            <div class="progress-bar" style="width: {% if xp_percentage > 100 %}100{% else %}{{ xp_percentage }}{% endif %}%"></div>
+                            {% endwith %}
+                        </div>
+                        <div class="progress-labels">
+                            <span>0</span>
+                            <span>XP to next level: {{ 100|add:user.profile.xp_points }}</span>
+                        </div>
+                    </div>
+                    <div class="streak-info">
+                        <div class="streak-icon">🔥</div>
+                        <div class="streak-text">
+                            <p><span class="streak-count">{{ user.profile.daily_streak }}</span> day streak</p>
+                            <p class="streak-message">Keep it going!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2>Achievements</h2>
+                </div>
+                <div class="card-body">
+                    <div class="achievements-list">
+                        <div class="achievement-item {% if user.profile.daily_streak >= 3 %}unlocked{% else %}locked{% endif %}">
+                            <div class="achievement-icon">
+                                <img src="{% static 'img/fire.svg' %}" alt="Streak">
+                            </div>
+                            <div class="achievement-info">
+                                <p class="achievement-title">3-Day Streak</p>
+                                <p class="achievement-desc">Log in for 3 consecutive days</p>
+                                <div class="achievement-progress">
+                                    <div class="achievement-bar" style="width: {% if user.profile.daily_streak >= 3 %}100{% else %}{{ user.profile.daily_streak|divisibleby:3|floatformat:0 }}{% endif %}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="achievement-item {% if user.profile.daily_streak >= 7 %}unlocked{% else %}locked{% endif %}">
+                            <div class="achievement-icon">
+                                <img src="{% static 'img/Trophy.svg' %}" alt="Trophy">
+                            </div>
+                            <div class="achievement-info">
+                                <p class="achievement-title">Week Warrior</p>
+                                <p class="achievement-desc">Log in for 7 consecutive days</p>
+                                <div class="achievement-progress">
+                                    <div class="achievement-bar" style="width: {% if user.profile.daily_streak >= 7 %}100{% else %}{{ user.profile.daily_streak|divisibleby:7|floatformat:0 }}{% endif %}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="achievement-item {% if user.profile.level >= 5 %}unlocked{% else %}locked{% endif %}">
+                            <div class="achievement-icon">
+                                <img src="{% static 'img/star 1.svg' %}" alt="Star">
+                            </div>
+                            <div class="achievement-info">
+                                <p class="achievement-title">Level 5 Achiever</p>
+                                <p class="achievement-desc">Reach level 5</p>
+                                <div class="achievement-progress">
+                                    <div class="achievement-bar" style="width: {% if user.profile.level >= 5 %}100{% else %}{{ user.profile.level|divisibleby:5|floatformat:0 }}{% endif %}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="achievement-item {% if user.profile.xp_points >= 500 %}unlocked{% else %}locked{% endif %}">
+                            <div class="achievement-icon">
+                                <img src="{% static 'img/Chart_light.svg' %}" alt="XP">
+                            </div>
+                            <div class="achievement-info">
+                                <p class="achievement-title">XP Collector</p>
+                                <p class="achievement-desc">Earn 500 XP</p>
+                                <div class="achievement-progress">
+                                    <div class="achievement-bar" style="width: {% if user.profile.xp_points >= 500 %}100{% else %}{{ user.profile.xp_points|divisibleby:5 }}{% endif %}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        padding: 25px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .profile-header {
+        margin-bottom: 25px;
+    }
+    
+    .profile-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #1b309a;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .profile-title:after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, rgba(210, 182, 227, 1) 0%, rgba(234, 218, 242, 1) 100%);
+        border-radius: 2px;
+    }
+    
+    .profile-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .profile-row {
+        display: grid;
+        grid-gap: 25px;
+    }
+    
+    .profile-row-top {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .profile-row-bottom {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .profile-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+    
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+    }
+    
+    .card-header {
+        background: linear-gradient(245deg, rgba(255, 255, 255, 1) 8%, rgba(255, 239, 246, 1) 40%, rgba(234, 218, 242, 1) 67%, rgba(210, 182, 227, 1) 82%);
+        padding: 18px 25px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        position: relative;
+    }
+    
+    .card-header:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: #1b309a;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #1b309a;
+        font-weight: 600;
+    }
+    
+    .card-body {
+        padding: 25px;
+        height: calc(100% - 70px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Profile Information Card */
+    .profile-avatar {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .profile-avatar img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid rgba(234, 218, 242, 1);
+        box-shadow: 0 5px 15px rgba(210, 182, 227, 0.3);
+    }
+    
+    .profile-info {
+        margin-bottom: 20px;
+    }
+    
+    .profile-info p {
+        margin: 12px 0;
+        color: #4a4a4a;
+        font-size: 15px;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .premium-badge {
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        color: #fff;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .profile-edit-btn {
+        display: block;
+        margin-top: auto;
+        padding: 12px 0;
+        background: linear-gradient(245deg, rgba(255, 255, 255, 1) 8%, rgba(255, 239, 246, 1) 40%, rgba(234, 218, 242, 1) 67%);
+        color: #1b309a;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 500;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(234, 218, 242, 0.5);
+    }
+    
+    .profile-edit-btn:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* Account Stats Card */
+    .stat-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .stat-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: rgba(234, 218, 242, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+    
+    .stat-icon img {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+    
+    .stat-info {
+        flex: 1;
+    }
+    
+    .stat-label {
+        margin: 0 0 5px 0;
+        font-size: 14px;
+        color: #888;
+    }
+    
+    .stat-progress {
+        height: 8px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 5px;
+    }
+    
+    .stat-bar {
+        height: 100%;
+        background: linear-gradient(90deg, rgba(210, 182, 227, 1) 0%, rgba(234, 218, 242, 1) 100%);
+        border-radius: 4px;
+    }
+    
+    .stat-value {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1b309a;
+        text-align: right;
+    }
+    
+    /* Level Progress Card */
+    .level-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .level-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1b309a, #4e5cbb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+        box-shadow: 0 5px 15px rgba(27, 48, 154, 0.3);
+    }
+    
+    .level-details {
+        flex: 1;
+    }
+    
+    .current-level {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1b309a;
+        margin: 0 0 5px 0;
+    }
+    
+    .xp-points {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+    }
+    
+    .progress-container {
+        margin-bottom: 25px;
+    }
+    
+    .progress-bar-container {
+        height: 10px;
+        background: #f0f0f0;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #1b309a, #4e5cbb);
+        border-radius: 5px;
+        transition: width 0.3s ease;
+    }
+    
+    .progress-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #888;
+    }
+    
+    .streak-info {
+        display: flex;
+        align-items: center;
+        margin-top: auto;
+        padding: 15px;
+        background: rgba(255, 243, 224, 0.3);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 167, 38, 0.2);
+    }
+    
+    .streak-icon {
+        font-size: 28px;
+        margin-right: 15px;
+    }
+    
+    .streak-text p {
+        margin: 0;
+        color: #666;
+    }
+    
+    .streak-count {
+        font-weight: 700;
+        color: #ff9800;
+        font-size: 18px;
+    }
+    
+    .streak-message {
+        font-size: 12px;
+        color: #888 !important;
+    }
+    
+    /* Achievements Card */
+    .achievements-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 15px;
+    }
+    
+    .achievement-item {
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        border-radius: 12px;
+        background: #f9f9f9;
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+    
+    .achievement-item.unlocked {
+        background: rgba(234, 218, 242, 0.15);
+        border: 1px solid rgba(234, 218, 242, 0.5);
+    }
+    
+    .achievement-icon {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        align-self: center;
+    }
+    
+    .achievement-icon img {
+        width: 24px;
+        height: 24px;
+        opacity: 0.5;
+    }
+    
+    .achievement-item.unlocked .achievement-icon img {
+        opacity: 1;
+    }
+    
+    .achievement-info {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .achievement-title {
+        margin: 0 0 3px 0;
+        font-weight: 600;
+        color: #333;
+        font-size: 15px;
+    }
+    
+    .achievement-item.unlocked .achievement-title {
+        color: #1b309a;
+    }
+    
+    .achievement-desc {
+        margin: 0 0 10px 0;
+        font-size: 12px;
+        color: #888;
+    }
+    
+    .achievement-progress {
+        height: 6px;
+        background: #f0f0f0;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    
+    .achievement-bar {
+        height: 100%;
+        background: linear-gradient(90deg, rgba(210, 182, 227, 1) 0%, rgba(234, 218, 242, 1) 100%);
+        border-radius: 3px;
+    }
+    
+    .achievement-item.unlocked .achievement-bar {
+        background: linear-gradient(90deg, #1b309a, #4e5cbb);
+    }
+    
+    .achievement-item.locked {
+        opacity: 0.75;
+    }
+    
+    @media (max-width: 991px) {
+        .profile-row-top,
+        .profile-row-bottom {
+            grid-template-columns: 1fr;
+        }
+        
+        .achievements-list {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 767px) {
+        .profile-container {
+            padding: 15px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .achievements-list {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

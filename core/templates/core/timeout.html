@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Request Timeout{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body text-center p-5">
+                    <h1 class="display-1 text-warning">408</h1>
+                    <h2 class="mb-4">Request Timeout</h2>
+                    <p class="lead mb-4">Your request is taking longer than expected to process. This might be due to heavy traffic or system load.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'core:home' %}" class="btn btn-primary">Go to Home</a>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">Go Back</a>
+                        <button onclick="window.location.reload()" class="btn btn-success">Try Again</button>
+                    </div>
+                    <div class="mt-4 text-muted">
+                        <small>If this problem persists, please try again later or contact support.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

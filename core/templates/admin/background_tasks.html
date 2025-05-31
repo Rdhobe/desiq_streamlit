@@ -1,0 +1,132 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .task-list {
+        margin-top: 20px;
+    }
+    
+    .task-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .task-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    .task-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    .status-running {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .status-failed {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .task-details {
+        margin-bottom: 15px;
+    }
+    
+    .task-output {
+        background-color: #f8f9fa;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 15px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .no-tasks {
+        text-align: center;
+        padding: 40px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    
+    .refresh-btn {
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h1>Background Tasks</h1>
+        <p>View the status of long-running background tasks.</p>
+        <div class="actions">
+            <a href="{% url 'core:admin_dashboard' %}" class="btn">Back to Dashboard</a>
+            <a href="{% url 'core:admin_background_tasks' %}" class="btn refresh-btn">Refresh</a>
+        </div>
+    </div>
+    
+    {% if tasks %}
+        <div class="task-list">
+            {% for task_id, task in tasks.items %}
+                <div class="task-card">
+                    <div class="task-header">
+                        <h3 class="task-title">{{ task.command }}</h3>
+                        <span class="task-status status-{{ task.status }}">{{ task.status|title }}</span>
+                    </div>
+                    <div class="task-details">
+                        <p><strong>Started:</strong> {{ task.started_at }}</p>
+                        {% if task.completed %}
+                            <p><strong>Completed:</strong> {{ task.completed_at }}</p>
+                        {% endif %}
+                    </div>
+                    {% if task.error %}
+                        <div class="task-error">
+                            <h4>Error:</h4>
+                            <div class="task-output">{{ task.error }}</div>
+                        </div>
+                    {% endif %}
+                    {% if task.output %}
+                        <div class="task-output-section">
+                            <h4>Output:</h4>
+                            <div class="task-output">{{ task.output }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-tasks">
+            <h3>No background tasks have been run yet.</h3>
+            <p>Run a command like "Generate Fake Users" to see it appear here.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

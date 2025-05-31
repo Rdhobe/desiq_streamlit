@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  
+  <!-- Face -->
+  <circle cx="50" cy="40" r="20" fill="#f5d6a7"/>
+  
+  <!-- Hair -->
+  <path d="M30 35c0-11 9-20 20-20s20 9 20 20c0 0-5-10-20-10s-20 10-20 10z" fill="#5d4037"/>
+  
+  <!-- Glasses -->
+  <circle cx="42" cy="38" r="5" fill="none" stroke="#333" stroke-width="1"/>
+  <circle cx="58" cy="38" r="5" fill="none" stroke="#333" stroke-width="1"/>
+  <line x1="47" y1="38" x2="53" y2="38" stroke="#333" stroke-width="1"/>
+  
+  <!-- Eyes -->
+  <circle cx="42" cy="38" r="2" fill="#333"/>
+  <circle cx="58" cy="38" r="2" fill="#333"/>
+  
+  <!-- Smile -->
+  <path d="M40 48c0 0 5 5 10 5s10-5 10-5" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Body -->
+  <path d="M30 75v-15c0 0 5-10 20-10s20 10 20 10v15" fill="#1565c0"/>
+  
+  <!-- Book -->
+  <rect x="35" y="75" width="30" height="20" rx="2" fill="#ffecb3" stroke="#1565c0" stroke-width="1"/>
+  <path d="M50 75v20" stroke="#1565c0" stroke-width="1"/>
+  <path d="M40 80h5M40 85h5M40 90h5M55 80h5M55 85h5M55 90h5" stroke="#1565c0" stroke-width="1"/>
+  
+  <!-- Graduation cap -->
+  <rect x="40" y="20" width="20" height="5" fill="#1565c0"/>
+  <path d="M50 25l-15 5 15 5 15-5z" fill="#1565c0"/>
+  <path d="M60 30v10M60 40l-3-3h6z" fill="none" stroke="#1565c0" stroke-width="1"/>
+</svg> 

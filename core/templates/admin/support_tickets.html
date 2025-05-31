@@ -1,0 +1,838 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .tickets-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .tickets-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .tickets-header h1 {
+        margin: 0;
+    }
+    
+    .filters {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .filter-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .filter-label {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .filter-input {
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+    
+    .btn-secondary {
+        background-color: #79aec8;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #609ab6;
+    }
+    
+    .btn-success {
+        background-color: #5cb85c;
+    }
+    
+    .btn-success:hover {
+        background-color: #4cae4c;
+    }
+    
+    .btn-danger {
+        background-color: #d9534f;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+    
+    .btn-warning {
+        background-color: #f0ad4e;
+    }
+    
+    .btn-warning:hover {
+        background-color: #eea236;
+    }
+    
+    .tickets-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+    
+    .tickets-table th,
+    .tickets-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+    
+    .tickets-table th {
+        background-color: #f8f9fa;
+        font-weight: 500;
+        color: #666;
+    }
+    
+    .tickets-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .ticket-status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    
+    .status-open {
+        background-color: #d9edf7;
+        color: #31708f;
+    }
+    
+    .status-in-progress {
+        background-color: #fcf8e3;
+        color: #8a6d3b;
+    }
+    
+    .status-resolved {
+        background-color: #dff0d8;
+        color: #3c763d;
+    }
+    
+    .status-closed {
+        background-color: #f5f5f5;
+        color: #777;
+    }
+    
+    .priority-low {
+        border-left: 4px solid #5cb85c;
+    }
+    
+    .priority-medium {
+        border-left: 4px solid #f0ad4e;
+    }
+    
+    .priority-high {
+        border-left: 4px solid #d9534f;
+    }
+    
+    .priority-urgent {
+        border-left: 4px solid #d9534f;
+        background-color: rgba(217, 83, 79, 0.05);
+    }
+    
+    .ticket-actions {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .ticket-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 800px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-title {
+        margin: 0;
+        font-size: 18px;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #777;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .ticket-details {
+        margin-bottom: 20px;
+    }
+    
+    .detail-row {
+        display: flex;
+        margin-bottom: 10px;
+    }
+    
+    .detail-label {
+        font-weight: bold;
+        width: 120px;
+        color: #666;
+    }
+    
+    .ticket-description {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+        white-space: pre-wrap;
+    }
+    
+    .comments-section {
+        margin-top: 20px;
+    }
+    
+    .comment {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+    }
+    
+    .comment-meta {
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 5px;
+    }
+    
+    .new-comment {
+        margin-top: 20px;
+    }
+    
+    .comment-textarea {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        min-height: 100px;
+        margin-bottom: 10px;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 30px;
+    }
+    
+    .page-link {
+        display: inline-block;
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    
+    .page-link.active {
+        background-color: #417690;
+        color: white;
+        border-color: #417690;
+    }
+    
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .summary-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 15px;
+        text-align: center;
+    }
+    
+    .summary-title {
+        font-size: 14px;
+        color: #666;
+        margin: 0 0 10px;
+    }
+    
+    .summary-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #417690;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .tickets-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+    
+    .filter-bar {
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .ticket-card {
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #007bff;
+        transition: transform 0.2s;
+    }
+    .ticket-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    }
+    .ticket-card.open {
+        border-left-color: #dc3545;
+    }
+    .ticket-card.pending {
+        border-left-color: #ffc107;
+    }
+    .ticket-card.resolved {
+        border-left-color: #28a745;
+    }
+    .ticket-header {
+        padding: 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        background-color: #f8f9fa;
+        border-top-right-radius: 8px;
+    }
+    .ticket-body {
+        padding: 15px;
+    }
+    .ticket-footer {
+        padding: 10px 15px;
+        background-color: rgba(0, 0, 0, 0.03);
+        font-size: 0.875rem;
+        color: #6c757d;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .status-badge.open {
+        background-color: #fcdada;
+        color: #dc3545;
+    }
+    .status-badge.pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    .status-badge.resolved {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+    .ticket-description {
+        max-height: 80px;
+        overflow: hidden;
+        position: relative;
+    }
+    .ticket-description.expanded {
+        max-height: none;
+    }
+    .read-more {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(to right, transparent, white 50%);
+        padding: 0 5px;
+        cursor: pointer;
+        color: #007bff;
+    }
+    .ai-summary-container {
+        background-color: #f0f7ff;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 3px solid #007bff;
+    }
+    .ai-summary-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+    .ai-summary {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    .pagination {
+        margin-bottom: 30px;
+    }
+    .search-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .dark-mode .filter-bar {
+        background-color: #343a40;
+        color: #f8f9fa;
+    }
+    .dark-mode .ticket-card {
+        background-color: #343a40;
+        color: #f8f9fa;
+    }
+    .dark-mode .ticket-header {
+        background-color: #2c3035;
+    }
+    .dark-mode .ticket-footer {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    .dark-mode .read-more {
+        background: linear-gradient(to right, transparent, #343a40 50%);
+        color: #5dade2;
+    }
+    .dark-mode .ai-summary-container {
+        background-color: #2c3035;
+        border-left: 3px solid #5dade2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Support Tickets</h1>
+    
+    <!-- AI Summary -->
+    {% if ticket_summary %}
+    <div class="ai-summary-container">
+        <div class="ai-summary-label">
+            <i class="fas fa-robot"></i> AI Summary for Ticket #{{ ticket_summary.ticket_id }}:
+        </div>
+        <div class="ai-summary">
+            {{ ticket_summary.summary }}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Filter bar -->
+    <div class="filter-bar">
+        <form method="get" class="search-form">
+            <div class="input-group" style="max-width: 300px;">
+                <input type="text" name="search" class="form-control" placeholder="Search tickets..." value="{{ search_query }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <div>
+                <select name="status" class="form-control" onchange="this.form.submit()">
+                    <option value="" {% if not status_filter %}selected{% endif %}>All Status</option>
+                    <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Open</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
+                </select>
+            </div>
+            
+            <div class="ml-auto">
+                <a href="{% url 'admin:core_supportissue_add' %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> New Ticket
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Tickets list -->
+    <div class="tickets-list">
+        {% for ticket in tickets %}
+        <div class="ticket-card {{ ticket.status }}">
+            <div class="ticket-header">
+                <div>
+                    <h5 class="mb-0">#{{ ticket.id }} - {{ ticket.title }}</h5>
+                    <small>Reported by: {{ ticket.user.username }}</small>
+                </div>
+                <div>
+                    <span class="status-badge {{ ticket.status }}">{{ ticket.status }}</span>
+                </div>
+            </div>
+            <div class="ticket-body">
+                <div class="ticket-description" id="description-{{ ticket.id }}">
+                    {{ ticket.description|linebreaks }}
+                    {% if ticket.description|length > 150 %}
+                    <span class="read-more" onclick="expandDescription('{{ ticket.id }}')">Read more</span>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-3 action-buttons">
+                    <a href="{% url 'admin:core_supportissue_change' ticket.id %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'core:admin_ai_summarize_ticket' ticket.id %}" class="btn btn-sm btn-info">
+                        <i class="fas fa-robot"></i> AI Summarize
+                    </a>
+                    <form method="post" action="{% url 'admin:core_supportissue_delete' ticket.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="ticket-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        Created: {{ ticket.created_at|date:"M d, Y H:i" }}
+                    </div>
+                    <div class="col-md-6 text-right">
+                        {% if ticket.updated_at %}
+                        Updated: {{ ticket.updated_at|date:"M d, Y H:i" }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            No tickets found.
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if tickets.paginator.num_pages > 1 %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if tickets.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ tickets.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#">First</a>
+            </li>
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Previous</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item">
+                <span class="page-link">
+                    Page {{ tickets.number }} of {{ tickets.paginator.num_pages }}
+                </span>
+            </li>
+            
+            {% if tickets.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ tickets.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ tickets.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Last</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Next</a>
+            </li>
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<div id="ticketModal" class="ticket-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Ticket Details</h2>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="ticket-details">
+                <div class="detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value">
+                        <select id="ticketStatus" class="filter-input">
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Priority:</div>
+                    <div class="detail-value">
+                        <select id="ticketPriority" class="filter-input">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Assigned To:</div>
+                    <div class="detail-value">
+                        <select id="ticketAssigned" class="filter-input">
+                            <option value="">Unassigned</option>
+                            {% for admin in admin_users %}
+                            <option value="{{ admin.id }}">{{ admin.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">User:</div>
+                    <div class="detail-value" id="ticketUser"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Created:</div>
+                    <div class="detail-value" id="ticketCreated"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Updated:</div>
+                    <div class="detail-value" id="ticketUpdated"></div>
+                </div>
+            </div>
+            
+            <h3>Description</h3>
+            <div class="ticket-description" id="ticketDescription"></div>
+            
+            <div class="comments-section">
+                <h3>Comments</h3>
+                <div id="ticketComments">
+                    <!-- Comments will be populated via JS -->
+                </div>
+                
+                <div class="new-comment">
+                    <h4>Add Comment</h4>
+                    <textarea id="newComment" class="comment-textarea" placeholder="Write your comment here..."></textarea>
+                    <button id="addComment" class="btn btn-success">Add Comment</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary modal-close-btn">Close</button>
+            <button id="saveTicket" class="btn">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle ticket view modal
+    const modal = document.getElementById('ticketModal');
+    const viewButtons = document.querySelectorAll('.view-ticket');
+    const closeButtons = document.querySelectorAll('.modal-close, .modal-close-btn');
+    const saveButton = document.getElementById('saveTicket');
+    const addCommentButton = document.getElementById('addComment');
+    
+    let currentTicketId = null;
+    
+    // Open modal when view button is clicked
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currentTicketId = this.getAttribute('data-ticket-id');
+            loadTicketDetails(currentTicketId);
+            modal.style.display = 'flex';
+        });
+    });
+    
+    // Close modal when close button is clicked
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    });
+    
+    // Close modal when clicking outside the content
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // Save ticket changes
+    saveButton.addEventListener('click', function() {
+        if (!currentTicketId) return;
+        
+        const status = document.getElementById('ticketStatus').value;
+        const priority = document.getElementById('ticketPriority').value;
+        const assignedTo = document.getElementById('ticketAssigned').value;
+        
+        // In a real implementation, this would make an AJAX call to save the changes
+        alert('In a real implementation, this would save the changes to ticket #' + currentTicketId);
+        
+        // For now, let's simulate a successful update by reloading the page
+        window.location.reload();
+    });
+    
+    // Add comment
+    addCommentButton.addEventListener('click', function() {
+        if (!currentTicketId) return;
+        
+        const commentText = document.getElementById('newComment').value.trim();
+        if (!commentText) {
+            alert('Please enter a comment');
+            return;
+        }
+        
+        // In a real implementation, this would make an AJAX call to add the comment
+        alert('In a real implementation, this would add your comment to ticket #' + currentTicketId);
+        
+        // Clear the comment field
+        document.getElementById('newComment').value = '';
+        
+        // For now, let's simulate adding the comment to the UI
+        const commentsContainer = document.getElementById('ticketComments');
+        const newComment = document.createElement('div');
+        newComment.className = 'comment';
+        newComment.innerHTML = `
+            <div class="comment-meta">
+                <strong>You</strong> - Just now
+            </div>
+            <div class="comment-text">
+                ${commentText}
+            </div>
+        `;
+        commentsContainer.appendChild(newComment);
+    });
+    
+    // Function to load ticket details
+    function loadTicketDetails(ticketId) {
+        // In a real implementation, this would make an AJAX call to get the ticket details
+        // For this example, we'll simulate with static data
+        
+        // Set form field values
+        document.getElementById('ticketStatus').value = 'open';
+        document.getElementById('ticketPriority').value = 'medium';
+        document.getElementById('ticketAssigned').value = '';
+        
+        // Set text fields
+        document.getElementById('ticketUser').textContent = 'johndoe';
+        document.getElementById('ticketCreated').textContent = 'Jan 15, 2023';
+        document.getElementById('ticketUpdated').textContent = 'Jan 16, 2023';
+        document.getElementById('ticketDescription').textContent = 'This is a sample ticket description. It would contain details about the issue reported by the user.';
+        
+        // Clear comments container
+        const commentsContainer = document.getElementById('ticketComments');
+        commentsContainer.innerHTML = '';
+        
+        // Add sample comments
+        const sampleComments = [
+            {
+                author: 'johndoe',
+                date: 'Jan 15, 2023',
+                text: 'I noticed this issue when trying to complete my daily tasks.'
+            },
+            {
+                author: 'admin',
+                date: 'Jan 16, 2023',
+                text: 'Thanks for reporting this. We\'re looking into it.'
+            }
+        ];
+        
+        sampleComments.forEach(comment => {
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment';
+            commentElement.innerHTML = `
+                <div class="comment-meta">
+                    <strong>${comment.author}</strong> - ${comment.date}
+                </div>
+                <div class="comment-text">
+                    ${comment.text}
+                </div>
+            `;
+            commentsContainer.appendChild(commentElement);
+        });
+    }
+    
+    function expandDescription(ticketId) {
+        const descriptionElement = document.getElementById('description-' + ticketId);
+        descriptionElement.classList.toggle('expanded');
+        
+        // Toggle read more/less text
+        const readMoreElement = descriptionElement.querySelector('.read-more');
+        if (descriptionElement.classList.contains('expanded')) {
+            readMoreElement.textContent = 'Read less';
+        } else {
+            readMoreElement.textContent = 'Read more';
+        }
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,67 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .output-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .output-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .output-header h1 {
+        margin: 0;
+    }
+    
+    .output-content {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="output-container">
+    <div class="output-header">
+        <h1>Command Output</h1>
+        <a href="{% url 'core:admin_dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+    
+    <div class="output-content">
+{{ output }}
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,1 @@
+web: gunicorn desiq.wsgi:application -c gunicorn_config.py --preload 

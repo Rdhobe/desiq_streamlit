@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+  <!-- Background Circle with Gradient -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e6f7ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#bae7ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="45" fill="url(#grad1)" stroke="#1890ff" stroke-width="3" />
+  
+  <!-- Heart Symbol -->
+  <path d="M50,65 C50,65 35,50 30,45 C25,40 25,30 35,25 C45,20 50,35 50,35 C50,35 55,20 65,25 C75,30 75,40 70,45 C65,50 50,65 50,65 Z" fill="#1890ff" />
+  
+  <!-- Leaf Symbol -->
+  <path d="M60,55 C70,45 75,35 75,35 C75,35 65,40 55,50 C45,60 45,70 45,70 C45,70 50,65 60,55 Z" fill="#1890ff" />
+  
+  <!-- Premium Star -->
+  <polygon points="85,15 88,22 95,23 90,28 91,35 85,32 79,35 80,28 75,23 82,22" fill="#ffd700" stroke="#ff8c00" stroke-width="1" />
+</svg> 

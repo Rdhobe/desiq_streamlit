@@ -1,0 +1,529 @@
+{% load static custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Desiq{% endblock %}</title>
+  <link rel="stylesheet" href="{% robust_static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% robust_static 'css/responsive.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Tour CSS -->
+  <link rel="stylesheet" href="{% robust_static 'css/tour.css' %}">
+  {% block head %}
+    <!-- Critical CSS - inline for faster initial render -->
+    <style>
+        /* Critical path CSS */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            background-color: #fafafa;
+            color: #333;
+        }
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .nav-item {
+            padding: 0.5rem 1rem;
+            display: inline-block;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #0d6efd;
+            color: white;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Stat Cards Styles */
+        .stat-cards-container {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            margin: 0 auto 20px;
+            padding: 0 20px;
+            max-width: 800px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .level-card, .xp-card {
+            background-color: white;
+        }
+        
+        .limits-card {
+            background-color: #f5f5f7;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #777;
+            font-weight: 500;
+        }
+        
+        .xp-label {
+            color: #1b309a;
+        }
+        
+        .limits-header {
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+        
+        .limits-item {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #555;
+        }
+        
+        .limits-value {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 600px) {
+            .stat-cards-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    
+    <!-- Non-critical CSS - deferred loading -->
+    <noscript id="deferred-styles">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+        {% block extra_css %}{% endblock %}
+    </noscript>
+    
+    <!-- Preloading key resources -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" as="script">
+    <link rel="preload" href="{% robust_static 'js/script.js' %}" as="script">
+{% endblock %}
+</head>
+<body>
+  <!-- Mobile Header (only visible on mobile) -->
+  <header class="mobile-header">
+    <div class="mobile-logo">
+      <a href="{% url 'core:home' %}">
+        <img src="{% static 'img/digital-brain-logo.svg' %}" alt="Desiq">
+      </a>
+      <span class="mobile-logo-text">DesiQ</span>
+    </div>
+    
+    <!-- Mobile Notification Bell -->
+    {% if user.is_authenticated %}
+    <div class="mobile-notification-bell">
+      <a href="{% url 'core:notifications' %}">
+        <i class="fas fa-bell"></i>
+        <span class="notification-counter" id="mobileNotificationCounter" style="display: none;">0</span>
+      </a>
+    </div>
+    {% endif %}
+  </header>
+  
+  <!-- Mobile Sidebar (off-canvas menu) -->
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <button class="sidebar-close" id="sidebarClose">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="sidebar-header">
+      <div class="mobile-logo">
+        <a href="{% url 'core:home' %}">
+          <img src="{% static 'img/digital-brain-logo.svg' %}" alt="Desiq">
+          <span class="mobile-logo-text">DesiQ</span>
+        </a>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <ul>
+        <li {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}><a href="{% url 'core:dashboard' %}"><img src="{% static 'img/Home_light.svg' %}" alt=""><span>Dashboard</span></a></li>
+        <li {% if request.resolver_match.url_name == 'know_yourself' %}class="active"{% endif %}><a href="{% url 'core:personality_test' %}"><img src="{% static 'img/change 1.svg' %}" alt=""><span>Know Yourself</span></a></li>
+        <li {% if request.resolver_match.url_name == 'scenarios' %}class="active"{% endif %}><a href="{% url 'core:scenarios' %}"><img src="{% static 'img/Group 2.svg' %}" alt=""><span>Decision Scenarios</span></a></li>
+        <li {% if request.resolver_match.url_name == 'smart_mentor' %}class="active"{% endif %}><a href="{% url 'core:mentor' %}"><img src="{% static 'img/Lamp_duotone_line.svg' %}" alt=""><span>Smart Mentor</span></a></li>
+        <li {% if request.resolver_match.url_name == 'progress' %}class="active"{% endif %}><a href="{% url 'core:progress' %}"><img src="{% static 'img/Chart_light.svg' %}" alt=""><span>Progress</span></a></li>
+        <li {% if request.resolver_match.url_name == 'community_dilemmas' %}class="active"{% endif %}><a href="{% url 'core:community' %}"><img src="{% static 'img/Group_add_light.svg' %}" alt=""><span>Community</span></a></li>
+        <li {% if request.resolver_match.url_name == 'support' %}class="active"{% endif %}><a href="{% url 'core:support' %}"><img src="{% static 'img/Support.svg' %}" alt=""><span>Support</span></a></li>
+        <li {% if request.resolver_match.url_name == 'personal_chat' or request.resolver_match.url_name == 'direct_message' or request.resolver_match.url_name == 'chat_with_mentor' %}class="active"{% endif %}><a href="{% url 'core:personal_chat' %}"><img src="{% static 'img/comment_duotone_line.svg' %}" alt=""><span>Chat</span></a></li>
+        {% if user.is_authenticated %}
+        <li {% if request.resolver_match.url_name == 'notifications' %}class="active"{% endif %}><a href="{% url 'core:notifications' %}"><div class="notification-bell"><i class="fas fa-bell"></i><span class="notification-counter" id="sidebarNotificationCounter" style="display: none;">0</span></div><span>Notifications</span></a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    <nav class="user-nav">
+      <ul>
+        <li {% if request.resolver_match.url_name == 'profile' %}class="active"{% endif %}><a href="{% url 'core:profile' %}"><img src="{% static 'img/User_scan_light.svg' %}" alt=""><span>Profile</span></a></li>
+        <li {% if request.resolver_match.url_name == 'settings' %}class="active"{% endif %}><a href="{% url 'core:setting' %}"><img src="{% static 'img/Setting_line_light.svg' %}" alt=""><span>Setting</span></a></li>
+        <li {% if request.resolver_match.url_name == 'logout' %}class="active"{% endif %}><a href="{% url 'core:logout' %}"><img src="{% static 'img/Sign_in_squre_light.svg' %}" alt=""><span>Log out</span></a></li>
+      </ul>
+    </nav>
+  </div>
+  
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  
+  <div class="desktop">
+    <!-- fixed sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <a href="{% url 'core:home' %}"><img src="{% static 'img/digital-brain-logo.svg' %}" alt="Desiq"> <span class="logo-text">DesiQ</span></a>
+      </div>
+      <nav class="main-nav" id="main-nav">
+        <ul>
+
+          <li {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}><a href="{% url 'core:dashboard' %}"><img src="{% static 'img/Home_light.svg' %}" alt="" id="dashboard-icon"><span>Dashboard</span></a></li>
+          <li {% if request.resolver_match.url_name == 'know_yourself' %}class="active"{% endif %}><a href="{% url 'core:personality_test' %}"><img src="{% static 'img/change 1.svg' %}" alt="" id="know-yourself-icon"><span>Know Yourself</span></a></li>
+          <li {% if request.resolver_match.url_name == 'scenarios' %}class="active"{% endif %}><a href="{% url 'core:scenarios' %}"><img src="{% static 'img/Group 2.svg' %}" alt="" id="scenarios-icon"><span>Decision Scenarios</span></a></li>
+          <li {% if request.resolver_match.url_name == 'smart_mentor' %}class="active"{% endif %}><a href="{% url 'core:mentor' %}"><img src="{% static 'img/Lamp_duotone_line.svg' %}" alt="" id="smart-mentor-icon"><span>Smart Mentor</span></a></li>
+          <li {% if request.resolver_match.url_name == 'progress' %}class="active"{% endif %}><a href="{% url 'core:progress' %}"><img src="{% static 'img/Chart_light.svg' %}" alt="" id="progress-icon"><span>Progress</span></a></li>
+          <li {% if request.resolver_match.url_name == 'community_dilemmas' %}class="active"{% endif %}><a href="{% url 'core:community' %}"><img src="{% static 'img/Group_add_light.svg' %}" alt="" id="community-icon"><span>Community Dilemmas</span></a></li>
+          <li {% if request.resolver_match.url_name == 'support' %}class="active"{% endif %}><a href="{% url 'core:support' %}"><img src="{% static 'img/Support.svg' %}" alt="" id="support-icon"><span>Support</span></a></li>
+          <li {% if request.resolver_match.url_name == 'personal_chat' or request.resolver_match.url_name == 'direct_message' or request.resolver_match.url_name == 'chat_with_mentor' %}class="active"{% endif %} id="chat-icon"><a href="{% url 'core:personal_chat' %}"><img src="{% static 'img/comment_duotone_line.svg' %}" alt=""><span>Chat</span></a></li>
+          {% if user.is_authenticated %}
+          <li {% if request.resolver_match.url_name == 'notifications' %}class="active"{% endif %} id="notifications-icon"><a href="{% url 'core:notifications' %}"><div class="notification-bell"><i class="fas fa-bell"></i><span class="notification-counter" id="mainNotificationCounter" style="display: none;">0</span></div><span>Notifications</span></a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      <nav class="user-nav" id="user-nav">
+        <ul>
+          <li {% if request.resolver_match.url_name == 'profile' %}class="active"{% endif %} id="profile-icon"><a href="{% url 'core:profile' %}"><img src="{% static 'img/User_scan_light.svg' %}" alt=""><span>Profile</span></a></li>
+          <li {% if request.resolver_match.url_name == 'settings' %}class="active"{% endif %} id="setting-icon"><a href="{% url 'core:setting' %}"><img src="{% static 'img/Setting_line_light.svg' %}" alt=""><span>Setting</span></a></li>
+          <li {% if request.resolver_match.url_name == 'logout' %}class="active"{% endif %} id="logout-icon"><a href="{% url 'core:logout' %}"><img src="{% static 'img/Sign_in_squre_light.svg' %}" alt=""><span>Log out</span></a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- main content -->
+    <main class="content">
+      <header class="page-header">
+        <h1>{% block header %}{% endblock %}</h1>
+      </header>
+      
+      {% if request.resolver_match.url_name == 'personality_test' or request.resolver_match.url_name == 'scenarios' or request.resolver_match.url_name == 'mentor' or request.resolver_match.url_name == 'mentor_list' or request.resolver_match.url_name == 'personality_test_detail' or request.resolver_match.url_name == 'take_personality_test' or request.resolver_match.url_name == 'chat_with_mentor' %}
+      <div class="stat-cards-container">
+        <div class="stat-card level-card">
+          <span class="stat-number">{{ user.profile.level }}</span>
+          <span class="stat-label">LEVEL</span>
+        </div>
+        <div class="stat-card xp-card">
+          <span class="stat-number">{{ user.profile.xp_points }} XP</span>
+          <span class="stat-label xp-label">XP POINTS</span>
+        </div>
+        
+        {% if request.resolver_match.url_name == 'personality_test' or request.resolver_match.url_name == 'personality_test_detail' or request.resolver_match.url_name == 'take_personality_test' %}
+        <!-- Personality Test - only show level and XP -->
+        {% elif request.resolver_match.url_name == 'mentor' or request.resolver_match.url_name == 'mentor_list' or request.resolver_match.url_name == 'chat_with_mentor' %}
+        <!-- Mentor page - show level, XP, and remaining mentor limit -->
+        <div class="stat-card limits-card">
+          <span class="stat-label limits-header">DAILY LIMITS</span>
+          <div class="limits-item">
+            <span>Mentor Sessions:</span>
+            <span class="limits-value">{{ remaining_sessions }} / {{ daily_limit }}</span>
+          </div>
+        </div>
+        {% elif request.resolver_match.url_name == 'scenarios' %}
+        <!-- Scenario page - show level, XP, and scenario generation limits -->
+        <div class="stat-card limits-card">
+          <span class="stat-label limits-header">DAILY LIMITS</span>
+          <div class="limits-item">
+            <span>Scenario Generation:</span>
+            <span class="limits-value">{{ scenarios_generated_today }} / {{ daily_scenario_limit }}</span>
+          </div>
+          {% if scenarios_completed_today is not None %}
+          <div class="limits-item">
+            <span>Completed Today:</span>
+            <span class="limits-value">{{ scenarios_completed_today }}</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+      
+      <section class="frame">
+        {% block content %}{% endblock %}
+      </section>
+    </main>
+  </div>
+  
+  <!-- Mobile Bottom Navigation -->
+  <div class="mobile-nav-container">
+    <nav class="mobile-nav">
+      <a href="{% url 'core:dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>
+        <img src="{% static 'img/Home_light.svg' %}" alt="">
+        <span>Home</span>
+      </a>
+      <a href="{% url 'core:scenarios' %}" {% if request.resolver_match.url_name == 'scenarios' %}class="active"{% endif %}>
+        <img src="{% static 'img/Group 2.svg' %}" alt="">
+        <span>Scenarios</span>
+      </a>
+      <a href="{% url 'core:mentor' %}" {% if request.resolver_match.url_name == 'smart_mentor' %}class="active"{% endif %}>
+        <img src="{% static 'img/Lamp_duotone_line.svg' %}" alt="">
+        <span>Mentor</span>
+      </a>
+      <a href="{% url 'core:community' %}" {% if request.resolver_match.url_name == 'community_dilemmas' %}class="active"{% endif %}>
+        <img src="{% static 'img/Group_add_light.svg' %}" alt="">
+        <span>Community</span>
+      </a>
+      <a href="{% url 'core:profile' %}" {% if request.resolver_match.url_name == 'profile' %}class="active"{% endif %}>
+        <img src="{% static 'img/User_scan_light.svg' %}" alt="">
+        <span>Profile</span>
+      </a>
+      <button class="mobile-menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </nav>
+  </div>
+  
+  <!-- JavaScript to handle mobile menu -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuBtn = document.getElementById('menuBtn');
+      const sidebarClose = document.getElementById('sidebarClose');
+      const mobileSidebar = document.getElementById('mobileSidebar');
+      const mobileOverlay = document.getElementById('mobileOverlay');
+      
+      // Open menu
+      if (menuBtn) {
+        menuBtn.addEventListener('click', function() {
+          mobileSidebar.classList.add('active');
+          mobileOverlay.classList.add('active');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+      }
+      
+      // Close menu
+      if (sidebarClose) {
+        sidebarClose.addEventListener('click', function() {
+          mobileSidebar.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+          document.body.style.overflow = ''; // Restore scrolling
+        });
+      }
+      
+      // Click on overlay to close
+      if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', function() {
+          mobileSidebar.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+          document.body.style.overflow = ''; // Restore scrolling
+        });
+      }
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+          mobileSidebar.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+          document.body.style.overflow = ''; // Restore scrolling
+        }
+      });
+
+      // Function to update notification counter
+      window.updateNotificationCounter = function() {
+        {% if user.is_authenticated %}
+        // Fetch unread notifications count
+        fetch('{% url "core:get_unread_notifications_count" %}')
+          .then(response => response.json())
+          .then(data => {
+            const count = data.count;
+            const mainCounter = document.getElementById('mainNotificationCounter');
+            const sidebarCounter = document.getElementById('sidebarNotificationCounter');
+            const mobileCounter = document.getElementById('mobileNotificationCounter');
+            
+            if (count > 0) {
+              // Update all notification counters
+              if (mainCounter) {
+                mainCounter.textContent = count;
+                mainCounter.style.display = 'flex';
+              }
+              
+              if (sidebarCounter) {
+                sidebarCounter.textContent = count;
+                sidebarCounter.style.display = 'flex';
+              }
+              
+              if (mobileCounter) {
+                mobileCounter.textContent = count;
+                mobileCounter.style.display = 'flex';
+              }
+            } else {
+              // Hide counters if no unread notifications
+              if (mainCounter) mainCounter.style.display = 'none';
+              if (sidebarCounter) sidebarCounter.style.display = 'none';
+              if (mobileCounter) mobileCounter.style.display = 'none';
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching notifications:', error);
+          });
+        {% endif %}
+      };
+      
+      // Initial update of notification counter
+      if (window.updateNotificationCounter) {
+        window.updateNotificationCounter();
+        
+        // Update notification counter every minute
+        setInterval(window.updateNotificationCounter, 60000);
+      }
+    });
+  </script>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  <!-- Custom Tour JS -->
+  <script src="{% static 'js/tour.js' %}"></script>
+  
+  <!-- Check for new user -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Checking for new user tour status...');
+      // Check if we need to show the welcome tour (for new users)
+      {% if user.is_authenticated and request.GET.new_user %}
+        console.log('New user detected, showing tour welcome');
+        // Check if the user has already completed the tour
+        if (localStorage.getItem('desiq_tour_completed') !== 'true') {
+          localStorage.setItem('desiq_new_user', 'true');
+          if (typeof window.startDesiQTour === 'function') {
+            console.log('startDesiQTour function exists, starting tour');
+            setTimeout(function() {
+              window.startDesiQTour();
+            }, 1000);
+          } else {
+            console.log('startDesiQTour function not found');
+          }
+        } else {
+          console.log('User has already completed the tour');
+        }
+      {% endif %}
+    });
+  </script>
+  
+  <!-- Add this before the </body> tag -->
+  <script>
+  // Implement lazy loading for images
+  document.addEventListener('DOMContentLoaded', function() {
+      // Select all images with the lazy class
+      var lazyImages = [].slice.call(document.querySelectorAll('img.lazy'));
+      
+      if ('IntersectionObserver' in window) {
+          let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+              entries.forEach(function(entry) {
+                  if (entry.isIntersecting) {
+                      let lazyImage = entry.target;
+                      lazyImage.src = lazyImage.dataset.src;
+                      if (lazyImage.dataset.srcset) {
+                          lazyImage.srcset = lazyImage.dataset.srcset;
+                      }
+                      lazyImage.classList.remove('lazy');
+                      lazyImageObserver.unobserve(lazyImage);
+                  }
+              });
+          });
+
+          lazyImages.forEach(function(lazyImage) {
+              lazyImageObserver.observe(lazyImage);
+          });
+      } else {
+          // Fallback for browsers that don't support IntersectionObserver
+          let active = false;
+
+          const lazyLoad = function() {
+              if (active === false) {
+                  active = true;
+
+                  setTimeout(function() {
+                      lazyImages.forEach(function(lazyImage) {
+                          if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && lazyImage.getBoundingClientRect().bottom >= 0) && getComputedStyle(lazyImage).display !== 'none') {
+                              lazyImage.src = lazyImage.dataset.src;
+                              if (lazyImage.dataset.srcset) {
+                                  lazyImage.srcset = lazyImage.dataset.srcset;
+                              }
+                              lazyImage.classList.remove('lazy');
+
+                              lazyImages = lazyImages.filter(function(image) {
+                                  return image !== lazyImage;
+                              });
+
+                              if (lazyImages.length === 0) {
+                                  document.removeEventListener('scroll', lazyLoad);
+                                  window.removeEventListener('resize', lazyLoad);
+                                  window.removeEventListener('orientationchange', lazyLoad);
+                              }
+                          }
+                      });
+
+                      active = false;
+                  }, 200);
+              }
+          };
+
+          document.addEventListener('scroll', lazyLoad);
+          window.addEventListener('resize', lazyLoad);
+          window.addEventListener('orientationchange', lazyLoad);
+          lazyLoad();
+      }
+  });
+
+  // Implement deferred loading of non-critical resources
+  function loadDeferredStyles() {
+      var addStylesNode = document.getElementById('deferred-styles');
+      if (addStylesNode) {
+          var replacement = document.createElement('div');
+          replacement.innerHTML = addStylesNode.textContent;
+          document.body.appendChild(replacement);
+          addStylesNode.parentElement.removeChild(addStylesNode);
+      }
+  }
+  window.addEventListener('load', loadDeferredStyles);
+  </script>
+  
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,53 @@
+# Django - MUST be this version for compatibility
+Django==4.2.11
+
+# Core Django + Utilities
+asgiref==3.8.1
+sqlparse==0.5.1
+tzdata==2025.2
+python-dotenv==1.0.1
+Pillow==10.3.0
+gunicorn==21.2.0
+whitenoise==6.6.0
+dj-database-url==2.1.0
+psutil==5.9.7
+Faker==22.6.0
+
+# PostgreSQL
+psycopg2-binary==2.9.9
+
+# Redis & Channels
+channels==4.0.0
+daphne==4.0.0
+channels-redis==4.1.0
+redis==5.0.3
+django-redis==5.4.0
+
+# Cron & Scheduling - Note: django-celery-beat requires Django<5.0
+django-crontab==0.7.1
+python-crontab==3.0.0
+django-celery-beat==2.5.0
+django-celery-results==2.4.0
+
+# Payment APIs
+razorpay==1.4.1
+stripe==8.6.0
+
+# Google & Social Auth
+google-auth==2.23.0
+google-auth-oauthlib==1.0.0
+google-api-python-client==2.97.0
+social-auth-app-django==5.4.3
+social-auth-core==4.6.1
+PyJWT==2.9.0
+
+# Admin Enhancements
+django-jazzmin==2.6.0
+django-import-export==3.2.0
+django-guardian==2.4.0
+django-ckeditor==6.5.1
+django-admin-autocomplete-filter==0.7.1
+
+# AI & Notifications
+openai==1.78.0
+slack-sdk==3.19.5 

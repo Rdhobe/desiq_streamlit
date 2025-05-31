@@ -1,0 +1,142 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Desiq Admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'core:admin_dashboard' %}">
+        {{ site_header|default:_('Desiq Admin') }}
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<div class="module" style="margin-top: 20px;">
+    <h2>Admin Navigation</h2>
+    <ul class="admin-nav">
+        <li><a href="{% url 'core:admin_dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'core:admin_user_management' %}">User Management</a></li>
+        <li><a href="{% url 'core:admin_mentor_management' %}">Mentor Management</a></li>
+        <li><a href="{% url 'core:admin_scenario_management' %}">Scenario Management</a></li>
+        <li><a href="{% url 'core:admin_personality_test_management' %}">Personality Test Management</a></li>
+        <li><a href="{% url 'core:admin_analytics_dashboard' %}">Analytics Dashboard</a></li>
+        <li><a href="{% url 'core:admin_support_tickets' %}">Support Tickets</a></li>
+        <li><a href="{% url 'core:admin_bulk_operations' %}">Bulk Operations</a></li>
+        <li><a href="{% url 'core:admin_system_status' %}">System Status</a></li>
+        <li><a href="{% url 'admin:index' %}">Django Admin</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Custom admin styles */
+    :root {
+        --primary-color: #417690;
+        --secondary-color: #79aec8;
+        --accent-color: #f5dd5d;
+        --text-color: #333;
+        --light-bg: #f8f9fa;
+        --border-color: #eee;
+    }
+
+    .admin-nav {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .admin-nav li {
+        margin-bottom: 8px;
+    }
+
+    .admin-nav a {
+        display: block;
+        padding: 8px 12px;
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .admin-nav a:hover {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    /* General improvements */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    }
+
+    #header {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    #branding h1 {
+        font-weight: 500;
+    }
+
+    .module h2, .module caption {
+        background: var(--secondary-color);
+    }
+
+    a:link, a:visited {
+        color: var(--primary-color);
+    }
+
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--primary-color);
+    }
+
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: var(--secondary-color);
+    }
+
+    .button.default, input[type=submit].default, .submit-row input.default {
+        background: var(--primary-color);
+    }
+
+    .button.default:hover, input[type=submit].default:hover {
+        background: var(--secondary-color);
+    }
+
+    /* Messages styling */
+    .messagelist {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    .messagelist li {
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+
+    .messagelist li.success {
+        background-color: #dff0d8;
+        color: #3c763d;
+    }
+
+    .messagelist li.error {
+        background-color: #f2dede;
+        color: #a94442;
+    }
+
+    .messagelist li.warning {
+        background-color: #fcf8e3;
+        color: #8a6d3b;
+    }
+
+    .messagelist li.info {
+        background-color: #d9edf7;
+        color: #31708f;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,348 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Messages{% endblock %}
+{% block content %}
+<div class="messages-container">
+    <div class="messages-header">
+        <h1 class="messages-title">Messages</h1>
+        <div class="search-container">
+            <input type="text" id="user-search" placeholder="Search users..." class="search-input">
+            <div id="search-results" class="search-results"></div>
+        </div>
+    </div>
+    
+    <div class="messages-content">
+        <div class="conversations-list">
+            <h2>Recent Conversations</h2>
+            {% if chat_users %}
+                <ul class="user-list">
+                    {% for chat_user in chat_users %}
+                        <li class="user-item">
+                            <a href="{% url 'core:direct_message' chat_user.user.id %}" class="user-link">
+                                <div class="user-avatar">{{ chat_user.user.username|first|upper }}</div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ chat_user.user.username }}</div>
+                                    <div class="last-message">
+                                        {% if chat_user.last_message %}
+                                            {% if chat_user.last_message.sender == request.user %}
+                                                <span class="message-prefix">You:</span>
+                                            {% endif %}
+                                            {% if chat_user.last_message.shared_scenario %}
+                                                <span class="message-content">Shared a scenario</span>
+                                            {% else %}
+                                                <span class="message-content">{{ chat_user.last_message.content|truncatechars:30 }}</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="message-content">Start a conversation</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if chat_user.unread_count > 0 %}
+                                    <div class="unread-badge">{{ chat_user.unread_count }}</div>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <p>No conversations yet. Start chatting with someone!</p>
+                </div>
+            {% endif %}
+            
+            <h2>Suggested Users</h2>
+            {% if other_users %}
+                <ul class="user-list">
+                    {% for user in other_users %}
+                        <li class="user-item">
+                            <a href="{% url 'core:direct_message' user.id %}" class="user-link">
+                                <div class="user-avatar">{{ user.username|first|upper }}</div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ user.username }}</div>
+                                    <div class="last-message">
+                                        <span class="message-content">Start a conversation</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <p>No suggested users available.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="start-message desktop-only">
+            <div class="welcome-message">
+                <h2>Welcome to Messages</h2>
+                <p>Select a conversation from the left or search for users to start a new conversation.</p>
+                <p>Share scenarios, discuss decisions, and connect with other users!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Desktop-only class */
+    @media (max-width: 768px) {
+        .desktop-only {
+            display: none !important;
+        }
+    }
+    
+    .messages-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .messages-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .messages-title {
+        margin: 0;
+        font-size: 24px;
+    }
+    
+    .search-container {
+        position: relative;
+        width: 300px;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 0 0 4px 4px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 100;
+        display: none;
+    }
+    
+    .search-results.active {
+        display: block;
+    }
+    
+    .search-result-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+    }
+    
+    .search-result-item:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .messages-content {
+        display: flex;
+        flex: 1;
+        gap: 20px;
+        height: calc(100% - 60px);
+    }
+    
+    .conversations-list {
+        width: 350px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+    }
+    
+    .conversations-list h2 {
+        margin: 0;
+        font-size: 16px;
+        color: #666;
+    }
+    
+    .user-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .user-item {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .user-link {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        text-decoration: none;
+        color: inherit;
+        gap: 10px;
+        position: relative;
+    }
+    
+    .user-link:hover {
+        background-color: #f0f4ff;
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #4a6cf7;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+    
+    .user-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .user-name {
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+    
+    .last-message {
+        font-size: 13px;
+        color: #666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .message-prefix {
+        color: #888;
+        margin-right: 4px;
+    }
+    
+    .unread-badge {
+        background-color: #4a6cf7;
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .start-message {
+        flex: 1;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .welcome-message {
+        text-align: center;
+        max-width: 400px;
+    }
+    
+    .welcome-message h2 {
+        margin-top: 0;
+        color: #333;
+    }
+    
+    .welcome-message p {
+        color: #666;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 20px 0;
+        color: #888;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('user-search');
+        const searchResults = document.getElementById('search-results');
+        
+        // Handle search input
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.innerHTML = '';
+                searchResults.classList.remove('active');
+                return;
+            }
+            
+            // Make AJAX request to search users
+            fetch(`/search-users/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = '';
+                    
+                    if (data.users.length === 0) {
+                        searchResults.innerHTML = '<div class="search-result-item">No users found</div>';
+                    } else {
+                        data.users.forEach(user => {
+                            const resultItem = document.createElement('div');
+                            resultItem.className = 'search-result-item';
+                            resultItem.textContent = user.username;
+                            resultItem.addEventListener('click', function() {
+                                window.location.href = `/messages/${user.id}/`;
+                            });
+                            searchResults.appendChild(resultItem);
+                        });
+                    }
+                    
+                    searchResults.classList.add('active');
+                })
+                .catch(error => {
+                    console.error('Error searching users:', error);
+                });
+        });
+        
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.remove('active');
+            }
+        });
+        
+        // Show search results when focusing on input
+        searchInput.addEventListener('focus', function() {
+            if (this.value.trim().length >= 2) {
+                searchResults.classList.add('active');
+            }
+        });
+    });
+</script>
+{% endblock %}

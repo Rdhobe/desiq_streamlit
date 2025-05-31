@@ -1,0 +1,392 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Desiq - Start Personal Chat{% endblock %}
+{% block content %}
+<div class="personal-chat-container">
+    <div class="personal-chat-header">
+        <h1 class="personal-chat-title">Start Personal Chat</h1>
+        <a href="{% url 'core:chat_rooms' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Rooms
+        </a>
+    </div>
+    
+    <div class="personal-chat-content">
+        <div class="personal-chat-card">
+            <div class="card-header">
+                <h2><i class="fas fa-user-plus"></i> Select a User to Chat With</h2>
+            </div>
+            <div class="card-body">
+                <div class="search-container">
+                    <div class="search-input-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="user-search" class="search-input" placeholder="Search users by name...">
+                    </div>
+                    <div id="search-results" class="search-results"></div>
+                </div>
+                
+                <div class="users-container">
+                    <h3>Community Members</h3>
+                    
+                    {% if users %}
+                        <form method="post" action="{% url 'core:create_personal_chat' %}" class="users-list">
+                            {% csrf_token %}
+                            {% for user in users %}
+                                <div class="user-item">
+                                    <div class="user-avatar">{{ user.username|first|upper }}</div>
+                                    <div class="user-info">
+                                        <h4 class="user-name">{{ user.username }}</h4>
+                                        <span class="user-joined">Joined {{ user.date_joined|date:"F Y" }}</span>
+                                    </div>
+                                    <button type="submit" name="user_id" value="{{ user.id }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-comment"></i> Chat
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        </form>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <p>No other users found</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .personal-chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .personal-chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #6c5ce7;
+        padding-bottom: 15px;
+    }
+    
+    .personal-chat-title {
+        color: #2d3436;
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .personal-chat-content {
+        margin-bottom: 30px;
+    }
+    
+    .personal-chat-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    
+    .card-header {
+        padding: 20px;
+        border-bottom: 1px solid #f5f6fa;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #2d3436;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .card-header h2 i {
+        color: #6c5ce7;
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    .search-container {
+        margin-bottom: 30px;
+    }
+    
+    .search-input-container {
+        position: relative;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #636e72;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 15px 15px 15px 45px;
+        border: 1px solid #dfe6e9;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.2s ease;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #6c5ce7;
+        box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+    }
+    
+    .search-results {
+        position: absolute;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background-color: white;
+        border: 1px solid #dfe6e9;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        z-index: 10;
+        display: none;
+    }
+    
+    .search-results.active {
+        display: block;
+    }
+    
+    .search-result-item {
+        padding: 12px 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    
+    .search-result-item:hover {
+        background-color: #f5f6fa;
+    }
+    
+    .users-container h3 {
+        margin: 0 0 15px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #636e72;
+    }
+    
+    .users-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .user-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .user-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 600;
+    }
+    
+    .user-info {
+        flex: 1;
+    }
+    
+    .user-name {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d3436;
+    }
+    
+    .user-joined {
+        font-size: 14px;
+        color: #636e72;
+    }
+    
+    .empty-state {
+        padding: 40px 20px;
+        text-align: center;
+        color: #636e72;
+    }
+    
+    .empty-icon {
+        font-size: 40px;
+        color: #dfe6e9;
+        margin-bottom: 15px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        font-size: 14px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+    }
+    
+    .btn-secondary {
+        background: #f5f6fa;
+        color: #2d3436;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dfe6e9;
+    }
+    
+    .btn-secondary:hover {
+        background: #dfe6e9;
+        transform: translateY(-2px);
+    }
+    
+    .btn-sm {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+    
+    @media (max-width: 768px) {
+        .personal-chat-container {
+            padding: 15px;
+        }
+        
+        .personal-chat-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('user-search');
+        const searchResults = document.getElementById('search-results');
+        
+        // Handle search input
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.innerHTML = '';
+                searchResults.classList.remove('active');
+                return;
+            }
+            
+            // Fetch search results
+            fetch(`/search-users/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Display results
+                    if (data.users && data.users.length > 0) {
+                        searchResults.innerHTML = '';
+                        
+                        data.users.forEach(user => {
+                            const resultItem = document.createElement('div');
+                            resultItem.className = 'search-result-item';
+                            
+                            const avatar = document.createElement('div');
+                            avatar.className = 'user-avatar';
+                            avatar.textContent = user.username.charAt(0).toUpperCase();
+                            
+                            const userInfo = document.createElement('div');
+                            userInfo.className = 'user-info';
+                            userInfo.innerHTML = `<h4 class="user-name">${user.username}</h4>`;
+                            
+                            const chatBtn = document.createElement('button');
+                            chatBtn.className = 'btn btn-primary btn-sm';
+                            chatBtn.innerHTML = '<i class="fas fa-comment"></i> Chat';
+                            chatBtn.addEventListener('click', function() {
+                                // Submit form with user ID
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = '{% url "core:create_personal_chat" %}';
+                                
+                                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                                const csrfInput = document.createElement('input');
+                                csrfInput.type = 'hidden';
+                                csrfInput.name = 'csrfmiddlewaretoken';
+                                csrfInput.value = csrfToken;
+                                
+                                const userIdInput = document.createElement('input');
+                                userIdInput.type = 'hidden';
+                                userIdInput.name = 'user_id';
+                                userIdInput.value = user.id;
+                                
+                                form.appendChild(csrfInput);
+                                form.appendChild(userIdInput);
+                                document.body.appendChild(form);
+                                form.submit();
+                            });
+                            
+                            resultItem.appendChild(avatar);
+                            resultItem.appendChild(userInfo);
+                            resultItem.appendChild(chatBtn);
+                            
+                            searchResults.appendChild(resultItem);
+                        });
+                        
+                        searchResults.classList.add('active');
+                    } else {
+                        searchResults.innerHTML = '<div class="search-result-item">No users found</div>';
+                        searchResults.classList.add('active');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching users:', error);
+                });
+        });
+        
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.remove('active');
+            }
+        });
+    });
+</script>
+{% endblock %} 

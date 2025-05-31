@@ -1,0 +1,96 @@
+{% extends "core/base.html" %}
+
+{% block title %}Service Temporarily Unavailable{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <h1>Service Temporarily Unavailable</h1>
+        <div class="error-icon">
+            <i class="fas fa-hourglass-end"></i>
+        </div>
+        <p class="error-message">
+            {{ message|default:"The server is currently experiencing high load and cannot process your request." }}
+        </p>
+        <div class="error-details">
+            <h2>What happened?</h2>
+            <p>Our system detected that this operation was taking too long or using too much memory.</p>
+            
+            <h2>What can you do?</h2>
+            <ul>
+                <li>Wait a few moments and try again</li>
+                <li>Try a simpler request or operation</li>
+                <li>Refresh the page and retry</li>
+            </ul>
+            
+            <h2>Technical Details</h2>
+            <p>This is a protective measure to ensure the stability of our service. The server automatically limits
+            long-running operations to maintain performance for all users.</p>
+        </div>
+        <div class="error-actions">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+            <a href="{% url 'core:dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .error-content {
+        text-align: center;
+    }
+    
+    .error-icon {
+        font-size: 5rem;
+        color: #6c5ce7;
+        margin: 2rem 0;
+    }
+    
+    .error-message {
+        font-size: 1.2rem;
+        color: #636e72;
+        margin-bottom: 2rem;
+    }
+    
+    .error-details {
+        text-align: left;
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .error-details h2 {
+        font-size: 1.3rem;
+        color: #2d3436;
+        margin-bottom: 1rem;
+    }
+    
+    .error-details ul {
+        padding-left: 1.5rem;
+    }
+    
+    .error-details li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .error-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+</style>
+{% endblock %} 

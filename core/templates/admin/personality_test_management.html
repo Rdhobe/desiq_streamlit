@@ -1,0 +1,235 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .test-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .test-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .test-header h1 {
+        margin: 0;
+    }
+    
+    .test-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .test-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+    
+    .test-table th,
+    .test-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .test-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .test-table tr:hover {
+        background-color: #f9f9f9;
+    }
+    
+    .test-icon {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        border-radius: 50%;
+        background-color: #f5f5f5;
+        color: #417690;
+        font-size: 20px;
+    }
+    
+    .test-actions-cell {
+        white-space: nowrap;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background-color: #305070;
+    }
+    
+    .btn-small {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .btn-secondary {
+        background-color: #79aec8;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #609ab6;
+    }
+    
+    .btn-success {
+        background-color: #5cb85c;
+    }
+    
+    .btn-success:hover {
+        background-color: #4cae4c;
+    }
+    
+    .btn-danger {
+        background-color: #d9534f;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c9302c;
+    }
+    
+    .search-form {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-form input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        flex-grow: 1;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    .pagination a {
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        color: #417690;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    
+    .pagination a:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .pagination .active {
+        background-color: #417690;
+        color: white;
+        border: 1px solid #417690;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="test-container">
+    <div class="test-header">
+        <h1>Personality Test Management</h1>
+        <a href="{% url 'core:admin_dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+    
+    <div class="test-actions">
+        <a href="{% url 'admin:core_personalitytest_add' %}" class="btn">Add New Test</a>
+        <a href="{% url 'core:admin_run_command' command='add_personality_tests' %}" class="btn btn-warning">Add Default Tests</a>
+    </div>
+    
+    <form class="search-form" method="get">
+        <input type="text" name="search" placeholder="Search by title or description" value="{{ request.GET.search }}">
+        <button type="submit" class="btn">Search</button>
+        {% if request.GET.search %}
+        <a href="{% url 'core:admin_personality_test_management' %}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+    
+    <table class="test-table">
+        <thead>
+            <tr>
+                <th>Icon</th>
+                <th>Title</th>
+                <th>Questions</th>
+                <th>Time to Complete</th>
+                <th>Slug</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for test in tests %}
+            <tr>
+                <td>
+                    <div class="test-icon">
+                        <i class="fa fa-{{ test.icon|default:'question' }}"></i>
+                    </div>
+                </td>
+                <td>{{ test.title }}</td>
+                <td>{{ test.question_count }}</td>
+                <td>{{ test.time_to_complete }}</td>
+                <td>{{ test.slug }}</td>
+                <td class="test-actions-cell">
+                    <a href="{% url 'admin:core_personalitytest_change' test.id %}" class="btn btn-small btn-secondary">Edit</a>
+                    <a href="{% url 'admin:core_personalitytest_delete' test.id %}" class="btn btn-small btn-danger">Delete</a>
+                    <a href="{% url 'core:personality_test_detail' test.slug %}" class="btn btn-small">View</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">No personality tests found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">&laquo; First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <a class="active">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Last &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

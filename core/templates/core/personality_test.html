@@ -1,0 +1,513 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Personality Tests - Desiq{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="how-it-works-container">
+    <div class="how-it-works-item">
+      <div class="card-header">
+        <h2>How It Works</h2>
+        <p>Discover your personality and thinking style in just a few steps</p>
+      </div>
+      
+      <div class="steps-container">
+        <div class="step">
+          <div class="step-icon">1</div>
+          <div class="step-content">
+            <h3>Choose a Test</h3>
+            <p>Select from our personality assessments based on your level</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-icon">2</div>
+          <div class="step-content">
+            <h3>Answer Questions</h3>
+            <p>Respond to thought-provoking questions about your preferences</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-icon">3</div>
+          <div class="step-content">
+            <h3>Get Results</h3>
+            <p>Receive insights and earn XP to unlock advanced tests</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="level-info-box">
+        <h3>Level Progression</h3>
+        <p>Your current level: <span class="level-badge">Level {{ user.profile.level }}</span></p>
+        <p>Complete tests and scenarios to earn XP. Each level requires 100 XP points.</p>
+      </div>
+    </div>
+  </div>
+
+  {% regroup tests by unlocked_at_level as level_list %}
+  
+  <div class="all-levels-container">
+    {% for level_group in level_list %}
+    <div class="level-section">
+      <h2 class="level-heading">Level {{ level_group.grouper }} Tests</h2>
+      <div class="test-container">
+        {% for test in level_group.list %}
+        <div class="test-card-wrapper {% if not test.unlocked %}locked-test{% endif %}">
+          <div class="background-svg">
+            <svg viewBox="0 0 1440 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M365.768 489.492V155.768C365.768 144.17 375.17 134.768 386.768 134.768L723.081 134.768" stroke="#1B309A" stroke-width="5"/>
+              <path d="M365.768 515.384V705.692V875C365.768 886.598 375.17 896 386.768 896H1106C1117.6 896 1127 886.598 1127 875V155.768C1127 144.17 1117.6 134.768 1106 134.768H746.384" stroke="black"/>
+              <circle cx="365.768" cy="515.384" r="7.26768" fill="black" stroke="#1B309A"/>
+              <circle cx="754.151" cy="134.768" r="7.26768" fill="black" stroke="#1B309A"/>
+            </svg>
+          </div>
+          <div class="card">
+            <div class="test-icon {{ test.icon|lower }}">
+              {% if test.icon == 'Brain' %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"></path></svg>
+              {% elif test.icon == 'Sparkles' %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg>
+              {% elif test.icon == 'Workflow' %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="8" x="3" y="3" rx="2"></rect><path d="M7 11v4a2 2 0 0 0 2 2h4"></path><rect width="8" height="8" x="13" y="13" rx="2"></rect></svg>
+              {% elif test.icon == 'Lightbulb' %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+              {% elif test.icon == 'Heart' %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+              {% elif test.icon == 'TrendingUp' %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+              {% endif %}
+            </div>
+            <h2>{{ test.title }}</h2>
+            <p>{{ test.description }}</p>
+            <div class="info">{{ test.question_count }} Questions</div>
+            <div class="info">{{ test.time_to_complete }}</div>
+            <div class="level-info">Level {{ test.unlocked_at_level }}+</div>
+            {% if test.is_completed %}
+            <div class="level-info">Completed</div>
+            {% elif not test.unlocked %}
+            <div class="level-info">Unlocked at Level {{ test.unlocked_at_level }}</div>
+            {% else %}
+            <a href="{% url 'core:personality_test_detail' test.slug %}" class="btn">Take the test →</a>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="no-tests">
+      <p>No personality tests available at the moment. Please check back soon!</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fef6ff;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(
+        245deg,
+        rgba(255, 255, 255, 1) 8%,
+        rgba(255, 239, 246, 1) 40%,
+        rgba(234, 218, 242, 1) 67%,
+        rgba(210, 182, 227, 1) 82%
+    );
+      padding: 40px 20px;
+    }
+    
+    /* All Levels Container */
+    .all-levels-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      margin: 0 auto;
+      max-width: 1200px;
+    }
+
+    .how-it-works-container {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+
+    .how-it-works-item {
+      background: linear-gradient(145deg, #ffffff, #f7f0ff);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(103, 80, 164, 0.15);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .card-header {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .card-header h2 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #6750A4;
+      margin-bottom: 8px;
+    }
+
+    .card-header p {
+      font-size: 16px;
+      color: #49454F;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .steps-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .step {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(103, 80, 164, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .step:hover {
+      transform: translateY(-5px);
+    }
+
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #6750A4;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      margin: 0 auto 10px;
+      box-shadow: 0 4px 8px rgba(103, 80, 164, 0.3);
+    }
+
+    .step-content h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #1C1B1F;
+    }
+
+    .step-content p {
+      font-size: 14px;
+      color: #49454F;
+      line-height: 1.4;
+      margin: 0;
+    }
+    
+    /* Level Info Box Styling */
+    .level-info-box {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      border: 1px solid rgba(103, 80, 164, 0.2);
+      box-shadow: 0 4px 15px rgba(103, 80, 164, 0.1);
+    }
+    
+    .level-info-box h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #6750A4;
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .level-info-box p {
+      font-size: 15px;
+      color: #49454F;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    
+    .level-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background-color: #6750A4;
+      color: white;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      margin: 0 5px;
+    }
+    
+    /* Level section styling */
+    .level-section {
+      margin-bottom: 40px;
+      width: 300px;
+    }
+    
+    .level-heading {
+      font-size: 20px;
+      font-weight: 600;
+      color: #6750A4;
+      margin: 20px 0 15px;
+      text-align: center;
+      position: relative;
+      padding-bottom: 10px;
+    }
+    
+    .level-heading::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(to right, #6750A4, #9a71df);
+      border-radius: 3px;
+    }
+
+    .test-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .test-card-wrapper {
+      position: relative;
+      width: 300px;
+      height: 380px;
+      transition: transform 0.3s ease;
+    }
+    
+    .test-card-wrapper:hover {
+      transform: translateY(-5px);
+    }
+    
+    .background-svg {
+      position: absolute;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+   
+    .background-svg svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      width: 260px;
+      height: 360px;
+      box-shadow: 8px 8px 20px #C3BBE1; 
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .test-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+    
+    .test-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .brain {
+      background-color: #e9f5ff;
+      color: #1b309a;
+    }
+    
+    .sparkles {
+      background-color: #fff4e5;
+      color: #ff8a00;
+    }
+    
+    .workflow {
+      background-color: #e9ffe5;
+      color: #2e8b57;
+    }
+    
+    .lightbulb {
+      background-color: #fff9e5;
+      color: #ffc107;
+    }
+    
+    .heart {
+      background-color: #ffe5e5;
+      color: #ff4d6d;
+    }
+    
+    .trendingup {
+      background-color: #e5f1ff;
+      color: #2196f3;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #1C1B1F;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card p {
+      font-size: 13px;
+      color: #49454F;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      flex-grow: 1;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
+
+    .info {
+      font-size: 12px;
+      color: #7A757F;
+      margin-bottom: 3px;
+    }
+    
+    .level-info {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6750A4;
+      margin-bottom: 6px;
+      padding: 2px 8px;
+      background-color: #f3eeff;
+      border-radius: 4px;
+      display: inline-block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn {
+      margin-top: 12px;
+      display: block;
+      width: 100%;
+      background-color: #6750A4;
+      color: white;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #57448c;
+    }
+    
+    .no-tests {
+      width: 100%;
+      text-align: center;
+      padding: 40px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 16px;
+    }
+    
+    .locked-test .card {
+      opacity: 0.7;
+      filter: grayscale(50%);
+      position: relative;
+    }
+    
+    .locked-test .card::after {
+      content: "🔒";
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .steps-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .all-levels-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .level-section {
+        width: 100%;
+        max-width: 450px;
+      }
+      
+      .test-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+      
+      .test-card-wrapper {
+        width: 45%;
+        height: 380px;
+        max-width: 280px;
+      }
+      
+      .card {
+        width: 90%;
+        height: 380px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .test-card-wrapper {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+{% endblock %}

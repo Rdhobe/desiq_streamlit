@@ -1,0 +1,446 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load json_extras %}
+
+{% block title %}Report: {{ scenario.title }} - Desiq{% endblock %}
+
+{% block content %}
+<div class="report-container">
+    <div class="report-card">
+        <div class="report-header">
+            <h1>Decision Analysis Report</h1>
+            <div class="scenario-title">{{ scenario.title }}</div>
+        </div>
+
+        <div class="report-content">
+            <div class="scenario-description">
+                <h2>Scenario</h2>
+                <p>{{ scenario.description }}</p>
+            </div>
+
+            <div class="score-overview">
+                <h2>Your Decision-Making Score</h2>
+                <div class="score-circle">
+                    <div class="score-number">{{ final_score }}</div>
+                    <div class="score-label">out of 100</div>
+                </div>
+                
+                <div class="skill-scores">
+                    <div class="skill-item">
+                        <div class="skill-label">Rationality</div>
+                        <div class="skill-bar-container">
+                            <div class="skill-bar" style="width: {{ rationality_score|mul:10 }}%"></div>
+                        </div>
+                        <div class="skill-value">{{ rationality_score }}/10</div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-label">Decisiveness</div>
+                        <div class="skill-bar-container">
+                            <div class="skill-bar" style="width: {{ decisiveness_score|mul:10 }}%"></div>
+                        </div>
+                        <div class="skill-value">{{ decisiveness_score }}/10</div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-label">Empathy</div>
+                        <div class="skill-bar-container">
+                            <div class="skill-bar" style="width: {{ empathy_score|mul:10 }}%"></div>
+                        </div>
+                        <div class="skill-value">{{ empathy_score }}/10</div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-label">Clarity</div>
+                        <div class="skill-bar-container">
+                            <div class="skill-bar" style="width: {{ clarity_score|mul:10 }}%"></div>
+                        </div>
+                        <div class="skill-value">{{ clarity_score }}/10</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-section">
+                <div class="strengths-section">
+                    <h2>Your Strengths</h2>
+                    <div class="analysis-content">
+                        <ul>
+                            {% with strengths_list=strengths|parse_json %}
+                                {% for strength in strengths_list %}
+                                    <li>{{ strength }}</li>
+                                {% endfor %}
+                            {% endwith %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="weaknesses-section">
+                    <h2>Areas for Improvement</h2>
+                    <div class="analysis-content">
+                        <ul>
+                            {% with weaknesses_list=weaknesses|parse_json %}
+                                {% for weakness in weaknesses_list %}
+                                    <li>{{ weakness }}</li>
+                                {% endfor %}
+                            {% endwith %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="improvement-plan">
+                <h2>Improvement Plan</h2>
+                <div class="plan-content">
+                    <ol>
+                        {% with plan_list=improvement_plan|parse_json %}
+                            {% for step in plan_list %}
+                                <li>{{ step }}</li>
+                            {% endfor %}
+                        {% endwith %}
+                    </ol>
+                </div>
+            </div>
+
+            <div class="resources-section">
+                <h2>Recommended Resources</h2>
+                <div class="resources-content">
+                    <ul>
+                        {% with resources_list=resources|parse_json %}
+                            {% for resource in resources_list %}
+                                <li>{{ resource }}</li>
+                            {% endfor %}
+                        {% endwith %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="question-answers">
+                <h2>Your Responses</h2>
+                <div class="accordion">
+                    {% for qa in question_answers %}
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span>Question {{ forloop.counter }}: {{ qa.question.question_text|truncatechars:60 }}</span>
+                                <span class="accordion-icon">+</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="qa-question">
+                                    <strong>Q:</strong> {{ qa.question.question_text }}
+                                </div>
+                                <div class="qa-answer">
+                                    <strong>A:</strong> {{ qa.answer.answer_text }}
+                                </div>
+                                <div class="qa-feedback">
+                                    <strong>Feedback:</strong> {{ qa.answer.feedback }}
+                                </div>
+                                <div class="qa-scores">
+                                    <div>Rationality: {{ qa.answer.rationality_score }}/10</div>
+                                    <div>Decisiveness: {{ qa.answer.decisiveness_score }}/10</div>
+                                    <div>Empathy: {{ qa.answer.empathy_score }}/10</div>
+                                    <div>Clarity: {{ qa.answer.clarity_score }}/10</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="completion-info">
+                <p>Completed on: {{ scenario.completed_at|date:"F j, Y, g:i a" }}</p>
+            </div>
+            
+            <div class="report-actions">
+                <a href="{% url 'core:scenarios' %}"><button class="btn-secondary">Back to Scenarios</button></a>
+                <a href="{% url 'core:home' %}"><button class="btn-primary">Go to Dashboard</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .report-container {
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(
+            245deg,
+            rgba(255, 255, 255, 1) 8%,
+            rgba(255, 239, 246, 1) 40%,
+            rgba(234, 218, 242, 1) 67%,
+            rgba(210, 182, 227, 1) 82%
+        );
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+    }
+
+    .report-card {
+        background-color: #ffffff;
+        border-radius: 34px;
+        border: 1px solid #00000022;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 40px;
+        box-shadow: inset 0px -4px 5.6px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    .report-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .report-header h1 {
+        color: #1b309a;
+        margin-bottom: 0.5rem;
+        font-size: 28px;
+    }
+
+    .scenario-title {
+        font-size: 1.2rem;
+        color: #4b5563;
+    }
+
+    .report-content h2 {
+        color: #1b309a;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 0.5rem;
+    }
+
+    .scenario-description {
+        margin-bottom: 2rem;
+    }
+
+    .scenario-description p {
+        white-space: pre-line;
+        line-height: 1.6;
+    }
+
+    .score-overview {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #1b309a;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .score-number {
+        font-size: 3rem;
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    .score-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .skill-scores {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .skill-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .skill-label {
+        width: 120px;
+        text-align: right;
+        padding-right: 1rem;
+        font-weight: 500;
+    }
+
+    .skill-bar-container {
+        flex-grow: 1;
+        height: 10px;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .skill-bar {
+        height: 100%;
+        background-color: #1b309a;
+        border-radius: 5px;
+    }
+
+    .skill-value {
+        width: 50px;
+        text-align: right;
+        padding-left: 1rem;
+        font-weight: 500;
+    }
+
+    .analysis-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .strengths-section {
+        background-color: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .weaknesses-section {
+        background-color: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .improvement-plan {
+        margin-bottom: 2rem;
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .resources-section {
+        margin-bottom: 2rem;
+        background-color: #faf5ff;
+        border: 1px solid #e9d5ff;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .question-answers {
+        margin-bottom: 2rem;
+    }
+
+    .accordion-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .accordion-header {
+        background-color: #f9fafb;
+        padding: 1rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+    }
+
+    .accordion-icon {
+        font-size: 1.5rem;
+        color: #1b309a;
+    }
+
+    .accordion-content {
+        padding: 1rem;
+        display: none;
+    }
+
+    .qa-question, .qa-answer, .qa-feedback {
+        margin-bottom: 1rem;
+    }
+
+    .qa-scores {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .completion-info {
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+        color: #6b7280;
+        text-align: center;
+    }
+
+    .report-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 169px;
+        height: 41px;
+        border-radius: 20.5px;
+        border: none;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.44);
+    }
+
+    .btn-primary {
+        background-color: #1b309a;
+        color: #ffffff;
+    }
+
+    .btn-secondary {
+        background-color: #f3f4f6;
+        color: #1f2937;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-primary:hover {
+        background-color: #142270;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e5e7eb;
+    }
+
+    @media (max-width: 768px) {
+        .analysis-section {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Accordion functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('.accordion-icon');
+                
+                // Toggle content visibility
+                if (content.style.display === 'block') {
+                    content.style.display = 'none';
+                    icon.textContent = '+';
+                } else {
+                    content.style.display = 'block';
+                    icon.textContent = '−';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

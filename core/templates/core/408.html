@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Request Timeout{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body text-center p-5">
+                    <h1 class="display-1 text-warning">408</h1>
+                    <h2 class="mb-4">Request Timeout</h2>
+                    <p class="lead mb-4">Sorry, your request took too long to process and timed out.</p>
+                    
+                    {% if 'dynamic_scenario' in request.path %}
+                    <div class="alert alert-info mb-4">
+                        <h5>In-Depth Analysis Tips:</h5>
+                        <ul class="text-start">
+                            <li>Try using shorter, more concise answers</li>
+                            <li>Consider using the Quick Scenario option instead</li>
+                            <li>Our servers may be experiencing high traffic - try again later</li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <p class="mb-4">This could be due to network issues or server load.</p>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'core:scenarios' %}" class="btn btn-primary">Back to Scenarios</a>
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">Dashboard</a>
+                        <button onclick="window.location.reload()" class="btn btn-success">Try Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,31 @@
+{% extends "core/emails/base_email.html" %}
+
+{% block title %}Welcome to DesiQ{% endblock %}
+
+{% block content %}
+<h2>Welcome to DesiQ, {{ user.username }}!</h2>
+
+<div style="text-align: center;">
+    <div class="icon">👋</div>
+</div>
+
+<p>Thank you for joining our community! We're excited to have you with us.</p>
+
+<p>At DesiQ, we're dedicated to helping you improve your decision-making skills through engaging scenarios, personality assessments, and expert guidance.</p>
+
+<h3>Here's what you can do next:</h3>
+<ul>
+    <li>Explore decision-making scenarios</li>
+    <li>Take personality tests</li>
+    <li>Connect with our mentors</li>
+    <li>Track your progress and growth</li>
+</ul>
+
+<div style="text-align: center;">
+    <a href="{{ request.scheme }}://{{ site.domain }}/dashboard/" class="btn">Go to Your Dashboard</a>
+</div>
+
+<p>If you have any questions or feedback, just reply to this email. Our team is always here to help!</p>
+
+<p>Best regards,<br>The DesiQ Team</p>
+{% endblock %} 

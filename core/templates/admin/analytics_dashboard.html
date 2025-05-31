@@ -1,0 +1,356 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin-bottom: 20px;
+    }
+    .card {
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    .stats-card {
+        text-align: center;
+        padding: 15px;
+    }
+    .stats-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+    .stats-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    .filter-bar {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    .export-btn {
+        margin-left: 10px;
+    }
+    .table thead th {
+        background-color: #f8f9fa;
+    }
+    .dark-mode .card {
+        background-color: #343a40;
+        color: #f8f9fa;
+    }
+    .dark-mode .card-header {
+        background-color: #2c3035;
+        color: #f8f9fa;
+    }
+    .dark-mode .stats-number {
+        color: #5dade2;
+    }
+    .dark-mode .stats-label {
+        color: #adb5bd;
+    }
+    .dark-mode .filter-bar {
+        background-color: #2c3035;
+        color: #f8f9fa;
+    }
+    .dark-mode .table thead th {
+        background-color: #2c3035;
+        color: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page title -->
+    <h1>Analytics Dashboard</h1>
+    
+    <!-- Time range filter -->
+    <div class="card filter-bar">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <form method="get" class="form-inline">
+                    <div class="form-group">
+                        <label for="time_range" class="mr-2">Time Range:</label>
+                        <select name="time_range" id="time_range" class="form-control" onchange="this.form.submit()">
+                            <option value="7" {% if time_range == '7' %}selected{% endif %}>Last 7 Days</option>
+                            <option value="30" {% if time_range == '30' %}selected{% endif %}>Last 30 Days</option>
+                            <option value="90" {% if time_range == '90' %}selected{% endif %}>Last 90 Days</option>
+                            <option value="180" {% if time_range == '180' %}selected{% endif %}>Last 6 Months</option>
+                            <option value="365" {% if time_range == '365' %}selected{% endif %}>Last Year</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 text-right">
+                <div class="btn-group" role="group">
+                    <a href="{% url 'core:admin_export_data' 'users' %}" class="btn btn-outline-primary export-btn">Export Users</a>
+                    <a href="{% url 'core:admin_export_data' 'scenarios' %}" class="btn btn-outline-primary export-btn">Export Scenarios</a>
+                    <a href="{% url 'core:admin_export_data' 'personality_tests' %}" class="btn btn-outline-primary export-btn">Export Test Results</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stat cards row -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card stats-card">
+                <div class="stats-number">{{ total_users_period }}</div>
+                <div class="stats-label">New Users</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card">
+                <div class="stats-number">{{ premium_users_period }}</div>
+                <div class="stats-label">New Premium Users</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card">
+                <div class="stats-number">{{ conversion_rate }}%</div>
+                <div class="stats-label">Premium Conversion Rate</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card">
+                <div class="stats-number">{{ top_scenarios.0.completion_count|default:"0" }}</div>
+                <div class="stats-label">Most Completed Scenario</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts row -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">User Growth</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Active Users</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="activeUsersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Scenario Completions</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="scenarioCompletionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Premium Conversions</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="premiumConversionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tables row -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Top Scenarios</div>
+                <div class="card-body">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Difficulty</th>
+                                <th>Completions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scenario in top_scenarios %}
+                            <tr>
+                                <td>{{ scenario.title }}</td>
+                                <td>{{ scenario.category }}</td>
+                                <td>{{ scenario.difficulty }}</td>
+                                <td>{{ scenario.completion_count }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No scenarios found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Activity Distribution</div>
+                <div class="card-body">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Activity Type</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity in activity_distribution %}
+                            <tr>
+                                <td>{{ activity.activity_type }}</td>
+                                <td>{{ activity.count }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No activities found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.0/dist/chart.umd.min.js"></script>
+<script>
+    // Parse data from server
+    const userGrowthData = JSON.parse('{{ user_growth_data|escapejs }}');
+    const scenarioCompletionData = JSON.parse('{{ scenario_completion_data|escapejs }}');
+    const premiumConversionData = JSON.parse('{{ premium_conversion_data|escapejs }}');
+    const activeUsersData = JSON.parse('{{ active_users_data|escapejs }}');
+    
+    // Theme detection
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const textColor = isDarkMode ? '#f8f9fa' : '#333';
+    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    
+    // Chart configuration helper
+    function getChartConfig(type, labels, data, label, color) {
+        return {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: `rgba(${color}, 0.2)`,
+                    borderColor: `rgba(${color}, 1)`,
+                    borderWidth: 1,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        };
+    }
+    
+    // Create charts
+    document.addEventListener('DOMContentLoaded', function() {
+        // User Growth Chart
+        const userGrowthCtx = document.getElementById('userGrowthChart').getContext('2d');
+        new Chart(userGrowthCtx, getChartConfig(
+            'line', 
+            userGrowthData.labels, 
+            userGrowthData.data, 
+            'New Users', 
+            '54, 162, 235'
+        ));
+        
+        // Scenario Completion Chart
+        const scenarioCtx = document.getElementById('scenarioCompletionChart').getContext('2d');
+        new Chart(scenarioCtx, getChartConfig(
+            'line', 
+            scenarioCompletionData.labels, 
+            scenarioCompletionData.data, 
+            'Completed Scenarios', 
+            '75, 192, 192'
+        ));
+        
+        // Premium Conversion Chart
+        const premiumCtx = document.getElementById('premiumConversionChart').getContext('2d');
+        new Chart(premiumCtx, getChartConfig(
+            'line', 
+            premiumConversionData.labels, 
+            premiumConversionData.data, 
+            'Premium Conversions', 
+            '255, 205, 86'
+        ));
+        
+        // Active Users Chart
+        const activeUsersCtx = document.getElementById('activeUsersChart').getContext('2d');
+        new Chart(activeUsersCtx, getChartConfig(
+            'line', 
+            activeUsersData.labels, 
+            activeUsersData.data, 
+            'Active Users', 
+            '153, 102, 255'
+        ));
+    });
+    
+    // Toggle between light and dark mode
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        // Refresh charts to update colors
+        location.reload();
+    }
+</script>
+{% endblock %} 

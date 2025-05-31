@@ -1,0 +1,564 @@
+{% extends 'core/base_no_login.html' %}
+{% load static %}
+
+{% block title %}Log In - DesiQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Login form styles */
+    .login-container {
+        max-width: 550px;
+        margin: 80px auto;
+        padding: 60px 40px;
+        background: linear-gradient(
+            245deg,
+            rgba(255, 255, 255, 1) 8%,
+            rgba(255, 239, 246, 1) 40%,
+            rgba(234, 218, 242, 1) 67%,
+            rgba(210, 182, 227, 1) 82%
+        );
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .login-header h1 {
+        font-size: 2rem;
+        color: #1b309a;
+        margin-bottom: 10px;
+    }
+
+    .login-header p {
+        font-size: 1.1rem;
+        color: #666;
+    }
+
+    .error-message {
+        background-color: #FEF2F2;
+        color: #DC2626;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 12px;
+        top: 37%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 12px 12px 40px;
+        border: 1px solid #e1e1e1;
+        border-radius: 8px;
+        background-color: #f9fafb;
+        font-size: 1rem;
+        color: #333;
+        transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #1b309a;
+        box-shadow: 0 0 0 2px rgba(27, 48, 154, 0.15);
+    }
+
+    .forgot-password {
+        display: block;
+        text-align: right;
+        font-size: 0.9rem;
+        color: #1b309a;
+        text-decoration: none;
+        margin-top: 5px;
+    }
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+    .submit-button {
+        width: 100%;
+        background-color: #1b309a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .submit-button:hover {
+        background-color: #152376;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(27, 48, 154, 0.2);
+    }
+
+    .submit-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .spinner {
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+        display: none;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .register-section {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .signup-link {
+        color: #1b309a;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+
+    .signup-link:hover {
+        text-decoration: underline;
+    }
+
+    .errorlist {
+        color: #DC2626;
+        font-size: 0.85rem;
+        list-style: none;
+        margin-top: 5px;
+        padding-left: 0;
+    }
+
+    /* Social login styles */
+    .social-login {
+        margin-bottom: 25px;
+    }
+
+    .social-login-title {
+        text-align: center;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .social-login-title::before,
+    .social-login-title::after {
+        content: "";
+        position: absolute;
+        height: 1px;
+        background-color: #e1e1e1;
+        top: 50%;
+        width: 30%;
+    }
+
+    .social-login-title::before {
+        left: 0;
+    }
+
+    .social-login-title::after {
+        right: 0;
+    }
+
+    .social-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .social-button i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .google-btn {
+        background-color: #ffffff;
+        color: #333;
+        border: 1px solid #e1e1e1;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .google-btn:hover {
+        background-color: #f8f8f8;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    .github-btn {
+        background-color: #24292e;
+        color: white;
+        border: 1px solid #24292e;
+    }
+
+    .github-btn:hover {
+        background-color: #2f363d;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    .form-divider {
+        text-align: center;
+        margin: 25px 0;
+        position: relative;
+    }
+
+    .form-divider::before,
+    .form-divider::after {
+        content: "";
+        position: absolute;
+        height: 1px;
+        background-color: #e1e1e1;
+        top: 50%;
+        width: 45%;
+    }
+
+    .form-divider::before {
+        left: 0;
+    }
+
+    .form-divider::after {
+        right: 0;
+    }
+
+    .form-divider span {
+        background-color: rgba(234, 218, 242, 0.5);
+        padding: 0 15px;
+        position: relative;
+        z-index: 1;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .login-container {
+            margin: 20px 15px;
+            padding: 30px 20px;
+        }
+        
+        .login-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .login-header p {
+            font-size: 1rem;
+        }
+
+        .social-buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .social-button {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-container {
+            padding: 15px;
+            margin-top: 40%
+        }
+        
+        .login-header h1 {
+            font-size: 1.6rem;
+        }
+        
+        .form-input {
+            padding: 10px 10px 10px 35px;
+            font-size: 0.95rem;
+        }
+        
+        .submit-button {
+            padding: 10px;
+            font-size: 0.95rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-header">
+        <h1>Welcome Back</h1>
+        <p>Enter your credentials to sign in to your account</p>
+    </div>
+
+    {% if form.errors %}
+    <div class="error-message">
+        Your username and password didn't match. Please try again.
+    </div>
+    {% endif %}
+    
+    {% if messages %}
+    <div class="error-message">
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                {{ message }}
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Social Login Section -->
+    <div class="social-login">
+        <div class="social-login-title">Sign in with</div>
+        <div class="social-buttons">
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="social-button google-btn">
+                <i class="fab fa-google"></i> Google
+            </a>
+            <a href="{% url 'social:begin' 'github' %}" class="social-button github-btn">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
+    </div>
+    
+    <div class="form-divider">
+        <span>Or sign in with email</span>
+    </div>
+    
+    <form id="login-form" method="post" action="{% url 'core:login' %}" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            <div class="input-wrapper">
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <input 
+
+                    type="email" 
+
+                    name="email" 
+
+                    id="{{ form.email.id_for_label }}"
+
+                    class="form-input"
+
+                    placeholder="Enter your email"
+
+                    required
+
+                    autofocus
+
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+
+                    title="Please enter a valid email address"
+
+                    autocomplete="email"
+
+                >
+
+            </div>
+
+            <div id="email-error" class="email-error">
+
+                Please enter a valid email address
+            </div>
+            {% if form.email.errors %}
+
+                <ul class="errorlist">
+
+                    {% for error in form.email.errors %}
+
+                        <li>{{ error }}</li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+            <div class="input-wrapper">
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                {{ form.password }}
+            </div>
+            {% if form.password.errors %}
+
+                <ul class="errorlist">
+
+                    {% for error in form.password.errors %}
+
+                        <li>{{ error }}</li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% endif %}
+            <a href="{% url 'core:password_reset' %}" class="forgot-password">Forgot password?</a>
+        </div>
+         <!-- Preserve next parameter if it exists -->
+
+         {% if request.GET.next %}
+
+         <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+     {% endif %}
+        <button 
+            type="submit" 
+            id="submit-button"
+            class="submit-button"
+        >
+            <span id="spinner" class="spinner">
+                <i class="fas fa-spinner"></i>
+            </span>
+            <span id="button-text">Sign In</span>
+        </button>
+        
+        <div class="register-section">
+            <p>
+                Don't have an account?
+                <a href="{% url 'core:register' %}" class="signup-link">Sign Up</a>
+            </p>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is authenticated by checking for user-specific elements
+        const isAuthenticated = document.querySelector('.sidebar') !== null || 
+                               document.querySelector('.user-nav') !== null || 
+                               document.cookie.includes('sessionid=');
+        
+        // Redirect to dashboard if already authenticated
+        if (isAuthenticated) {
+            window.location.href = "{% url 'core:dashboard' %}";
+        }
+        
+        const loginForm = document.getElementById('login-form');
+        const submitButton = document.getElementById('submit-button');
+        const spinner = document.getElementById('spinner');
+        const buttonText = document.getElementById('button-text');
+        const emailInput = document.querySelector('input[name="email"]');
+
+        const emailError = document.getElementById('email-error');
+
+
+
+        // Email validation function
+
+        function validateEmail(email) {
+
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            return emailPattern.test(email);
+
+        }
+
+
+
+        // Real-time email validation
+
+        emailInput.addEventListener('input', function() {
+
+            const email = this.value.trim();
+
+            if (email && !validateEmail(email)) {
+
+                this.style.borderColor = '#DC2626';
+
+                emailError.style.display = 'block';
+
+            } else {
+
+                this.style.borderColor = email ? '#16A34A' : '#e1e1e1';
+
+                emailError.style.display = 'none';
+
+            }
+
+        });
+
+
+        loginForm.addEventListener('submit', function(e) {
+            const email = emailInput.value.trim();
+            // Validate email before submission
+            if (!email || !validateEmail(email)) {
+                e.preventDefault();
+                emailInput.style.borderColor = '#DC2626';
+                emailError.style.display = 'block';
+                emailInput.focus();
+                return false;
+            }
+            // Show loading state
+            setLoading(true);
+
+        });
+        
+        function setLoading(isLoading) {
+            submitButton.disabled = isLoading;
+            if (isLoading) {
+                spinner.style.display = 'inline-block';
+                buttonText.textContent = 'Signing In...';
+            } else {
+                spinner.style.display = 'none';
+                buttonText.textContent = 'Sign In';
+            }
+        }
+        
+
+        // Reset loading state if there are form errors (page reloads)
+
+        window.addEventListener('load', function() {
+
+setLoading(false);
+
+});
+    });
+</script>
+{% endblock %}
