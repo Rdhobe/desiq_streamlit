@@ -23,8 +23,6 @@ service:
       value: sync
     - name: GUNICORN_LOG_LEVEL
       value: info
-    - name: DJANGO_SETTINGS_MODULE
-      value: desiq.settings
     - name: SECRET_KEY
       secret: secret-key
     - name: STATIC_ROOT
